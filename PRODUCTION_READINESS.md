@@ -41,17 +41,13 @@ Updated 13 October 2026. This file records what was checked and what is actually
 
 ### Live result
 
-Checked 13 October 2026 against deployment `90b92b02-86a8-4570-8e4e-ca2e010672b2` (commit `6df2cdd`, production, Active).
+Checked 13 October 2026 on `https://protocols.davidgarciab.com`, served by production deployment `0665b82c-9e29-496d-be30-1a3dd52e8ad9` (commit `99a4239`).
 
-- `https://protocol-anatomy.pages.dev/` and the directory routes for all five protocols, all five version guides, concepts, glossary, methodology, sources, and search returned HTTP 200.
-- `/protocols/aave` redirects with HTTP 308 to `/protocols/aave/`, whose canonical is `https://protocols.davidgarciab.com/protocols/aave/`.
-- `robots.txt` allows crawling and points at `https://protocols.davidgarciab.com/sitemap-index.xml`. The sitemap lists the protocol and guide URLs with trailing slashes.
-- Unknown paths return HTTP 404 with `noindex`.
+- Pages custom domain `protocols.davidgarciab.com` status is `active`. Verification is `active`. HTTP certificate validation is `active`. Certificate authority is Google.
+- Authoritative DNS and `1.1.1.1` / `8.8.8.8` resolve the hostname to Cloudflare proxy addresses `188.114.96.5` and `188.114.97.5`, plus IPv6 `2a06:98c1:3120::5` and `2a06:98c1:3121::5`. The proxied record does not return a public CNAME. The zone DNS API still returns HTTP 403 for this Wrangler login, so the raw record was not edited from here.
+- TLS certificate: subject `CN=protocols.davidgarciab.com`, issuer Google Trust Services `WE1`, valid 13 October 2026 through 11 January 2027. SAN is `DNS:protocols.davidgarciab.com`.
+- HTTPS routes returned 200 for `/`, the protocol directory, all five protocol overviews, all five version guides, `/concepts/`, `/concepts/constant-product/`, `/glossary/`, `/methodology/`, `/sources/`, `/search/`, `robots.txt`, `sitemap-index.xml`, and `favicon.svg`. `/does-not-exist` returned 404 with `noindex`.
+- `/protocols/aave` redirects with HTTP 308 to `/protocols/aave/`. The canonical on that page is `https://protocols.davidgarciab.com/protocols/aave/`. `robots.txt` allows crawling and points at `https://protocols.davidgarciab.com/sitemap-index.xml`.
 - Response headers include `nosniff`, `strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, and `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
-- The `protocol-anatomy.pages.dev` certificate is valid (Let's Encrypt, issued 13 October 2026, expires 11 January 2027).
-- In the browser: homepage, Aave overview (breadcrumbs, table of contents, two diagrams), search for `stETH` (16 results) and `zzznomatchtoken` (0 results), glossary filter `stETH` (5 visible terms), mobile menu open and Escape dismissal, and the 404 page. The 404 page recorded no script errors. The copy button reported `Copy failed` in the automated browser because the document was not focused and clipboard access was denied. That is the existing failure path, not a production exception.
-- GitHub Actions check on `6df2cdd` succeeded.
-
-`protocols.davidgarciab.com` is attached to the Pages project (domain id `8f1966da-f6fd-4267-93a2-1e1a6d269c11`) with status `pending`. Verification says `CNAME record not set`. `dig` returned no CNAME or A record, and HTTPS to that hostname did not connect. DNS list and create calls return HTTP 403 with the current Wrangler token, which has zone read but not DNS edit. The dashboard session used for this check was not signed in.
-
-Required record, and nothing else: proxied CNAME `protocols` → `protocol-anatomy.pages.dev` on zone `davidgarciab.com` (`54d48c045d5bd2b1a741b2f11d980a99`). Do not change nameservers or other records.
+- In the browser on the custom domain: homepage, Aave overview (breadcrumbs, table of contents, two figures, stylesheet HTTP 200, no failed resource responses, no script errors), and search for `liquidation` (18 results, no script errors).
+- The copy button still reports `Copy failed` in this automated browser. With focus emulation on, `document.hasFocus()` was true and `clipboard.writeText` rejected with `NotAllowedError: Write permission denied`. That is the embedded browser denying clipboard write, not a missing production permission policy. No site change was made for it.
