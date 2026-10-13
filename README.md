@@ -4,7 +4,7 @@ Protocol Anatomy is a static technical publication about how major DeFi protocol
 
 Tagline: Understand the code. Follow the money. Trace the evolution.
 
-The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lido. It is prepared for `https://protocols.davidgarciab.com`. Nothing in this repository deploys that domain.
+The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lido. The canonical site is `https://protocols.davidgarciab.com`.
 
 ## Stack
 
@@ -19,8 +19,8 @@ pnpm is the package manager. The lockfile is `pnpm-lock.yaml`.
 
 ## Prerequisites
 
-- Node.js 22.12 or newer (see `.nvmrc`)
-- pnpm 10
+- Node.js 24.21.0 (see `.nvmrc`). Astro accepts Node.js 22.12 and newer; this project pins the current Active LTS line, 24.x.
+- pnpm 12.13.0 (`packageManager` in `package.json`; `corepack enable` selects it)
 
 ## Install and run
 
@@ -117,22 +117,27 @@ Code samples use fenced blocks. The article layout adds a Copy button when JavaS
 
 ## Deploy to Cloudflare Pages
 
-Do this only when you intend to publish. This repository does not create a Cloudflare account or change DNS.
+Production is the Cloudflare Pages project `protocol-anatomy` on the existing `davidgarciab@gmail.com` account. Pushes to `main` build and deploy. Other branches and pull requests get preview deployments. The site is static: no Worker, database, or API token is required at runtime.
 
-1. Push the repository to the Git host you will connect.
-2. In Cloudflare Pages, create a project from that repository.
-3. Set the production branch, then:
-   - Build command: `pnpm build`
-   - Build output directory: `dist`
-   - Node.js version: 22
-4. Add the custom domain `protocols.davidgarciab.com`.
-5. DNS: if the zone is already on Cloudflare, Pages can add the record for you. If it is not, create a `CNAME` from `protocols` to the Pages target Cloudflare shows, or an equivalent proxied record. Do not point the name at a local server.
-6. After the first deployment, open the production URL and the addresses in `scripts/verify-dist.ts`. Confirm the canonical tag is `https://protocols.davidgarciab.com/...` and that the five protocol pages render.
-7. `robots.txt` and the sitemap already use that origin. They do not need a second generator.
+Pages build settings:
 
-Pages serves `404.html` for unknown paths. The site is static. It does not need a database, an API key, or a server-side runtime.
+- Build command: `pnpm install --frozen-lockfile && pnpm build`
+- Output directory: `dist`
+- Production branch: `main`
+- `NODE_VERSION`: `24.21.0` (also `.nvmrc`)
+- `PNPM_VERSION`: `12.13.0`
 
-Cloudflare’s free allowance and its limits change. Check the current Pages pricing and fair-use terms before relying on them. A quiet static site is the inexpensive case. Large build minutes, many deployments, or added Workers and images can cost money later. This project does not add those.
+The v3 Pages image does not read `packageManager` or the lockfile to choose pnpm, so `PNPM_VERSION` has to be set on the project. Do not add analytics or a paid build feature.
+
+`public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy. There is no Content-Security-Policy because the navigation and copy buttons use a small inline script.
+
+Custom domain: `protocols.davidgarciab.com`. The zone `davidgarciab.com` is already on this Cloudflare account. Attach the hostname from the Pages project so Cloudflare creates the proxied record and the certificate. Do not replace unrelated DNS records, and do not change nameservers.
+
+Rollback: in the Pages project, open Deployments and roll back to an earlier successful production deployment. That does not rewrite Git history.
+
+Inspect status with `npx wrangler pages deployment list --project-name protocol-anatomy`. No repository secret is required for the Git integration. A direct-upload fallback would need `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; this project does not use that path.
+
+Pages serves `404.html` for unknown paths. Cloudflare’s free allowance changes. Check the current Pages terms before relying on them. This project does not add Workers, images, or other paid features.
 
 ## Known limits
 
