@@ -24,7 +24,7 @@ const { Content, headings } = await render(entry);
   headings={headings}
   kicker={entry.data.category}
   readingMinutes={readingMinutes(entry.body)}
-  crumbs={[{ href: '/protocols', label: 'Protocols' }, { label: entry.data.title }]}
+  crumbs={[{ href: '/protocols/', label: 'Protocols' }, { label: entry.data.title }]}
   related={protocolLinks(entry, library)}
 >
   <Content />

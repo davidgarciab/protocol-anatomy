@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { glossary } from '../data/glossary';
+import { pagePath } from '../lib/site';
 import { stripMarkdown, type SearchEntry } from '../lib/search';
 
 const protocols = await getCollection('protocols');
@@ -13,7 +14,7 @@ const concepts = await getCollection('concepts');
 const entries: SearchEntry[] = [
   ...protocols.map((entry) => ({
     title: entry.data.title,
-    url: `/protocols/${entry.id}`,
+    url: pagePath(`/protocols/${entry.id}`),
     kind: 'Protocol',
     summary: entry.data.summary,
     text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
@@ -21,7 +22,7 @@ const entries: SearchEntry[] = [
   })),
   ...guides.map((entry) => ({
     title: entry.data.title,
-    url: `/guides/${entry.id}`,
+    url: pagePath(`/guides/${entry.id}`),
     kind: 'Guide',
     summary: entry.data.summary,
     text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
@@ -29,14 +30,14 @@ const entries: SearchEntry[] = [
   })),
   ...concepts.map((entry) => ({
     title: entry.data.title,
-    url: `/concepts/${entry.id}`,
+    url: pagePath(`/concepts/${entry.id}`),
     kind: 'Concept',
     summary: entry.data.summary,
     text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
   })),
   ...glossary.map((entry) => ({
     title: entry.term,
-    url: `/glossary#${entry.id}`,
+    url: pagePath(`/glossary#${entry.id}`),
     kind: 'Glossary',
     summary: entry.definition,
     text: `${entry.term} ${entry.definition}`,

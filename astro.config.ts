@@ -7,7 +7,7 @@ import { rehypeDiagrams } from './src/plugins/rehype-diagrams';
 export default defineConfig({
   site: 'https://protocols.davidgarciab.com',
   output: 'static',
-  trailingSlash: 'never',
+  trailingSlash: 'always',
   compressHTML: true,
   integrations: [mdx(), sitemap()],
   markdown: {

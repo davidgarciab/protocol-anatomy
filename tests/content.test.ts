@@ -101,8 +101,9 @@ describe('search and reading helpers', () => {
 });
 
 describe('canonical URLs', () => {
-  it('uses the production origin and no trailing slash', () => {
-    expect(canonicalUrl('/protocols/aave/')).toBe('https://protocols.davidgarciab.com/protocols/aave');
+  it('uses the production origin and the trailing slash Pages serves', () => {
+    expect(canonicalUrl('/protocols/aave/')).toBe('https://protocols.davidgarciab.com/protocols/aave/');
+    expect(canonicalUrl('/glossary#health-factor')).toBe('https://protocols.davidgarciab.com/glossary/#health-factor');
     expect(canonicalUrl('/')).toBe('https://protocols.davidgarciab.com/');
     expect(canonicalUrl('/protocols/aave')).not.toContain('localhost');
   });

@@ -26,8 +26,8 @@ const protocol = library.protocols.find((item) => item.id === entry.data.protoco
   kicker="Version guide"
   readingMinutes={readingMinutes(entry.body)}
   crumbs={[
-    { href: '/guides', label: 'Guides' },
-    { href: protocol ? `/protocols/${protocol.id}` : '/protocols', label: protocol?.data.title ?? entry.data.protocol },
+    { href: '/guides/', label: 'Guides' },
+    { href: protocol ? `/protocols/${protocol.id}/` : '/protocols/', label: protocol?.data.title ?? entry.data.protocol },
     { label: entry.data.title },
   ]}
   related={guideLinks(entry, library)}

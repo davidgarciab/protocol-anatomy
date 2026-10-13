@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { pagePath } from './site';
 import { glossary } from '../data/glossary';
 import type { RelatedLink } from '../components/Related.astro';
 
@@ -18,16 +19,16 @@ export function protocolLinks(entry: CollectionEntry<'protocols'>, library: Libr
   return [
     ...entry.data.guides.map((id) => {
       const guide = must(library.guides, id, 'guide');
-      return { href: `/guides/${guide.id}`, title: guide.data.title, kind: 'Guide' };
+      return { href: pagePath(`/guides/${guide.id}`), title: guide.data.title, kind: 'Guide' };
     }),
     ...entry.data.concepts.map((id) => {
       const concept = must(library.concepts, id, 'concept');
-      return { href: `/concepts/${concept.id}`, title: concept.data.title, kind: 'Concept' };
+      return { href: pagePath(`/concepts/${concept.id}`), title: concept.data.title, kind: 'Concept' };
     }),
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: `/glossary#${term.id}`, title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }
@@ -35,19 +36,19 @@ export function protocolLinks(entry: CollectionEntry<'protocols'>, library: Libr
 export function guideLinks(entry: CollectionEntry<'guides'>, library: Library): RelatedLink[] {
   const protocol = must(library.protocols, entry.data.protocol, 'protocol');
   return [
-    { href: `/protocols/${protocol.id}`, title: protocol.data.title, kind: 'Protocol' },
+    { href: pagePath(`/protocols/${protocol.id}`), title: protocol.data.title, kind: 'Protocol' },
     ...entry.data.relatedGuides.map((id) => {
       const guide = must(library.guides, id, 'guide');
-      return { href: `/guides/${guide.id}`, title: guide.data.title, kind: 'Guide' };
+      return { href: pagePath(`/guides/${guide.id}`), title: guide.data.title, kind: 'Guide' };
     }),
     ...entry.data.concepts.map((id) => {
       const concept = must(library.concepts, id, 'concept');
-      return { href: `/concepts/${concept.id}`, title: concept.data.title, kind: 'Concept' };
+      return { href: pagePath(`/concepts/${concept.id}`), title: concept.data.title, kind: 'Concept' };
     }),
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: `/glossary#${term.id}`, title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }
@@ -56,16 +57,16 @@ export function conceptLinks(entry: CollectionEntry<'concepts'>, library: Librar
   return [
     ...entry.data.protocols.map((id) => {
       const protocol = must(library.protocols, id, 'protocol');
-      return { href: `/protocols/${protocol.id}`, title: protocol.data.title, kind: 'Protocol' };
+      return { href: pagePath(`/protocols/${protocol.id}`), title: protocol.data.title, kind: 'Protocol' };
     }),
     ...entry.data.related.map((id) => {
       const concept = must(library.concepts, id, 'concept');
-      return { href: `/concepts/${concept.id}`, title: concept.data.title, kind: 'Concept' };
+      return { href: pagePath(`/concepts/${concept.id}`), title: concept.data.title, kind: 'Concept' };
     }),
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: `/glossary#${term.id}`, title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }

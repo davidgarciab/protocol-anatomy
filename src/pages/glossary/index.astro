@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { glossary } from '../../data/glossary';
+import { pagePath } from '../../lib/site';
 
 const letters = [...new Set(glossary.map((entry) => entry.term[0].toUpperCase()))].sort();
 const grouped = letters.map((letter) => ({
@@ -46,7 +47,7 @@ const description = 'Short definitions for the accounting, pricing, and governan
                     {entry.related.map((link, index) => (
                       <>
                         {index > 0 && ' · '}
-                        <a href={link.href}>{link.label}</a>
+                        <a href={pagePath(link.href)}>{link.label}</a>
                       </>
                     ))}
                   </p>

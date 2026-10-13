@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE } from '../lib/site';
+import { SITE, pagePath } from '../lib/site';
 import { groupLabel } from '../lib/relate';
 
 const protocols = (await getCollection('protocols')).sort((a, b) => a.data.order - b.data.order);
@@ -29,8 +29,8 @@ const jsonLd = {
       <p class="tagline">{SITE.tagline}</p>
       <p class="hero-lede">{SITE.description}</p>
       <div class="hero-actions">
-        <a class="button" href="/protocols">Browse the protocols</a>
-        <a href="/methodology">How the research is checked</a>
+        <a class="button" href="/protocols/">Browse the protocols</a>
+        <a href="/methodology/">How the research is checked</a>
       </div>
     </section>
 
@@ -61,7 +61,7 @@ const jsonLd = {
         {
           protocols.map((protocol, index) => (
             <li>
-              <a href={`/protocols/${protocol.id}`}>
+              <a href={pagePath(`/protocols/${protocol.id}`)}>
                 <span class="num">{String(index + 1).padStart(2, '0')}</span>
                 <span>{protocol.data.title}</span>
                 <span class="cat">{protocol.data.category}</span>
@@ -82,7 +82,7 @@ const jsonLd = {
         {
           guides.map((guide) => (
             <li>
-              <a href={`/guides/${guide.id}`}>
+              <a href={pagePath(`/guides/${guide.id}`)}>
                 <span class="num">→</span>
                 <span>{guide.data.title}</span>
                 <span class="cat">{guide.data.protocol}</span>
@@ -101,13 +101,13 @@ const jsonLd = {
           featuredConcepts.map((concept) => (
             <article class="plain-card">
               <p class="kicker">{groupLabel[concept.data.group]}</p>
-              <h3><a href={`/concepts/${concept.id}`}>{concept.data.title}</a></h3>
+              <h3><a href={pagePath(`/concepts/${concept.id}`)}>{concept.data.title}</a></h3>
               <p>{concept.data.description}</p>
             </article>
           ))
         }
       </div>
-      <p><a href="/concepts">All concepts</a> · <a href="/glossary">Glossary</a></p>
+      <p><a href="/concepts/">All concepts</a> · <a href="/glossary/">Glossary</a></p>
     </section>
   </main>
   <Footer slot="footer" />

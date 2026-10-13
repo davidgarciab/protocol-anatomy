@@ -24,7 +24,7 @@ const { Content, headings } = await render(entry);
   headings={headings}
   kicker={groupLabel[entry.data.group]}
   readingMinutes={readingMinutes(entry.body)}
-  crumbs={[{ href: '/concepts', label: 'Concepts' }, { label: entry.data.title }]}
+  crumbs={[{ href: '/concepts/', label: 'Concepts' }, { label: entry.data.title }]}
   related={conceptLinks(entry, library)}
 >
   <Content />

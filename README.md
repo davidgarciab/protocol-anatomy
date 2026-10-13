@@ -131,7 +131,16 @@ The v3 Pages image does not read `packageManager` or the lockfile to choose pnpm
 
 `public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy. There is no Content-Security-Policy because the navigation and copy buttons use a small inline script.
 
-Custom domain: `protocols.davidgarciab.com`. The zone `davidgarciab.com` is already on this Cloudflare account. Attach the hostname from the Pages project so Cloudflare creates the proxied record and the certificate. Do not replace unrelated DNS records, and do not change nameservers.
+Custom domain: `protocols.davidgarciab.com`. The zone `davidgarciab.com` is already on this Cloudflare account, on the Free plan, with nameservers `shubhi.ns.cloudflare.com` and `albert.ns.cloudflare.com`. The Pages project has the hostname attached, but certificate setup stays pending until DNS has this record and no other:
+
+- Type: `CNAME`
+- Name: `protocols`
+- Target: `protocol-anatomy.pages.dev`
+- Proxy: on
+
+Do not replace unrelated DNS records, and do not change nameservers. The current Wrangler login can deploy Pages and read the zone, but it cannot create DNS records. After that CNAME exists, the Pages domain should leave `pending` and the Google certificate can finish HTTP validation.
+
+Cloudflare Pages serves each directory `index.html` at a trailing slash and redirects the slashless path with `308`. Canonical URLs, the sitemap, and internal links use that trailing slash so they match the URL that returns `200`.
 
 Rollback: in the Pages project, open Deployments and roll back to an earlier successful production deployment. That does not rewrite Git history.
 

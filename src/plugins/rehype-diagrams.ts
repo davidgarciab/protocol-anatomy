@@ -13,6 +13,9 @@ export function rehypeDiagrams() {
       if (node.tagName === 'th' && !node.properties.scope) {
         node.properties.scope = 'col';
       }
+      if (node.tagName === 'a' && typeof node.properties.href === 'string') {
+        node.properties.href = trailingPageHref(node.properties.href);
+      }
     });
 
     visit(tree, 'element', (node: Element, index, parent) => {
@@ -72,6 +75,15 @@ function replaceDiagrams(node: HastNode) {
     }
     if (child.type === 'element') replaceDiagrams(child);
   }
+}
+
+function trailingPageHref(href: string): string {
+  if (!href.startsWith('/') || href.startsWith('//')) return href;
+  const hashAt = href.indexOf('#');
+  const hash = hashAt >= 0 ? href.slice(hashAt) : '';
+  const path = hashAt >= 0 ? href.slice(0, hashAt) : href;
+  if (path === '' || path === '/' || /\.[a-z0-9]+$/i.test(path)) return href;
+  return `${path.replace(/\/+$/, '')}/${hash}`;
 }
 
 function onlyDiagram(children: HastNode[]): string | undefined {

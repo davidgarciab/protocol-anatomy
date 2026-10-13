@@ -35,9 +35,14 @@ Updated 13 October 2026. This file records what was checked and what is actually
 - Pages project `protocol-anatomy` was created on 13 October 2026, connected to `davidgarciab/protocol-anatomy`, production branch `main`, build image v3.
 - Build command: `pnpm install --frozen-lockfile && pnpm build`. Output: `dist`.
 - `NODE_VERSION=24.21.0` and `PNPM_VERSION=12.13.0` are plain environment variables on production and preview.
-- The project was created after commit `fbada23` was pushed, so that commit did not start a Pages build. The next push to `main` is the first production build.
-- Custom domain and live HTTPS are recorded below only after they respond.
+- The first production deployment is `f5fa4d25-fdf5-440b-9251-7020ef8d44a1` from commit `020f437`. `https://protocol-anatomy.pages.dev/` returned HTTP 200 with the `_headers` security headers after a short HTTP 522 while the hostname propagated.
+- That deployment redirects directory URLs such as `/protocols/aave` to `/protocols/aave/` with HTTP 308, while the HTML canonical omitted the slash. The site now sets `trailingSlash: 'always'` and emits the slash in canonicals, the sitemap, and internal links.
+- Custom domain and live HTTPS on `protocols.davidgarciab.com` are recorded below only after they respond.
 
 ### Live result
 
-Pending the first production deployment.
+`https://protocol-anatomy.pages.dev` is the live Pages production URL for deployment `f5fa4d25-fdf5-440b-9251-7020ef8d44a1` (commit `020f437`). The trailing-slash correction is not in that deployment until the next `main` build finishes.
+
+`protocols.davidgarciab.com` is attached to the Pages project (domain id `8f1966da-f6fd-4267-93a2-1e1a6d269c11`) with status `pending`. Verification says `CNAME record not set`. DNS list and create calls return HTTP 403 with the current Wrangler token, which has zone read but not DNS edit. The dashboard session used for this check was not signed in.
+
+Required record, and nothing else: proxied CNAME `protocols` → `protocol-anatomy.pages.dev` on zone `davidgarciab.com` (`54d48c045d5bd2b1a741b2f11d980a99`). Do not change nameservers or other records.

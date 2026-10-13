@@ -27,7 +27,7 @@ function protocolTitle(id: string): string {
       {
         guides.map((guide) => (
           <li>
-            <a href={`/guides/${guide.id}`}>
+            <a href={`/guides/${guide.id}/`}>
               <span class="num">→</span>
               <span>{guide.data.title}</span>
               <span class="cat">{protocolTitle(guide.data.protocol)}</span>

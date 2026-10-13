@@ -29,7 +29,7 @@ const description = 'Cross-protocol explanations of AMMs, lending, stablecoins, 
               .filter((concept) => concept.data.group === group)
               .map((concept) => (
                 <li>
-                  <a href={`/concepts/${concept.id}`}>
+                  <a href={`/concepts/${concept.id}/`}>
                     <span class="num">→</span>
                     <span>{concept.data.title}</span>
                   </a>

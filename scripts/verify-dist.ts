@@ -50,6 +50,10 @@ for (const protocol of ['aave', 'uniswap', 'maker-sky', 'curve', 'lido']) {
   const html = read(file);
   if (!html.includes('Sources')) errors.push(`${file} is missing its source list`);
   if (html.includes('TODO') || html.includes('lorem ipsum')) errors.push(`${file} contains placeholder text`);
+  const canonical = `https://protocols.davidgarciab.com/protocols/${protocol}/`;
+  if (!html.includes(`rel="canonical" href="${canonical}"`)) {
+    errors.push(`${file} canonical is not ${canonical}`);
+  }
 }
 
 if (existsSync(join(dist, '404.html'))) {

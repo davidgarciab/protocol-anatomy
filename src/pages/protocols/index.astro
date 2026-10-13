@@ -22,7 +22,7 @@ const description = 'Directory of the lending, exchange, stablecoin, and staking
       {
         protocols.map((protocol, index) => (
           <li>
-            <a href={`/protocols/${protocol.id}`}>
+            <a href={`/protocols/${protocol.id}/`}>
               <span class="num">{String(index + 1).padStart(2, '0')}</span>
               <span>{protocol.data.title}</span>
               <span class="cat">{protocol.data.category}</span>

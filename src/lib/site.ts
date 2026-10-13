@@ -42,9 +42,18 @@ export interface VersionNote {
   note: string;
 }
 
+/** Cloudflare Pages serves each directory index at a trailing slash. */
+export function pagePath(pathname: string): string {
+  const hashAt = pathname.indexOf('#');
+  const hash = hashAt >= 0 ? pathname.slice(hashAt) : '';
+  const path = hashAt >= 0 ? pathname.slice(0, hashAt) : pathname;
+  if (path === '' || path === '/') return `/${hash}`;
+  if (/\.[a-z0-9]+$/i.test(path)) return `${path}${hash}`;
+  return `${path.replace(/\/+$/, '')}/${hash}`;
+}
+
 export function canonicalUrl(pathname: string): string {
-  const path = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
-  return new URL(path, SITE.url).href;
+  return new URL(pagePath(pathname), SITE.url).href;
 }
 
 export function sourceKindLabel(kind: SourceKind): string {

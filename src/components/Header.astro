@@ -1,15 +1,21 @@
 ---
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+function normalize(pathname: string): string {
+  if (pathname === '/' || pathname === '') return '/';
+  return pathname.endsWith('/') ? pathname : `${pathname}/`;
+}
+
+const path = normalize(Astro.url.pathname);
 const items = [
-  { href: '/protocols', label: 'Protocols' },
-  { href: '/guides', label: 'Guides' },
-  { href: '/concepts', label: 'Concepts' },
-  { href: '/glossary', label: 'Glossary' },
-  { href: '/methodology', label: 'Methodology' },
+  { href: '/protocols/', label: 'Protocols' },
+  { href: '/guides/', label: 'Guides' },
+  { href: '/concepts/', label: 'Concepts' },
+  { href: '/glossary/', label: 'Glossary' },
+  { href: '/methodology/', label: 'Methodology' },
 ];
 
 function current(href: string): boolean {
-  return path === href || (href !== '/' && path.startsWith(`${href}/`));
+  const page = normalize(href);
+  return path === page || (page !== '/' && path.startsWith(page));
 }
 ---
 
@@ -33,7 +39,7 @@ function current(href: string): boolean {
         </a>
       ))
     }
-    <form class="header-search" action="/search" method="get" role="search" aria-label="Site search">
+    <form class="header-search" action="/search/" method="get" role="search" aria-label="Site search">
       <label class="sr-only" for="header-q">Search the publication</label>
       <input id="header-q" type="search" name="q" placeholder="Search" />
     </form>

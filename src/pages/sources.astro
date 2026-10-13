@@ -3,13 +3,13 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { sourceKindLabel, type Source } from '../lib/site';
+import { pagePath, sourceKindLabel, type Source } from '../lib/site';
 
 const collections = [
-  ...(await getCollection('protocols')).map((entry) => ({ entry, href: `/protocols/${entry.id}` })),
-  ...(await getCollection('guides')).map((entry) => ({ entry, href: `/guides/${entry.id}` })),
-  ...(await getCollection('concepts')).map((entry) => ({ entry, href: `/concepts/${entry.id}` })),
-  ...(await getCollection('site')).map((entry) => ({ entry, href: `/${entry.id}` })),
+  ...(await getCollection('protocols')).map((entry) => ({ entry, href: pagePath(`/protocols/${entry.id}`) })),
+  ...(await getCollection('guides')).map((entry) => ({ entry, href: pagePath(`/guides/${entry.id}`) })),
+  ...(await getCollection('concepts')).map((entry) => ({ entry, href: pagePath(`/concepts/${entry.id}`) })),
+  ...(await getCollection('site')).map((entry) => ({ entry, href: pagePath(`/${entry.id}`) })),
 ];
 
 const byUrl = new Map<string, { source: Source; pages: { href: string; title: string }[] }>();
