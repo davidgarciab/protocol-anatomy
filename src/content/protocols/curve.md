@@ -1,14 +1,14 @@
 ---
 title: "Curve Finance"
 description: "How Curve prices pegged assets with StableSwap, volatile assets with CryptoSwap, and LP claims in Stableswap-NG."
-summary: "Curve builds AMMs for assets that should trade near each other, and a second family for assets that should not. StableSwap uses an amplification coefficient to flatten the price near the peg. CryptoSwap concentrates liquidity around a moving price scale. Stableswap-NG is the current factory for plain pools and metapools."
+summary: "Curve runs separate AMMs for pegged assets, volatile assets, and markets priced elsewhere. StableSwap flattens the price near a peg. CryptoSwap concentrates liquidity around a moving scale. FXSwap recenters that kind of curve with a refuel budget. Stableswap-NG is the pegged-pool factory."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
 order: 4
 category: "Automated market maker"
 mechanism: "StableSwap and CryptoSwap invariants, with LP tokens minted against pool liquidity rather than a constant-product share."
-versionContext: "Stableswap-NG is the documented factory for pegged pools. CryptoSwap is a separate invariant. crvUSD is a collateralized stablecoin that uses LLAMMA, not a StableSwap pool."
+versionContext: "Stableswap-NG is the documented factory for pegged pools. CryptoSwap and FXSwap are separate AMM families. crvUSD is a collateralized stablecoin that uses LLAMMA, not a StableSwap pool."
 tags:
   - stableswap
   - amm
@@ -24,6 +24,7 @@ glossary:
   - stableswap
   - amplification-coefficient
   - cryptoswap
+  - fxswap
   - metapool
   - lp-share
 versions:
@@ -33,6 +34,9 @@ versions:
   - name: "CryptoSwap"
     status: "active"
     note: "A separate invariant for volatile pairs, with amplification and gamma around an internal price scale."
+  - name: "FXSwap"
+    status: "active"
+    note: "A two-asset pool for externally priced markets. StableSwap-style pricing, with refuels that pay for recentering."
   - name: "crvUSD"
     status: "active"
     note: "A lending-and-mint system beside the AMMs. Controller blueprints are versioned, and existing markets keep the blueprint they were deployed with."
@@ -51,6 +55,10 @@ sources:
     publisher: "Curve"
   - title: "Understanding CryptoSwap"
     url: "https://docs.curve.finance/protocol/pool/understanding-cryptoswap"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "Understanding FXSwap"
+    url: "https://docs.curve.finance/protocol/pool/understanding-fxswap"
     kind: "docs"
     publisher: "Curve"
   - title: "CryptoSwap whitepaper"
@@ -123,9 +131,15 @@ K0 = Π x_i * n^n / D^n
 K = A * K0 * γ^2 / (γ + 1 - K0)^2
 ```
 
-`A` still concentrates liquidity. `gamma` (γ) changes how the curve leaves that concentrated region. Curve’s conceptual docs and the paper do not describe gamma as a simple “higher means wider” switch that an integrator should hard-code. The understanding-CryptoSwap page also warns that CryptoSwap’s `A` is scaled differently from StableSwap’s: it says an `A` of 10,000 in CryptoSwap corresponds to an `A` of 1 in StableSwap. Read the paper and the pool’s stored parameters together. Do not copy a StableSwap `A` into a tricrypto pool.
+`A` still concentrates liquidity. The understanding-CryptoSwap page says an `A` of 10,000 in CryptoSwap corresponds to an `A` of 1 in StableSwap. Copying a stablecoin pool’s `A` into a tricrypto pool uses the wrong scale.
 
-The internal price is a `price_scale` the pool updates. Liquidity concentrates around that scale. A trade away from it pays more slippage, which is the point: the pool is not offering v2-style depth at every price, and it is not offering StableSwap’s peg.
+`gamma` (γ) changes how the curve leaves the concentrated region. On 13 October 2026 that same page said two different things about the direction. One sentence says higher gamma pulls more liquidity in around the center. Later sentences say higher gamma spreads liquidity wider, and the parameterization note says a higher gamma with a lower `A` spreads liquidity across a wider range. Those instructions disagree. The linked CryptoSwap whitepaper is a PDF whose text did not extract reliably here, so this page does not pick a direction from the paper. Read the pool’s stored gamma against the formula above, and treat the prose page as unsettled until those sentences match.
+
+The internal price is a `price_scale` the pool updates. Liquidity concentrates around that scale. A trade away from it pays more slippage, which is the point: the pool is not offering v2-style depth at every price, and it is not offering StableSwap’s peg. The same page says a rebalance runs only after the internal price clears an adjustment step and the cost stays under half of the trading fees earned. If fees are too small, the center of liquidity can sit away from the market. That stuck state is a documented CryptoSwap failure mode.
+
+## FXSwap
+
+[FXSwap](/glossary#fxswap) is a third pool family, for a market whose price is discovered somewhere else: the understanding-FXSwap page gives fiat pairs and an externally priced BTC pair as the examples. It prices with a StableSwap-style invariant so the depth stays concentrated, and it recenters that concentration with a profit buffer plus an explicit refuel budget. The page says refuels pay for the pool’s normal recentering. They do not set the price, and they do not guarantee the pool stays balanced. The page also says FXSwap is generally not the tool for primary price discovery. It is not a CryptoSwap deployment with a new ticker, and it is not a Stableswap-NG metapool.
 
 ## crvUSD is not a pool type
 

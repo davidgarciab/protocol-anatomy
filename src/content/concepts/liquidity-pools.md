@@ -1,7 +1,7 @@
 ---
 title: "Liquidity pools and LP shares"
 description: "How a liquidity provider’s claim is tracked in Uniswap v2, Uniswap v3 and v4, and Curve NG pools."
-summary: "A liquidity pool holds the reserves a swap trades against. The LP share is the claim on those reserves and on fees. Uniswap v2 uses a fungible token, v3 an NFT, v4 ERC-6909 accounting, and Curve NG the pool contract itself."
+summary: "A liquidity pool holds the reserves a swap trades against. The LP share is the claim on those reserves and on fees. Uniswap v2 uses a fungible token, v3 and v4 use position NFTs from different contracts, and Curve NG uses the pool contract itself."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
@@ -38,6 +38,14 @@ sources:
     url: "https://developers.uniswap.org/docs/protocols/v4/concepts/architecture"
     kind: "docs"
     publisher: "Uniswap"
+  - title: "PositionManager.sol"
+    url: "https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol"
+    kind: "code"
+    publisher: "Uniswap"
+  - title: "ERC-6909 in Uniswap v4"
+    url: "https://developers.uniswap.org/docs/protocols/v4/concepts/erc-6909"
+    kind: "docs"
+    publisher: "Uniswap"
 ---
 
 The pool is the inventory. The LP share is the receipt. Confusing them causes two integration bugs: treating the receipt as if it were the original deposit, and treating every receipt as an ERC-20.
@@ -56,7 +64,7 @@ v2 mints a fungible ERC-20. Balance is proportional share. Fees increase reserve
 
 v3 mints an ERC-721 through `NonfungiblePositionManager` because a range is part of the position. The NFT is not a share of the whole pool. It is a share of liquidity between two [ticks](/glossary#tick). Two NFTs in one pool can be in different ranges and earn different fees. They should not be added together as if they were v2 LP tokens.
 
-v4’s overview moves the receipt again, to `PositionManager` and ERC-6909. The architectural idea is the same as v3’s range. The token standard is not. ERC-6909 lets one contract track many token ids. An indexer that only listens for ERC-721 transfers will not see a v4 position.
+v4’s `PositionManager` mints another ERC-721, named “Uniswap v4 Positions NFT” in the contract. The range is still the position. The contract address is not v3’s `NonfungiblePositionManager`, so an indexer that only watches that v3 contract misses v4 liquidity. ERC-6909 on `PoolManager` is a claim on tokens left in the singleton. It can sit beside a position when a manager opts to settle that way. It is not a substitute token id for the NFT.
 
 Curve Stableswap-NG collapses pool and LP token into one contract. The integration guide says so. Transfers of the pool’s own token are transfers of LP claims. A metapool then treats some other pool’s LP token as one of its coins. That is composition of receipts: the metapool’s inventory includes a claim on a second inventory. Withdrawing one coin from the metapool can require the base pool to unwind.
 

@@ -87,7 +87,7 @@ export const diagrams: Record<string, string> = {
         detail: 'If collateral cannot cover the debt, the shortfall is bad debt or a protocol deficit. Auctions and close factors change how much is settled at once.',
       },
     ]),
-    'Aave, Maker, and Curve’s crvUSD system do not liquidate in the same way. Read the protocol page before treating this sequence as an implementation.',
+      'Aave, Maker, and Curve’s crvUSD system do not liquidate in the same way. Aave V4’s overview adds a limit this sequence omits: a user cannot liquidate their own position. Read the protocol page before treating the steps as an implementation.',
   ),
   'stablecoin-flow': figure(
     'Collateralized stablecoin issuance',
@@ -133,7 +133,7 @@ export const diagrams: Record<string, string> = {
         detail: 'Withdrawal is a request, then a wait, then a claim. It is not the same transaction as a transfer of the liquid token.',
       },
     ]),
-    'The exit queue, the reporter, and the operator set are trust boundaries. Transferring the liquid token does not by itself unstake the underlying asset.',
+    'This is the pooled shape, such as Lido Core. A Lido V3 staking vault is one owner and one operator, and its validator exit is not this queue. The reporter and the operator set remain trust boundaries. Transferring the liquid token does not by itself unstake the underlying asset.',
   ),
   'hub-spoke': figure(
     'Hub and spokes',

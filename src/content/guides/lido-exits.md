@@ -53,6 +53,10 @@ sources:
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/dg-guide.md"
     kind: "docs"
     publisher: "Lido"
+  - title: "stVaults technical design"
+    url: "https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/stvaults-technical-design"
+    kind: "docs"
+    publisher: "Lido"
   - title: "Lido withdrawal interface"
     url: "https://stake.lido.fi/withdrawals/claim"
     kind: "docs"
@@ -65,7 +69,9 @@ sources:
 
 For a long period, stETH was liquid only in the market sense. Holders could sell it. They could not ask the protocol for the underlying ETH, because Ethereum itself had not shipped withdrawals. Once consensus-layer withdrawals existed, Lido added a queue. Dual Governance is a later control that uses that queue. It does not change the share math in the [Lido overview](/protocols/lido).
 
-The historical state matters for reading old integrations. A contract written when stETH could not be redeemed was pricing a token with no protocol exit. That discount, when it appeared, was not a rebase bug. It was the market’s view of an exit that did not exist yet. The queue is the protocol exit. A DEX pool is still only a market exit.
+The historical state matters for reading old integrations. A contract written when stETH could not be redeemed was pricing a token with no protocol exit. That discount, when it appeared, was not a rebase bug. It was the market’s view of an exit that did not exist yet. The queue is the protocol exit for pooled stETH. A DEX pool is still only a market exit.
+
+Lido V3 staking vaults have a different exit for the ether in a vault. The technical design says the vault owner can request validator exits and can trigger an EIP-7002 withdrawal, because the withdrawal credentials point at the vault. That path is not a burn of pooled stETH through `unstETH`. Minted stETH still uses the queue on this page when its holder wants protocol ETH. The [Lido overview](/protocols/lido) separates the vault from the Core share.
 
 ## The queue
 

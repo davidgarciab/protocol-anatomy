@@ -8,7 +8,7 @@ lastVerified: "2026-10-13"
 order: 5
 category: "Liquid staking"
 mechanism: "Share-based claims on pooled staked ether, with oracle accounting and a withdrawal queue."
-versionContext: "Share accounting and the withdrawal queue are the production design documented in Lido’s core contracts. Dual Governance has been live on Ethereum mainnet since 4 July 2025, as described by Lido."
+versionContext: "Lido Core share accounting and the withdrawal queue remain the pooled design. Lido V3 stVaults are a documented isolated-vault design beside that pool. Dual Governance has been live on Ethereum mainnet since 4 July 2025, as described by Lido."
 tags:
   - staking
   - shares
@@ -27,6 +27,7 @@ glossary:
   - withdrawal-request
   - rebase
   - node-operator
+  - staking-vault
 versions:
   - name: "Share accounting"
     status: "active"
@@ -37,6 +38,9 @@ versions:
   - name: "Dual Governance"
     status: "active"
     note: "Live on Ethereum since 4 July 2025 according to Lido’s overview. It gives stETH holders a delay path against DAO execution."
+  - name: "Lido V3 stVaults"
+    status: "active"
+    note: "Isolated staking vaults beside Lido Core. A connected vault can mint stETH against its reported value, up to a DAO-set reserve ratio."
 sources:
   - title: "Lido tokens integration guide"
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/lido-tokens-integration-guide.md"
@@ -66,6 +70,14 @@ sources:
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/dg-guide.md"
     kind: "docs"
     publisher: "Lido"
+  - title: "stVaults technical design"
+    url: "https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/stvaults-technical-design"
+    kind: "docs"
+    publisher: "Lido"
+  - title: "stVaults documentation center"
+    url: "https://docs.lido.fi/run-on-lido/stvaults/"
+    kind: "docs"
+    publisher: "Lido"
   - title: "Lido withdrawal interface"
     url: "https://stake.lido.fi/withdrawals/claim"
     kind: "docs"
@@ -86,7 +98,7 @@ stETH balance = shares * totalPooledEther / totalShares
 
 The guide describes this as the bookkeeping model. Rounding lives in the contract, so an integration should call the view methods rather than reimplement the division. When new ETH is deposited, new shares are minted in proportion to what that ETH adds to the pool. When rewards arrive, the protocol does not mint a second token to each holder. It changes the pooled-ether total, and every share becomes worth more stETH. Penalties do the opposite.
 
-That balance change is a [rebase](/glossary#rebase). The integration guide says rebases normally follow the consensus-layer accounting report, and that a negative daily rebase had not occurred at the time that guide was written. “Had not occurred” is not a promise that a slash cannot reduce balances. The share math allows it.
+That balance change is a [rebase](/glossary#rebase). The integration guide says rebases normally follow the consensus-layer accounting report. The report section below records the quorum and the sanity bounds in that guide, including its statement that daily rebases had not been negative at the time of writing. The share math still allows a penalty to reduce balances.
 
 <diagram-placeholder name="staking-flow"></diagram-placeholder>
 
@@ -94,9 +106,19 @@ Submitted ETH is not instantly one validator. Ethereum requires 32 ETH to activa
 
 ## Who runs the validators
 
-Lido does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary#node-operator) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
+Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary#node-operator) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
 
-This is the main trust boundary. The token is liquid. The stake is operated by other parties, under Ethereum’s rules, with a governance process deciding the operator set.
+This is the main trust boundary of the pooled token. The token is liquid. The stake is operated by other parties, under Ethereum’s rules, with a governance process deciding the operator set.
+
+## Staking vaults
+
+Lido’s stVaults pages describe a second live design, which the documentation center calls the core of Lido V3. A [staking vault](/glossary#staking-vault) is one owner and one node operator. The operator address is set when the vault is initialized and the technical design says it cannot be changed. The vault is a `0x02` withdrawal-credentials target, so consensus rewards and exited balances are documented as flowing back to the vault. The operator does not take custody of that ether.
+
+A vault connected to Lido can mint stETH against its reported value. `VaultHub` is the registry that mints and burns that stETH, settles fees, and handles bad debt. `LazyOracle` stores the per-vault report. The amount that can be minted is capped by a reserve ratio, and the technical design says only the DAO changes that ratio. Minted stETH joins the existing token. The vault is not a second rebasing token and not a share of someone else’s Core deposit.
+
+The same design lists a constraint rather than a measured guarantee: slashing consequences are contained within the node operator’s group of vaults, up to a level the DAO agrees, and vault users are not supposed to reduce the Core stETH APR. Read that as the stated boundary. The oracle report and the reserve ratio are what an integrator can check.
+
+`VaultFactory` deploys the vault from a beacon proxy. The owner can irreversibly ossify the implementation and opt out of later proxy upgrades. That choice is per vault. Ossifying one vault does not freeze Lido Core.
 
 ## The accounting report
 
@@ -104,7 +126,7 @@ The share rate does not update itself from beacon-chain state. An oracle committ
 
 The simulated share rate is documented in that contract as pooled ether per share at 1e27 precision, computed for the report before withdrawal finalization is applied. The protocol then uses it when finalizing the queue. Bunker mode is a boolean on the same report. The contract comment says it reflects whether the protocol should be in bunker mode at the reference slot. How that flag changes the queue is part of the withdrawal design; this page does not invent a second definition. Read the withdrawal docs before assuming a normal finalization during a mass slashing.
 
-The report is a trusted input. A wrong consensus balance becomes a wrong rebase. The safety checks around the report, including the sanity checker referenced from the accounting flow, are there because the staking contract cannot see beacon state on its own.
+The report is a trusted input. A wrong consensus balance becomes a wrong rebase. The integration guide, as read on 13 October 2026, says the oracle set is nine daemons and that five matching reports are enough to land the update. It also states two sanity bounds: a reported APR cannot exceed 27 percent, and a reported drop in staked ether cannot exceed 5 percent. Those bounds are the guide’s account of the checker. They are not a view of the beacon chain, which the staking contract cannot read on its own. The guide also says that, at the time of its writing, daily rebases had never been negative. The share math still allows a penalty to reduce balances.
 
 ## wstETH
 
@@ -136,7 +158,7 @@ The [exit guide](/guides/lido-exits) connects this queue to Dual Governance, whi
 
 - The share rate is only as honest as the oracle report and the sanity checks around it.
 - Validator performance is an Ethereum consensus fact, reported later. Lido cannot make a slashing not reduce pooled ether.
-- The operator set is permissioned by governance and module rules. “Liquid” describes the token, not the validator keys.
+- The Core operator set is permissioned by governance and module rules. A staking vault fixes one operator at initialization. “Liquid” describes the token, not the validator keys.
 - Withdrawal timing depends on Ethereum’s exit machinery and on whether bunker mode changes finalization.
 - Governance can still change upgradeable protocol contracts, subject to the timelock and, since July 2025, the Dual Governance delay Lido documents. The delay is not the same thing as the core staking math being immutable.
 

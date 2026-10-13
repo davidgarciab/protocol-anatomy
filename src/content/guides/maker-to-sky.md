@@ -20,6 +20,7 @@ glossary:
   - dai
   - usds
   - susds
+  - stusds
   - vault
   - stability-fee
 relatedGuides: []
@@ -32,7 +33,7 @@ versions:
     note: "Not described as deprecated. Both have documented converters to the newer tokens."
   - name: "USDS, sUSDS, and SKY"
     status: "active"
-    note: "Sky’s token layer: one-for-one with DAI, an ERC-4626 savings rate, and a fixed MKR conversion."
+    note: "Sky’s token layer: one-for-one with DAI, an ERC-4626 savings rate, a separate stUSDS deposit, and a fixed MKR conversion."
 sources:
   - title: "Vat detailed documentation"
     url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
@@ -52,6 +53,10 @@ sources:
     publisher: "Sky"
   - title: "sUSDS"
     url: "https://developers.skyeco.com/protocol/tokens/susds/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "stUSDS"
+    url: "https://developers.skyeco.com/protocol/tokens/stusds/"
     kind: "docs"
     publisher: "Sky"
   - title: "Protocol token routes"
@@ -91,6 +96,8 @@ The [protocol token routes](https://developers.skyeco.com/quick-start/protocol-t
 
 DAI is still in the table. The docs do not tell holders that DAI is frozen or that it must be converted. An integration can keep using DAI, USDS, or both, and should not assume balances are interchangeable without the converter. They are the same face value only after that conversion, not the same ERC-20 address.
 
+The routes page does not list [stUSDS](/glossary#stusds). Sky’s stUSDS page documents a separate ERC-4626 deposit of USDS that funds SKY-backed borrowing and pays an stUSDS rate. That share price is not the sUSDS savings price and not the DAI converter.
+
 USDS is upgradeable. The token page says it uses UUPS and ERC-1967. DAI’s join model and USDS’s proxy are different administrative surfaces. Converting to USDS moves the balance into a token that can be upgraded by its admin. That is a change in governance exposure, separate from the one-for-one rate.
 
 sUSDS is a vault in the ERC-4626 sense. A Maker vault is not. Depositing USDS into sUSDS does not lock collateral or draw debt. It sells the USDS, temporarily, to the savings module in exchange for shares whose price is the `chi` accumulator. Withdrawing redeems USDS. The [on-chain accounting](/concepts/on-chain-accounting) article uses this pair — urn versus ERC-4626 — as the example of two objects that English calls a vault.
@@ -103,7 +110,7 @@ Historical Maker docs now sit on a documentation host that Sky also uses. A page
 
 ## Integration consequences
 
-- Price DAI and USDS as the same unit only along the documented converter, and do not pool them one-for-one with sUSDS or sDAI.
+- Price DAI and USDS as the same unit only along the documented converter, and do not pool them one-for-one with sUSDS, stUSDS, or sDAI.
 - Display vault debt as `art * rate` after `drip`, not as the stored `art`.
 - Treat SKY as the governance token at the fixed conversion from MKR, and do not infer a market rate of 24,000 from the converter. The converter is the peg between the two governance tokens, in the same way the DAI converter is a peg between the two stablecoin tokens.
 - Expect USDS upgradeability. Do not expect the Vat’s safety check to be upgradeable in the same way; changes there are governance actions on a live ledger, which is its own risk, documented as authorization on Vat functions rather than as a UUPS token.

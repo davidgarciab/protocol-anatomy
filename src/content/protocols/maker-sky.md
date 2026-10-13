@@ -28,6 +28,7 @@ glossary:
   - dai
   - usds
   - susds
+  - stusds
   - sky-savings-rate
 versions:
   - name: "Vat and Jug"
@@ -38,7 +39,7 @@ versions:
     note: "The stablecoin balance inside the Vat. Convertible both ways with USDS at one-to-one."
   - name: "USDS and sUSDS"
     status: "active"
-    note: "Sky’s ERC-20 upgrade path and the ERC-4626 savings wrapper. Documented as fee-free conversions, not as a sunset of DAI."
+    note: "Sky’s ERC-20 upgrade path, the ERC-4626 savings wrapper, and stUSDS as a separate risk-capital deposit. DAI is not described as sunset."
 sources:
   - title: "Vat detailed documentation"
     url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
@@ -66,6 +67,10 @@ sources:
     publisher: "Sky"
   - title: "sUSDS"
     url: "https://developers.skyeco.com/protocol/tokens/susds/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "stUSDS"
+    url: "https://developers.skyeco.com/protocol/tokens/stusds/"
     kind: "docs"
     publisher: "Sky"
   - title: "Protocol token routes"
@@ -135,6 +140,8 @@ Sky’s token docs describe USDS as an ERC-20 with permit support, upgradeable t
 The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary#sky-savings-rate). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
 
 The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts: a fixed one-to-one swap against an external stablecoin, subject to the module’s liquidity, not a Curve invariant. That is the [peg stability module](/glossary#peg-stability-module) idea. It can hold the market price near one dollar only while it has inventory and while governance leaves it open. It does not make a vault safer.
+
+[stUSDS](/glossary#stusds) is another ERC-4626 deposit of USDS, and it is not sUSDS. Sky’s token page calls it a risk-capital token: supplying USDS funds SKY-backed borrowing and pays an stUSDS rate. The page documents `deposit` and `mint` plus permit. It does not document a one-for-one path with DAI, and it does not document the Sky Savings Rate. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price this deposit.
 
 ## What “decentralized” does not remove
 

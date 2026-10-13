@@ -75,7 +75,7 @@ In V3, a market’s cash, debt, and configuration live with a single `Pool`. The
 
 V4’s overview inverts that. The hub holds the liquidity and the utilization rate. Spokes are the markets. A spoke can be added, and the overview’s stated reason is to avoid migrating liquidity every time a borrowing mode is added or removed. Caps still stop a spoke from draining the hub. The activation proposal describes the hub as immutable and the spokes as upgradeable. That split is the security claim: the shared accounting is frozen, the product surface is not.
 
-An integrator that cached “the pool address” for V3 cannot point that name at V4. Users call a spoke. The hub is not the aToken minter described in the V3 tokenization docs. V4’s overview speaks in supplied shares and drawn shares.
+An integrator that cached “the pool address” for V3 cannot point that name at V4. Users call a spoke. The hub is not the aToken minter described in the V3 tokenization docs. V4’s overview speaks in supplied shares and drawn shares. The activation proposal also describes a Tokenized Spoke that wraps a supply position as an ERC-4626 and does not enable borrowing on that spoke. That wrapper is a spoke, not a V3 aToken and not the hub’s internal share account. Read the spoke that minted a balance before treating it as either one.
 
 ## One borrow rate, or a rate plus a premium
 

@@ -33,7 +33,7 @@ versions:
     note: "Concentrated liquidity, fee tiers, callback payment, ERC-721 positions."
   - name: "v4"
     status: "active"
-    note: "Singleton PoolManager, flash accounting, optional hooks, ERC-6909 position accounting. Live since 31 January 2025."
+    note: "Singleton PoolManager, flash accounting, and optional hooks. Live since 31 January 2025. The LP receipt is an ERC-721 from PositionManager."
 sources:
   - title: "How Uniswap works"
     url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
@@ -63,6 +63,18 @@ sources:
     url: "https://developers.uniswap.org/docs/protocols/v4/concepts/hooks"
     kind: "docs"
     publisher: "Uniswap"
+  - title: "ERC-6909 in Uniswap v4"
+    url: "https://developers.uniswap.org/docs/protocols/v4/concepts/erc-6909"
+    kind: "docs"
+    publisher: "Uniswap"
+  - title: "PositionManager.sol"
+    url: "https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol"
+    kind: "code"
+    publisher: "Uniswap"
+  - title: "PoolKey.sol"
+    url: "https://github.com/Uniswap/v4-core/blob/main/src/types/PoolKey.sol"
+    kind: "code"
+    publisher: "Uniswap"
   - title: "Uniswap v4 is here"
     url: "https://blog.uniswap.org/uniswap-v4-is-here"
     kind: "docs"
@@ -77,7 +89,7 @@ v2 liquidity is uniform. The LP token is an ERC-20 claim on a share of both rese
 
 v3 liquidity is a choice of range. The concentrated-liquidity documentation and the v3 whitepaper define the range by [ticks](/glossary#tick) of `1.0001^i`. A position earns fees only inside its ticks. The claim is an ERC-721 from `NonfungiblePositionManager`, because two ranges are not fungible. Fees are collected to the position. They do not rebase the NFT’s token id.
 
-v4, the current overview says, keeps concentrated liquidity and changes the receipt again. Positions are managed by `PositionManager` with ERC-6909 accounting inside one contract, not by a v3-style NFT per position. Code that transfers a v3 position token by ERC-721 `safeTransferFrom` is not a v4 migration.
+v4 keeps concentrated liquidity for a hookless pool and changes the contract that mints the receipt. `PositionManager` mints an ERC-721, “Uniswap v4 Positions NFT”, one token id per position. That is the same standard as v3 and a different contract from `NonfungiblePositionManager`. Transferring the v3 NFT does not migrate the position. ERC-6909 claims, minted by `PoolManager` when a caller leaves tokens on deposit, are settlement balances. They are not the liquidity position.
 
 Nothing in these docs converts a v2 LP token into a v3 NFT or a v4 position. Migration is a withdraw and a new deposit, and the v4 deposit may include a hook address in the pool key.
 
@@ -95,7 +107,7 @@ v2’s documented pool fee is 0.30 percent, the 997/1000 factor in the flash-swa
 
 v3 pools are identified by the two tokens and a fee tier. The whitepaper connects fee tier to tick spacing: a lower fee can use a tighter grid. The same token pair can have several pools. A router picks among them.
 
-v4 identifies a pool by a key that includes the hook. The hooks page says the hook is fixed at `initialize`. Two pools with the same tokens and fee and different hooks are different pools. A hookless v4 pool is the concentrated-liquidity case. A hooked pool is that case plus whatever the hook is allowed to do. The permission flags are part of the design: a hook cannot silently gain a callback it did not declare.
+v4 identifies a pool by a `PoolKey`: the two currencies, a fee, a tick spacing, and a hook. Tick spacing is its own field. v3 is the version that pairs spacing with a fee tier. `PoolKey` says the fee is capped at 1,000,000, and that a dynamic-fee pool must set the fee to exactly `0x800000`. That value is a flag, not a fee of one hundred percent. The hook, when its address flags allow it, can change the fee after initialization. The hook itself is fixed at `initialize`. Two pools with different hooks are different pools. A hookless pool uses concentrated liquidity. A hook with custom accounting can opt out of that curve. The permission flags live in the hook address, so a hook cannot silently gain a callback it did not declare.
 
 Protocol fee is a separate switch. The overview says governance can enable it within limits. It is not the LP fee, and it is not automatically on because a version number increased.
 
@@ -110,9 +122,11 @@ The core contracts remain, in Uniswap’s wording, non-upgradeable. A hook can b
 | Question | v2 | v3 | v4 |
 | --- | --- | --- | --- |
 | Where is the liquidity active? | Every price | Between two ticks | Between two ticks |
-| What does the LP hold? | ERC-20 | ERC-721 position | ERC-6909 position accounting |
+| What does the LP hold? | ERC-20 | ERC-721 from `NonfungiblePositionManager` | ERC-721 from `PositionManager` |
 | How is input collected? | Transfer, then balance check | Swap callback | Deltas settled at the end of unlock |
-| What makes a second pool? | It does not, for the same pair | Fee tier | Fee, tick spacing, and hook |
+| What makes a second pool? | It does not, for the same pair | Fee tier, which selects tick spacing | Currencies, fee or dynamic-fee flag, tick spacing, and hook |
 | Can pool code be extended? | Not in the pair | Not in the pool | Optional hook, fixed at creation |
 
-If a transaction trace shows a pair contract and a fungible LP token, it is v2 even if the user’s interface says Uniswap. If it shows `NonfungiblePositionManager`, it is v3. If it shows `PoolManager` and a hook address of zero or non-zero, it is v4. The [composability](/concepts/composability) article is about why those traces get mixed inside one router call.
+ERC-6909 does not belong in the LP-receipt row. It is the claim token `PoolManager` can mint when tokens stay in the singleton between calls.
+
+If a transaction trace shows a pair contract and a fungible LP token, it is v2 even if the user’s interface says Uniswap. If it shows `NonfungiblePositionManager`, it is v3. If it shows `PositionManager` or `PoolManager`, it is v4. A hook address of zero is still a v4 pool. The [composability](/concepts/composability) article is about why those traces get mixed inside one router call.

@@ -14,6 +14,8 @@ protocols:
   - aave
   - maker-sky
   - uniswap
+  - curve
+  - lido
 glossary:
   - proxy
   - usds
@@ -42,6 +44,14 @@ sources:
     url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
+  - title: "Integrating Stableswap-NG"
+    url: "https://docs.curve.finance/developer/integration/stableswap-ng"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "stVaults technical design"
+    url: "https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/stvaults-technical-design"
+    kind: "docs"
+    publisher: "Lido"
 ---
 
 Users and integrators store addresses. If the logic at that address can change, every earlier reading of the code is provisional. A proxy is the usual way to get that property. The proxy’s address and its storage stay. A `delegatecall` runs an implementation contract in the proxy’s context. Replacing the implementation pointer changes the code without asking holders to migrate balances.
@@ -56,7 +66,9 @@ Aave’s V4 overview says the opposite about the hub: it is immutable, and spoke
 
 Uniswap’s current overview says core contracts are not upgradeable. There is no proxy admin on a v2 pair. A v4 hook is a separate contract. If that hook was deployed behind a proxy, the upgrade key is the hook author’s. The `PoolManager` does not become upgradeable because the hook is.
 
-Curve NG pools are deployed as instances from an implementation. The docs say existing pools keep their implementation when the factory adds another. That is “new pools can be new code,” not “this pool’s code will change under you.” Confirm the specific pool before describing it as a proxy.
+Lido V3 staking vaults are deployed from a beacon proxy. The technical design says the owner can irreversibly ossify that implementation and opt out of later upgrades. Until that call, the vault has an upgrade path. Ossifying the vault does not freeze the Lido Core staking contracts.
+
+Stableswap-NG docs say the factory deploys pools as minimal proxies of a stored implementation, and that a pool is immutable once deployed: `set_pool_implementations` affects pools deployed afterward. The proxy’s target is fixed for that address. A new factory implementation is a new pool’s code. It is not an upgrade of a pool that already exists. Confirm the implementation index anyway, because two NG pools can be minimal proxies of different implementations and still share an ABI.
 
 ## What to read in the source
 

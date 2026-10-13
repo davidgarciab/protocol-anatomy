@@ -41,6 +41,10 @@ sources:
     url: "https://developers.uniswap.org/docs/protocols/v4/concepts/architecture"
     kind: "docs"
     publisher: "Uniswap"
+  - title: "PoolKey.sol"
+    url: "https://github.com/Uniswap/v4-core/blob/main/src/types/PoolKey.sol"
+    kind: "code"
+    publisher: "Uniswap"
 ---
 
 Uniswap v2 forces every liquidity provider in a pair to cover every price. The concentrated-liquidity docs give the stablecoin example: if two dollar tokens trade between 0.99 and 1.01, almost all of a v2 pool’s capital is elsewhere. v3 lets the provider deposit only in that interval. The same capital then offers more depth where trades actually happen, and none where they do not.
@@ -51,7 +55,7 @@ v4’s architecture page says this capital-efficiency property is inherited. Hoo
 
 The whitepaper sets the price at tick `i` to `1.0001^i`. One tick is one basis point. The contracts store the square root of that price as a Q64.96 number, which is what `TickMath.getSqrtRatioAtTick` returns. The published constants bound the tick at ±887272, corresponding to prices the fixed-point format can represent.
 
-Pools do not initialize every tick. `tickSpacing` selects a grid. The whitepaper notes the trade: a finer grid is more precise, and each initialized tick a swap crosses costs gas. Fee tiers and spacing are paired so a cheap stablecoin pool can use a tight grid and a volatile pool can use a coarse one.
+Pools do not initialize every tick. `tickSpacing` selects a grid. The whitepaper notes the trade: a finer grid is more precise, and each initialized tick a swap crosses costs gas. In v3, fee tiers and spacing are paired, so a cheap stablecoin pool can use a tight grid and a volatile pool can use a coarse one. In v4, tick spacing is its own field on the pool key, and a dynamic fee is a flag on that key rather than a tier that selects the grid.
 
 A position is the liquidity between a lower and an upper tick on that grid. Current liquidity is the sum of positions that contain the current tick. When a swap crosses a tick, the pool adds or removes the liquidity stored at that boundary. The price does not jump over an empty region for free. It walks.
 

@@ -1,13 +1,13 @@
 ---
 title: "Curve pool generations"
 description: "How Curve’s StableSwap pools, CryptoSwap pools, Stableswap-NG factory, and crvUSD markets differ."
-summary: "Curve did not ship a single V1-to-V4 exchange. It shipped an invariant for pegged assets, a later invariant for volatile assets, a factory that deploys immutable pool instances, and a separate stablecoin whose liquidation is an AMM. Those are different objects."
+summary: "Curve did not ship a single V1-to-V4 exchange. It shipped an invariant for pegged assets, a later invariant for volatile assets, an FXSwap pool for externally priced markets, a factory of immutable pool instances, and a separate stablecoin whose liquidation is an AMM."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
 order: 4
 protocol: "curve"
-versionContext: "Stableswap-NG and CryptoSwap are both current AMM families. crvUSD controller blueprints are versioned, and a market keeps the blueprint it was deployed with."
+versionContext: "Stableswap-NG, CryptoSwap, and FXSwap are current AMM families. crvUSD controller blueprints are versioned, and a market keeps the blueprint it was deployed with."
 tags:
   - curve
   - stableswap
@@ -19,6 +19,7 @@ concepts:
 glossary:
   - stableswap
   - cryptoswap
+  - fxswap
   - metapool
   - amplification-coefficient
 relatedGuides: []
@@ -32,6 +33,9 @@ versions:
   - name: "CryptoSwap"
     status: "active"
     note: "Volatile-asset invariant with its own amplification scale and a gamma parameter."
+  - name: "FXSwap"
+    status: "active"
+    note: "Externally priced two-asset pools. A StableSwap-style curve plus a refuel budget for recentering."
   - name: "crvUSD controllers"
     status: "active"
     note: "V1 through V3 blueprints. The overview calls V3 the current factory blueprint. Old markets are not rewritten in place."
@@ -46,6 +50,10 @@ sources:
     publisher: "Curve"
   - title: "Understanding CryptoSwap"
     url: "https://docs.curve.finance/protocol/pool/understanding-cryptoswap"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "Understanding FXSwap"
+    url: "https://docs.curve.finance/protocol/pool/understanding-fxswap"
     kind: "docs"
     publisher: "Curve"
   - title: "CryptoSwap whitepaper"
@@ -86,7 +94,9 @@ Older pools remain. Routing that only knows the NG factory will miss them. Curve
 
 CryptoSwap’s paper changes the invariant so liquidity can sit around a moving price instead of a peg of one. The understanding-CryptoSwap page says the `A` numbers are not on the StableSwap scale: 10,000 there is described as corresponding to 1 in StableSwap. Gamma is a second parameter. Copying a stablecoin pool’s `A` into a volatile pool is a category error, not a migration.
 
-Twocrypto and tricrypto pools are CryptoSwap deployments with two or three coins. They are not Stableswap-NG pools with the coin count changed. A metapool, by contrast, is a StableSwap-shaped pool whose second “coin” is another pool’s LP token.
+Twocrypto and tricrypto pools are CryptoSwap deployments with two or three coins. They are not Stableswap-NG pools with the coin count changed. A metapool is a StableSwap-shaped pool whose second coin is another pool’s LP token.
+
+[FXSwap](/glossary#fxswap) sits beside both. The understanding-FXSwap page describes a two-asset pool that uses StableSwap-style pricing and recenters with a refuel budget because the reference price comes from outside the pool. A refuel is not an oracle write of the spot price. Branching on “Curve pool” without asking which invariant is the integration bug this guide is about.
 
 ## crvUSD versions are blueprint versions
 
@@ -100,9 +110,10 @@ LLAMMA’s soft liquidation — converting collateral in bands as price moves �
 
 | If the contract is… | Price with… | Do not assume… |
 | --- | --- | --- |
-| A Stableswap-NG pool | The StableSwap invariant and any coin rate | That `A` matches a CryptoSwap pool |
-| A CryptoSwap pool | `price_scale`, `A`, and gamma | That the peg is one |
+| A Stableswap-NG pool | The StableSwap invariant and any coin rate | A CryptoSwap `A`, or an FXSwap refuel |
+| A CryptoSwap pool | `price_scale`, `A`, and gamma | A peg of one, or the StableSwap scale for `A` |
+| An FXSwap pool | A StableSwap-style curve plus the refuel budget | That the pool is where the price is discovered |
 | A crvUSD controller | Collateral bands and the minted stablecoin | That it is an LP position |
-| An older factory pool | Whichever ABI the registry reports | That NG asset types exist |
+| An older factory pool | Whichever ABI the registry reports | NG asset types |
 
 The [constant product](/concepts/constant-product) article is the baseline both AMM families are departing from. Curve’s departure is deliberate and partial: far from the peg or the price scale, the curve is allowed to resemble a product pool so that one coin cannot be drained at a constant price forever.

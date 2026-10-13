@@ -18,6 +18,7 @@ glossary:
   - share
   - withdrawal-request
   - node-operator
+  - staking-vault
 related:
   - on-chain-accounting
   - oracles-and-dependencies
@@ -39,6 +40,10 @@ sources:
     url: "https://github.com/lidofinance/core/blob/v3.0.2/contracts/0.8.9/oracle/AccountingOracle.sol"
     kind: "code"
     publisher: "Lido"
+  - title: "stVaults technical design"
+    url: "https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/stvaults-technical-design"
+    kind: "docs"
+    publisher: "Lido"
 ---
 
 Staking locks an asset in a validator so the consensus protocol will pay rewards and charge penalties. Liquid staking issues a token against that lock so the depositor can transfer the claim. The lock remains. The token is not the validator key, and selling the token does not exit the validator.
@@ -49,7 +54,9 @@ Staking locks an asset in a validator so the consensus protocol will pay rewards
 
 ## The share
 
-Lido mints shares when ETH is submitted. The stETH balance is shares times pooled ether over total shares. Rewards increase pooled ether. A slashing decreases it. Every holder is in one pool, so a penalty is socialized across shares rather than charged to “the” validator a user picked. Users do not pick a validator in the basic deposit. The protocol assigns stake to [operators](/glossary#node-operator).
+Lido Core mints shares when ETH is submitted. The stETH balance is shares times pooled ether over total shares. Rewards increase pooled ether. A slashing decreases it. Every Core holder is in one pool, so a penalty is socialized across shares rather than charged to a validator that user picked. Users do not pick a validator in the basic Core deposit. The protocol assigns stake to [operators](/glossary#node-operator).
+
+Lido V3 [staking vaults](/glossary#staking-vault) are the documented exception to that socialization. One vault has one owner and one operator. It can mint stETH against its own reported value, up to a reserve ratio, and the technical design says operator-group losses are supposed to stay in that group up to a DAO-set level. The minted token is still stETH. The exit of the underlying validators is the vault’s exit, described on the [Lido](/protocols/lido) page, not a second share token.
 
 That socialization is the product. It is also the risk. One operator’s slashing changes the share rate for holders who never chose that operator. Module design and operator limits are how the protocol tries to bound the blast radius. They are governance parameters. The share math will apply whatever the report contains.
 

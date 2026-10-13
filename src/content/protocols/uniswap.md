@@ -37,7 +37,7 @@ versions:
     note: "Concentrated liquidity between ticks, fee tiers, and NFT positions through NonfungiblePositionManager."
   - name: "v4"
     status: "active"
-    note: "Singleton PoolManager, flash accounting, and optional hooks. Launched 31 January 2025. Positions use ERC-6909 accounting in PositionManager."
+    note: "Singleton PoolManager, flash accounting, and optional hooks. Launched 31 January 2025. PositionManager mints an ERC-721. ERC-6909 claims are a separate settlement balance."
 sources:
   - title: "How Uniswap works"
     url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
@@ -66,6 +66,18 @@ sources:
   - title: "Uniswap v4 hooks"
     url: "https://developers.uniswap.org/docs/protocols/v4/concepts/hooks"
     kind: "docs"
+    publisher: "Uniswap"
+  - title: "ERC-6909 in Uniswap v4"
+    url: "https://developers.uniswap.org/docs/protocols/v4/concepts/erc-6909"
+    kind: "docs"
+    publisher: "Uniswap"
+  - title: "PositionManager.sol"
+    url: "https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol"
+    kind: "code"
+    publisher: "Uniswap"
+  - title: "PoolKey.sol"
+    url: "https://github.com/Uniswap/v4-core/blob/main/src/types/PoolKey.sol"
+    kind: "code"
     publisher: "Uniswap"
   - title: "Uniswap v4 is here"
     url: "https://blog.uniswap.org/uniswap-v4-is-here"
@@ -133,11 +145,13 @@ A v3 swap walks the current tick range, then crosses into the next initialized t
 
 The v4 architecture page says v4 keeps v3’s capital efficiency and adds hooks, a singleton, and flash accounting. All pools live in `PoolManager`. Creating a pool writes state instead of deploying a new pair contract. A multi-pool swap does not have to transfer the intermediate token; the manager records deltas and settles at the end. The docs call that flash accounting.
 
-[Hooks](/glossary#hook) are optional. A pool with no hook still uses concentrated liquidity. If a hook is set, it is part of the pool key passed to `initialize` and cannot be added or swapped later. The hooks documentation lists callbacks around initialize, liquidity changes, swaps, and donate. The hook declares which of those it implements. A hook can change fees or liquidity behavior. It can also be a new trust assumption: the pool will call whatever code was hashed into the pool key.
+[Hooks](/glossary#hook) are optional. The hooks documentation says a pool with no hook uses the same concentrated-liquidity behavior as v3. If a hook is set, it is part of the pool key passed to `initialize` and cannot be added or swapped later. The hooks documentation lists callbacks around initialize, liquidity changes, swaps, and donate. The hook declares which of those it implements by flags in its address. The architecture page also describes custom accounting: a hook can charge a fee or opt out of the concentrated-liquidity curve. A hooked pool follows that curve only when its hook leaves the curve in place. The pool will call whatever code was hashed into the pool key.
 
 The launch post dated 31 January 2025 says v4 was live on Ethereum, Polygon, Arbitrum, OP Mainnet, Base, BNB Chain, Blast, World Chain, Avalanche, and Zora. A later Uniswap Foundation note lists twelve chains. Treat the chain list as time-specific. The architectural claims above are about the contract design, not about which deployment an interface routes through today.
 
-v4 position accounting is also different. The overview says v4 positions go through `PositionManager` and ERC-6909, not the v3 ERC-721. An integration that assumes “the LP position is an NFT” is describing v3.
+v4 liquidity positions are still NFTs. `PositionManager` in v4-periphery inherits `ERC721Permit_v4` and names the collection “Uniswap v4 Positions NFT”. The file comment says it mints and manages ERC-721 tokens associated with each position. That was the source on `main` as read on 13 October 2026. `main` can move. The v3 position contract is a different address, `NonfungiblePositionManager`, so a transfer of a v3 token id does not move a v4 position.
+
+ERC-6909 is a different object on `PoolManager`. The ERC-6909 page says a caller can leave the underlying ERC-20 in the manager and receive a claim token, then burn that claim instead of transferring the ERC-20 on a later call. Liquidity managers can opt to receive capital as a claim. The claim is not the position NFT, and a mint of claim tokens is not proof that a tick range was opened.
 
 ## What stays outside the pool
 

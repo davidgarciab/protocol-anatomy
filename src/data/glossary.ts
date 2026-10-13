@@ -121,10 +121,20 @@ export const glossary: GlossaryEntry[] = [
     id: 'flash-accounting',
     term: 'Flash accounting',
     definition:
-      'Uniswap v4’s practice of recording token deltas during a PoolManager unlock and transferring tokens only at settlement. A multi-hop swap can therefore avoid moving the intermediate token between pools.',
+      'Uniswap v4’s practice of recording token deltas during a PoolManager unlock and transferring tokens only at settlement. A multi-hop swap can therefore avoid moving the intermediate token between pools. ERC-6909 claims are an optional balance inside that settlement. They are not the ERC-721 liquidity position.',
     related: [
       { href: '/guides/uniswap-versions', label: 'Uniswap versions' },
       { href: '/concepts/composability', label: 'Composability' },
+    ],
+  },
+  {
+    id: 'fxswap',
+    term: 'FXSwap',
+    definition:
+      'A Curve two-asset pool for markets whose price is discovered elsewhere. It prices with a StableSwap-style curve and recenters that curve using trading profit plus an explicit refuel budget. The refuel pays for recentering. It does not set the price.',
+    related: [
+      { href: '/protocols/curve', label: 'Curve' },
+      { href: '/guides/curve-generations', label: 'Curve pool generations' },
     ],
   },
   {
@@ -199,7 +209,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'lp-share',
     term: 'LP share',
     definition:
-      'A liquidity provider’s claim on a pool. Uniswap v2 mints a fungible ERC-20. Uniswap v3 records a ranged position as an NFT. Curve Stableswap-NG uses the pool contract itself as the LP token. The share is a claim on pool assets and fees, not a promise of the tokens originally deposited.',
+      'A liquidity provider’s claim on a pool. Uniswap v2 mints a fungible ERC-20. Uniswap v3 and v4 both record a ranged position as an ERC-721, from NonfungiblePositionManager and PositionManager respectively. Curve Stableswap-NG uses the pool contract itself as the LP token. The share is a claim on pool assets and fees, not a promise of the tokens originally deposited.',
     related: [{ href: '/concepts/liquidity-pools', label: 'Liquidity pools' }],
   },
   {
@@ -313,6 +323,16 @@ export const glossary: GlossaryEntry[] = [
     ],
   },
   {
+    id: 'staking-vault',
+    term: 'Staking vault',
+    definition:
+      'An isolated Lido V3 position: one owner, one node operator, and withdrawal credentials pointed at the vault. The owner can mint stETH against the vault’s reported value up to a reserve ratio the DAO sets. It is not a share of the pooled Lido Core stake.',
+    related: [
+      { href: '/protocols/lido', label: 'Lido' },
+      { href: '/concepts/liquid-staking', label: 'Liquid staking' },
+    ],
+  },
+  {
     id: 'steth',
     term: 'stETH',
     definition:
@@ -321,6 +341,13 @@ export const glossary: GlossaryEntry[] = [
       { href: '/protocols/lido', label: 'Lido' },
       { href: '/concepts/liquid-staking', label: 'Liquid staking' },
     ],
+  },
+  {
+    id: 'stusds',
+    term: 'stUSDS',
+    definition:
+      'Sky’s ERC-4626 deposit of USDS for the stUSDS module. The token docs describe it as risk capital that funds SKY-backed borrowing. It is not the Sky Savings Rate and it is not the one-for-one DAI converter.',
+    related: [{ href: '/protocols/maker-sky', label: 'MakerDAO / Sky' }],
   },
   {
     id: 'susds',
@@ -333,7 +360,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'tick',
     term: 'Tick',
     definition:
-      'A discrete price boundary in Uniswap v3 and v4. Tick i represents the price 1.0001^i, so one initialized step of one tick is one basis point. Pools only initialize ticks on a spacing that depends on the fee tier.',
+      'A discrete price boundary in Uniswap v3 and v4. Tick i represents the price 1.0001^i, so one step of one tick is one basis point. A pool only initializes ticks on its tick spacing. In v3 that spacing is paired with the fee tier. In v4 it is a separate field on the pool key.',
     related: [{ href: '/concepts/concentrated-liquidity', label: 'Concentrated liquidity' }],
   },
   {
