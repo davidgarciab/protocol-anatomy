@@ -23,7 +23,8 @@ glossary:
   - stusds
   - vault
   - stability-fee
-relatedGuides: []
+relatedGuides:
+  - aave-versions
 versions:
   - name: "MCD Vat"
     status: "active"

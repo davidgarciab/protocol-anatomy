@@ -118,13 +118,20 @@ export const glossary: GlossaryEntry[] = [
     ],
   },
   {
+    id: 'flash-loan',
+    term: 'Flash loan',
+    definition:
+      'Liquidity taken during a transaction and repaid, with any fee, before that transaction ends. Aave V3 exposes this as flashLoan and flashLoanSimple. Uniswap v2 does it inside swap, and v3 exposes pool.flash. v4 records the interim debt as flash-accounting deltas.',
+    related: [{ href: '/concepts/flash-liquidity', label: 'Flash loans and flash accounting' }],
+  },
+  {
     id: 'flash-accounting',
     term: 'Flash accounting',
     definition:
       'Uniswap v4’s practice of recording token deltas during a PoolManager unlock and transferring tokens only at settlement. A multi-hop swap can therefore avoid moving the intermediate token between pools. ERC-6909 claims are an optional balance inside that settlement. They are not the ERC-721 liquidity position.',
     related: [
+      { href: '/concepts/flash-liquidity', label: 'Flash loans and flash accounting' },
       { href: '/guides/uniswap-versions', label: 'Uniswap versions' },
-      { href: '/concepts/composability', label: 'Composability' },
     ],
   },
   {

@@ -23,6 +23,7 @@ export const REQUIRED_CONCEPTS = [
   'proxies',
   'on-chain-accounting',
   'composability',
+  'flash-liquidity',
   'security-assumptions',
 ] as const;
 

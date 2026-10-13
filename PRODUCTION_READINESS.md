@@ -1,6 +1,13 @@
 # Production readiness
 
-Updated 13 October 2026. This file records what was checked and what is actually deployed. It is not a substitute for the production site responding.
+Updated 14 October 2026. This file records what was checked and what is actually deployed. It is not a substitute for the production site responding.
+
+## 14 October 2026
+
+- Search is `noindex, follow` and is omitted from the sitemap. Article pages include `TechArticle` (`datePublished`, `dateModified`) and a `BreadcrumbList` that matches the visible breadcrumbs.
+- Google Search Console is not authorized from this workspace. No verification token is stored. The property owner adds `https://protocols.davidgarciab.com/` in Search Console, verifies it with the HTML file or meta tag Google displays, and submits `https://protocols.davidgarciab.com/sitemap-index.xml`. This pass does not change DNS.
+- `pnpm editorial:review` watches 17 GitHub files and releases in `editorial/sources.json`. A second run against the committed baseline reported no changes. `.github/workflows/editorial-review.yml` is weekly and separate from the production check workflow.
+- Local checks after the content change: `pnpm check` 0 errors, `pnpm test` 16/16, `pnpm validate` 27 articles and 49 glossary entries, `pnpm build` 35 pages, `pnpm verify:dist`, `pnpm audit:a11y` 8 pages, `pnpm check:assets`, `pnpm check:links` 61 URLs and 0 broken.
 
 ## Findings
 

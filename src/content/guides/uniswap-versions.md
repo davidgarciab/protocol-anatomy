@@ -17,13 +17,15 @@ concepts:
   - concentrated-liquidity
   - liquidity-pools
   - composability
+  - flash-liquidity
 glossary:
   - constant-product
   - tick
   - hook
   - flash-accounting
   - lp-share
-relatedGuides: []
+relatedGuides:
+  - curve-generations
 versions:
   - name: "v2"
     status: "active"

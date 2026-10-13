@@ -6,6 +6,8 @@ dist/
 .env.*
 *.log
 link-report.json
+editorial/.cache.json
+editorial/review.md
 coverage/
 test-results/
 playwright-report/

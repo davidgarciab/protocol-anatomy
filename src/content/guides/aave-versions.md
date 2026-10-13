@@ -23,7 +23,8 @@ glossary:
   - risk-premium
   - close-factor
   - health-factor
-relatedGuides: []
+relatedGuides:
+  - maker-to-sky
 versions:
   - name: "V2"
     status: "historical"

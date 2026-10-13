@@ -17,8 +17,10 @@ protocols:
   - lido
 glossary:
   - flash-accounting
+  - flash-loan
   - hook
 related:
+  - flash-liquidity
   - automated-market-makers
   - security-assumptions
   - proxies
@@ -53,7 +55,7 @@ Ethereum transactions are atomic. If any call reverts, the whole transaction rev
 
 ## What fits in one transaction
 
-A Uniswap router can swap through several pools, and the user’s minimum-output check can wrap the whole route. If the last pool would break the limit, none of the earlier hops remain. v2 flash swaps and v4 flash accounting are stronger versions of the same idea. Inventory leaves, or is recorded as a debt, and must be back by the end of the call. The flash-swap guide’s product check is the enforcement for v2. v4’s architecture page describes deltas settled at the end of `unlock` so intermediate tokens need not move.
+A Uniswap router can swap through several pools, and the user’s minimum-output check can wrap the whole route. If the last pool would break the limit, none of the earlier hops remain. v2 flash swaps and v4 flash accounting are stronger versions of the same idea. Inventory leaves, or is recorded as a debt, and must be back by the end of the call. The flash-swap guide’s product check is the enforcement for v2. v4’s architecture page describes deltas settled at the end of `unlock` so intermediate tokens need not move. [Flash loans and flash accounting](/concepts/flash-liquidity) separates that v2 check, the v3 `flash` call, the v4 delta, and Aave V3’s flash loan.
 
 Aave’s pool can be called in the same transaction as a swap. A common pattern is: flash-borrow, swap, do something, repay. The lending pool does not know it is inside a flash loan. It checks health factor at the points its own functions specify. If the transaction ends with an unsafe position, the borrow reverts. If it ends safe and the next block’s oracle moves, the position can be liquidated later. Atomicity protected the transaction. It did not protect the position.
 

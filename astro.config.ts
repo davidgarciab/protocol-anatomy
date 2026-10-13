@@ -9,7 +9,15 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   compressHTML: true,
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => {
+        const path = new URL(page).pathname;
+        return path !== '/search' && path !== '/search/';
+      },
+    }),
+  ],
   markdown: {
     processor: unified({ rehypePlugins: [rehypeDiagrams] }),
     shikiConfig: {

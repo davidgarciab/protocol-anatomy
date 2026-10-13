@@ -22,7 +22,8 @@ glossary:
   - fxswap
   - metapool
   - amplification-coefficient
-relatedGuides: []
+relatedGuides:
+  - uniswap-versions
 versions:
   - name: "StableSwap"
     status: "active"

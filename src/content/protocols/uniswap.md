@@ -19,6 +19,7 @@ concepts:
   - constant-product
   - concentrated-liquidity
   - composability
+  - flash-liquidity
 guides:
   - uniswap-versions
 glossary:

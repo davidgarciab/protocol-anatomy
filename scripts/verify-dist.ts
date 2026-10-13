@@ -61,6 +61,26 @@ if (existsSync(join(dist, '404.html'))) {
   if (!missing.includes('noindex')) errors.push('404 page is not marked noindex');
 }
 
+if (existsSync(join(dist, 'search/index.html'))) {
+  const search = read('search/index.html');
+  if (!search.includes('noindex')) errors.push('Search page is indexable duplicate content');
+}
+
+if (existsSync(join(dist, 'protocols/aave/index.html'))) {
+  const aave = read('protocols/aave/index.html');
+  if (!aave.includes('datePublished')) errors.push('Article structured data is missing datePublished');
+  if (!aave.includes('BreadcrumbList')) errors.push('Article structured data is missing BreadcrumbList');
+}
+
+if (existsSync(dist)) {
+  const sitemapFiles = readdirSync(dist).filter((entry) => entry.startsWith('sitemap') && entry.endsWith('.xml'));
+  const sitemap = sitemapFiles.map((entry) => read(entry)).join('\n');
+  if (!sitemap.includes('https://protocols.davidgarciab.com/protocols/aave/')) {
+    errors.push('Sitemap is missing the Aave overview');
+  }
+  if (sitemap.includes('/search')) errors.push('Sitemap includes the search page');
+}
+
 function walk(dir: string): string[] {
   const files: string[] = [];
   for (const entry of readdirSync(dir)) {

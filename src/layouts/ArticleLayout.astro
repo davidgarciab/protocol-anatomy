@@ -35,18 +35,45 @@ const data = entry.data;
 const pathname = Astro.url.pathname;
 const sources = data.sources as Source[];
 const versionContext = 'versionContext' in data ? data.versionContext : undefined;
+const pageUrl = canonicalUrl(pathname);
+const breadcrumb = [
+  { name: 'Home', item: canonicalUrl('/') },
+  ...crumbs.map((crumb, index) => ({
+    name: crumb.label,
+    item: crumb.href
+      ? canonicalUrl(crumb.href)
+      : index === crumbs.length - 1
+        ? pageUrl
+        : undefined,
+  })),
+];
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'TechArticle',
-  headline: data.title,
-  description: data.description,
-  dateModified: data.lastVerified,
-  url: canonicalUrl(pathname),
-  publisher: {
-    '@type': 'Organization',
-    name: SITE.name,
-    url: SITE.url,
-  },
+  '@graph': [
+    {
+      '@type': 'TechArticle',
+      headline: data.title,
+      description: data.description,
+      datePublished: data.published,
+      dateModified: data.lastVerified,
+      url: pageUrl,
+      mainEntityOfPage: pageUrl,
+      publisher: {
+        '@type': 'Organization',
+        name: SITE.name,
+        url: SITE.url,
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumb.map((crumb, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: crumb.name,
+        ...(crumb.item ? { item: crumb.item } : {}),
+      })),
+    },
+  ],
 };
 ---
 
@@ -66,7 +93,10 @@ const jsonLd = {
           </div>
           <div>
             <dt>Last verified</dt>
-            <dd><time datetime={data.lastVerified}>{data.lastVerified}</time></dd>
+            <dd>
+              <time datetime={data.lastVerified}>{data.lastVerified}</time>{' '}
+              <a href="/methodology/#what-last-verified-means">What this date means</a>
+            </dd>
           </div>
           <div>
             <dt>Reading time</dt>

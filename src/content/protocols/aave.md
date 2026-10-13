@@ -18,6 +18,7 @@ concepts:
   - interest-rate-models
   - collateral-and-liquidation
   - on-chain-accounting
+  - flash-liquidity
   - oracles-and-dependencies
   - governance-and-upgrades
 guides:

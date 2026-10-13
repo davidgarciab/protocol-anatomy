@@ -50,8 +50,11 @@ pnpm preview
 | `pnpm audit:a11y` | axe-core on key built pages | No |
 | `pnpm check:assets` | Fail if a built JS, CSS, or HTML file exceeds the review limit | No |
 | `pnpm check:links` | Fetch cited https URLs and write `link-report.json` | Yes |
+| `pnpm editorial:review` | Compare cited files and releases with `editorial/baseline.json` | Yes |
 
 `pnpm check:links` is intentionally outside the default test run. A 403 or a timeout is reported as restricted or temporary. Only HTTP 404 and 410 fail the command. A successful response does not prove a sentence is supported.
+
+`pnpm editorial:review` reads `editorial/sources.json`, a bounded list of GitHub files and releases. It writes `editorial/review.md` and does not edit articles. `--write-baseline` records the SHAs and tags just observed. `--refresh` ignores the six-hour cache in `editorial/.cache.json`. A source that does not answer is listed as unavailable and the previous baseline entry is kept. The same finding is not treated as a new review merely because the command runs again. GitHub Actions runs this weekly, in `.github/workflows/editorial-review.yml`, and opens or updates one `editorial-review` issue when the diff changes. That workflow is separate from `.github/workflows/check.yml`, so a GitHub outage does not fail the production build. No token is stored in the repository. Actions uses its built-in `GITHUB_TOKEN`.
 
 GitHub Actions runs the offline commands on push and pull request. See `.github/workflows/check.yml`.
 
@@ -151,3 +154,4 @@ Pages serves `404.html` for unknown paths. Cloudflare’s free allowance changes
 - Automated accessibility scans disable color-contrast because the headless DOM does not reliably compute it. Contrast was reviewed in the design tokens and should be rechecked in a browser after visual changes.
 - Some historical Maker documentation URLs now redirect into Sky’s documentation shell. Prefer the `dss` source when a redirected page no longer contains the module text.
 - No author biography is published, because none was supplied.
+- Google Search Console is not connected, and this repository has no Search Console credential. Indexing status is not known from here. To submit the sitemap, add the URL-prefix property `https://protocols.davidgarciab.com/` in Search Console, verify it, and submit `https://protocols.davidgarciab.com/sitemap-index.xml`. The HTML-file or HTML-tag method avoids a DNS change. Google displays the token during verification. Do not invent one. This maintenance pass does not change DNS.

@@ -1,0 +1,196 @@
+[
+  {
+    "id": "aave-v4-overview",
+    "kind": "github-file",
+    "repo": "aave/aave-v4",
+    "path": "docs/overview.md",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/aave.md",
+      "src/content/guides/aave-versions.md",
+      "src/content/concepts/flash-liquidity.md"
+    ],
+    "why": "Hub, spoke, liquidation, and risk-premium claims are taken from this file. A new commit may change those descriptions without changing the V3 Pool."
+  },
+  {
+    "id": "aave-v4-release",
+    "kind": "github-release",
+    "repo": "aave/aave-v4",
+    "articles": [
+      "src/content/protocols/aave.md",
+      "src/content/guides/aave-versions.md"
+    ],
+    "why": "A new V4 release may change hub behavior that the overview and version guide describe. Read the notes before treating the pages as stale."
+  },
+  {
+    "id": "aave-v3-math",
+    "kind": "github-file",
+    "repo": "aave/aave-v3-core",
+    "path": "contracts/protocol/libraries/math/MathUtils.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/concepts/on-chain-accounting.md",
+      "src/content/concepts/interest-rate-models.md"
+    ],
+    "why": "The accounting page quotes the linear supply factor and the binomial variable-debt approximation from this file."
+  },
+  {
+    "id": "aave-v3-reserve-logic",
+    "kind": "github-file",
+    "repo": "aave/aave-v3-core",
+    "path": "contracts/protocol/libraries/logic/ReserveLogic.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/concepts/on-chain-accounting.md",
+      "src/content/concepts/interest-rate-models.md"
+    ],
+    "why": "Index updates for liquidity and variable debt, including the conditions that skip an update, are taken from this file."
+  },
+  {
+    "id": "aave-v3-atoken",
+    "kind": "github-file",
+    "repo": "aave/aave-v3-core",
+    "path": "contracts/protocol/tokenization/AToken.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/concepts/on-chain-accounting.md"
+    ],
+    "why": "The accounting page quotes AToken.balanceOf, which multiplies the scaled balance by normalized income."
+  },
+  {
+    "id": "aave-v3-wad-ray",
+    "kind": "github-file",
+    "repo": "aave/aave-v3-core",
+    "path": "contracts/protocol/libraries/math/WadRayMath.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/concepts/on-chain-accounting.md"
+    ],
+    "why": "The half-up ray multiplication used for aToken balances is quoted from this file."
+  },
+  {
+    "id": "aave-v3-pool",
+    "kind": "github-file",
+    "repo": "aave/aave-v3-core",
+    "path": "contracts/protocol/pool/Pool.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/protocols/aave.md",
+      "src/content/concepts/flash-liquidity.md"
+    ],
+    "why": "The Aave overview cites Pool.supply, and the flash-liquidity page describes the V3 flash-loan entry points on this pool."
+  },
+  {
+    "id": "uniswap-v3-pool",
+    "kind": "github-file",
+    "repo": "Uniswap/v3-core",
+    "path": "contracts/UniswapV3Pool.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/flash-liquidity.md"
+    ],
+    "why": "The flash fee rounding and the F0/F1 balance checks are quoted from this pool."
+  },
+  {
+    "id": "uniswap-v4-pool-manager",
+    "kind": "github-file",
+    "repo": "Uniswap/v4-core",
+    "path": "src/PoolManager.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/flash-liquidity.md",
+      "src/content/protocols/uniswap.md"
+    ],
+    "why": "The unlock callback and CurrencyNotSettled check are the v4 settlement rule quoted on the flash-liquidity page."
+  },
+  {
+    "id": "uniswap-v4-position-manager",
+    "kind": "github-file",
+    "repo": "Uniswap/v4-periphery",
+    "path": "src/PositionManager.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/uniswap.md",
+      "src/content/guides/uniswap-versions.md"
+    ],
+    "why": "The pages distinguish the ERC-721 position minted here from ERC-6909 claims on the PoolManager."
+  },
+  {
+    "id": "uniswap-v4-pool-key",
+    "kind": "github-file",
+    "repo": "Uniswap/v4-core",
+    "path": "src/types/PoolKey.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/guides/uniswap-versions.md"
+    ],
+    "why": "The versions guide uses this file for the fee cap and the dynamic-fee sentinel. A change to either value would make that sentence stale."
+  },
+  {
+    "id": "uniswap-v4-core-release",
+    "kind": "github-release",
+    "repo": "Uniswap/v4-core",
+    "articles": [
+      "src/content/protocols/uniswap.md",
+      "src/content/guides/uniswap-versions.md"
+    ],
+    "why": "A new v4-core release may move pool behavior past the launch behavior the overview describes. Release notes can also be unrelated to pools."
+  },
+  {
+    "id": "maker-vat",
+    "kind": "github-file",
+    "repo": "sky-ecosystem/dss",
+    "path": "src/vat.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/protocols/maker-sky.md",
+      "src/content/guides/maker-to-sky.md"
+    ],
+    "why": "The vault safety check is quoted from vat.sol. The repository is sky-ecosystem/dss, which is where the Maker core commit history resolves."
+  },
+  {
+    "id": "sky-susds",
+    "kind": "github-file",
+    "repo": "sky-ecosystem/sdai",
+    "path": "src/SUsds.sol",
+    "ref": "susds",
+    "articles": [
+      "src/content/protocols/maker-sky.md",
+      "src/content/guides/maker-to-sky.md"
+    ],
+    "why": "sUSDS share accounting is cited from this contract on the susds branch. A change can affect the ERC-4626 description without changing the Vat."
+  },
+  {
+    "id": "lido-wsteth",
+    "kind": "github-file",
+    "repo": "lidofinance/core",
+    "path": "contracts/0.6.12/WstETH.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/protocols/lido.md"
+    ],
+    "why": "The Lido overview quotes wrap() from core v3.0.2. A later edit to this file may mean that quote is no longer the file's current text. The pinned quote can remain accurate as history."
+  },
+  {
+    "id": "lido-core-release",
+    "kind": "github-release",
+    "repo": "lidofinance/core",
+    "articles": [
+      "src/content/protocols/lido.md",
+      "src/content/guides/lido-exits.md"
+    ],
+    "why": "A new core release may be unrelated to share accounting or the withdrawal queue. v4.1.0 implemented an execution-delegation framework. Future notes still need a look before editing the pages."
+  },
+  {
+    "id": "curve-stableswap-ng-factory",
+    "kind": "github-file",
+    "repo": "curvefi/stableswap-ng",
+    "path": "contracts/main/CurveStableSwapFactoryNG.vy",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/curve.md",
+      "src/content/guides/curve-generations.md"
+    ],
+    "why": "NG factory behavior, including how new pools are deployed and that existing pools stay immutable, is part of the Curve version guide."
+  }
+]
