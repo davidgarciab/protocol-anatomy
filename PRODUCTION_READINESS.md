@@ -32,4 +32,12 @@ Updated 13 October 2026. This file records what was checked and what is actually
 
 ## Deployment
 
-Recorded after the Pages project and hostname are verified. Do not treat this section as success until those lines name a deployment id and a live HTTPS response.
+- Pages project `protocol-anatomy` was created on 13 October 2026, connected to `davidgarciab/protocol-anatomy`, production branch `main`, build image v3.
+- Build command: `pnpm install --frozen-lockfile && pnpm build`. Output: `dist`.
+- `NODE_VERSION=24.21.0` and `PNPM_VERSION=12.13.0` are plain environment variables on production and preview.
+- The project was created after commit `fbada23` was pushed, so that commit did not start a Pages build. The next push to `main` is the first production build.
+- Custom domain and live HTTPS are recorded below only after they respond.
+
+### Live result
+
+Pending the first production deployment.
