@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import { readingMinutes } from '../lib/reading';
+
+const entry = (await getCollection('site')).find((item) => item.id === 'methodology');
+if (!entry) throw new Error('Missing methodology entry');
+const { Content, headings } = await render(entry);
+---
+
+<ArticleLayout
+  entry={entry}
+  headings={headings}
+  kicker="About this publication"
+  readingMinutes={readingMinutes(entry.body)}
+  crumbs={[{ label: 'Methodology' }]}
+  related={[
+    { href: '/sources', title: 'Source index', kind: 'Reference' },
+    { href: '/protocols', title: 'Protocols', kind: 'Directory' },
+  ]}
+>
+  <Content />
+</ArticleLayout>

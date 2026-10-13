@@ -1,0 +1,22 @@
+---
+import { SITE } from '../lib/site';
+---
+
+<footer class="site-footer">
+  <p>
+    <strong>{SITE.name}.</strong> {SITE.tagline}
+  </p>
+  <nav class="footer-nav" aria-label="Footer">
+    <a href="/protocols">Protocols</a>
+    <a href="/guides">Version guides</a>
+    <a href="/concepts">Concepts</a>
+    <a href="/glossary">Glossary</a>
+    <a href="/methodology">Methodology</a>
+    <a href="/sources">Sources</a>
+    <a href="/search">Search</a>
+  </nav>
+  <p>
+    Educational notes on published protocol designs. This is not an audit, a recommendation to allocate capital, or financial advice. The protocols named here are independent projects.
+  </p>
+  <p>Prepared for <span>{SITE.url}</span>.</p>
+</footer>

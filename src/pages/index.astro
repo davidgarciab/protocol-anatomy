@@ -1,0 +1,114 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/site';
+import { groupLabel } from '../lib/relate';
+
+const protocols = (await getCollection('protocols')).sort((a, b) => a.data.order - b.data.order);
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+const featuredConcepts = concepts.slice(0, 6);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+};
+---
+
+<BaseLayout title={SITE.name} description={SITE.description} jsonLd={jsonLd}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <section class="hero">
+      <p class="eyebrow">Technical field guide</p>
+      <h1>{SITE.name}</h1>
+      <p class="tagline">{SITE.tagline}</p>
+      <p class="hero-lede">{SITE.description}</p>
+      <div class="hero-actions">
+        <a class="button" href="/protocols">Browse the protocols</a>
+        <a href="/methodology">How the research is checked</a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="learn-heading">
+      <h2 id="learn-heading">What a guide is for</h2>
+      <div class="learn-grid">
+        <article>
+          <h3>The mechanism</h3>
+          <p>What state the contracts store, which inputs change it, and which invariant the transaction is required to leave behind.</p>
+        </article>
+        <article>
+          <h3>The money</h3>
+          <p>Where collateral, reserves, fees, and shares sit after a supply, swap, mint, or withdrawal, including the residual loss when a rule fails.</p>
+        </article>
+        <article>
+          <h3>The version</h3>
+          <p>Which design is deployed, which design it replaced, and which behavior belongs to an older contract that integrations still call.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="protocols-heading">
+      <h2 id="protocols-heading">Five protocols</h2>
+      <p class="section-intro">
+        A lending market, an automated market maker, a collateralized stablecoin, a specialized AMM, and a liquid staking pool. They are not five copies of one architecture.
+      </p>
+      <ol class="contents-index">
+        {
+          protocols.map((protocol, index) => (
+            <li>
+              <a href={`/protocols/${protocol.id}`}>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <span>{protocol.data.title}</span>
+                <span class="cat">{protocol.data.category}</span>
+              </a>
+              <p>{protocol.data.mechanism}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="versions-heading">
+      <h2 id="versions-heading">Version and architecture</h2>
+      <p class="section-intro">
+        Each comparison is limited to versions that the cited documentation or repositories actually describe.
+      </p>
+      <ul class="contents-index">
+        {
+          guides.map((guide) => (
+            <li>
+              <a href={`/guides/${guide.id}`}>
+                <span class="num">→</span>
+                <span>{guide.data.title}</span>
+                <span class="cat">{guide.data.protocol}</span>
+              </a>
+              <p>{guide.data.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="concepts-heading">
+      <h2 id="concepts-heading">Concepts</h2>
+      <div class="card-grid">
+        {
+          featuredConcepts.map((concept) => (
+            <article class="plain-card">
+              <p class="kicker">{groupLabel[concept.data.group]}</p>
+              <h3><a href={`/concepts/${concept.id}`}>{concept.data.title}</a></h3>
+              <p>{concept.data.description}</p>
+            </article>
+          ))
+        }
+      </div>
+      <p><a href="/concepts">All concepts</a> · <a href="/glossary">Glossary</a></p>
+    </section>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

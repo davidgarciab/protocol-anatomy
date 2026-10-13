@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+import { SITE, canonicalUrl } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  pathname?: string;
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  pathname = Astro.url.pathname,
+  type = 'website',
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title === SITE.name ? SITE.name : `${title} · ${SITE.name}`;
+const canonical = canonicalUrl(pathname);
+const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#10151c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {jsonLd && <script type="application/ld+json" set:html={json} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot name="header" />
+    <slot />
+    <slot name="footer" />
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+      const nav = document.querySelector<HTMLElement>('#primary-nav');
+      if (toggle && nav) {
+        toggle.addEventListener('click', () => {
+          const open = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!open));
+          nav.classList.toggle('is-open', !open);
+          if (!open) {
+            nav.querySelector<HTMLElement>('a')?.focus();
+          }
+        });
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+            toggle.setAttribute('aria-expanded', 'false');
+            nav.classList.remove('is-open');
+            toggle.focus();
+          }
+        });
+      }
+
+      document.querySelectorAll<HTMLElement>('.prose pre').forEach((block) => {
+        if (block.querySelector('.copy-button')) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-button';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code');
+        block.append(button);
+        button.addEventListener('click', async () => {
+          const code = block.querySelector('code')?.textContent ?? block.textContent ?? '';
+          try {
+            await navigator.clipboard.writeText(code.replace(/\nCopy$/, '').trim());
+            button.textContent = 'Copied';
+          } catch {
+            button.textContent = 'Copy failed';
+          }
+          window.setTimeout(() => {
+            button.textContent = 'Copy';
+          }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>

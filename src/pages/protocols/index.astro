@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const protocols = (await getCollection('protocols')).sort((a, b) => a.data.order - b.data.order);
+const description = 'Directory of the lending, exchange, stablecoin, and staking protocols covered by Protocol Anatomy.';
+---
+
+<BaseLayout title="Protocols" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Directory</p>
+      <h1>Protocols</h1>
+      <p class="lede">
+        Each entry is a working overview. The version guide linked from the overview is the place to compare contract generations.
+      </p>
+    </header>
+    <ol class="contents-index">
+      {
+        protocols.map((protocol, index) => (
+          <li>
+            <a href={`/protocols/${protocol.id}`}>
+              <span class="num">{String(index + 1).padStart(2, '0')}</span>
+              <span>{protocol.data.title}</span>
+              <span class="cat">{protocol.data.category}</span>
+            </a>
+            <p>{protocol.data.mechanism}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

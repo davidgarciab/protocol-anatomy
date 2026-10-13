@@ -1,0 +1,41 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const items = [
+  { href: '/protocols', label: 'Protocols' },
+  { href: '/guides', label: 'Guides' },
+  { href: '/concepts', label: 'Concepts' },
+  { href: '/glossary', label: 'Glossary' },
+  { href: '/methodology', label: 'Methodology' },
+];
+
+function current(href: string): boolean {
+  return path === href || (href !== '/' && path.startsWith(`${href}/`));
+}
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Protocol Anatomy, home">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="1.7"></circle>
+      <path d="M4 16h24" fill="none" stroke="currentColor" stroke-width="1.7"></path>
+      <circle cx="16" cy="16" r="2.1" fill="currentColor"></circle>
+    </svg>
+    Protocol Anatomy
+  </a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+    Menu
+  </button>
+  <nav id="primary-nav" class="primary-nav" aria-label="Primary">
+    {
+      items.map((item) => (
+        <a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+    <form class="header-search" action="/search" method="get" role="search">
+      <label class="sr-only" for="header-q">Search the publication</label>
+      <input id="header-q" type="search" name="q" placeholder="Search" />
+    </form>
+  </nav>
+</header>

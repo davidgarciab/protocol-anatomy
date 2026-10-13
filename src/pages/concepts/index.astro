@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { groupLabel } from '../../lib/relate';
+
+const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+const groups = ['markets', 'credit', 'monetary', 'engineering'] as const;
+const description = 'Cross-protocol explanations of AMMs, lending, stablecoins, liquid staking, and the engineering around them.';
+---
+
+<BaseLayout title="Concepts" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Reference</p>
+      <h1>Concepts</h1>
+      <p class="lede">
+        These articles name the shared idea, then say where Aave, Uniswap, Maker, Curve, or Lido depart from it.
+      </p>
+    </header>
+    {
+      groups.map((group) => (
+        <section class="directory-block" aria-labelledby={`group-${group}`}>
+          <h2 id={`group-${group}`}>{groupLabel[group]}</h2>
+          <ul class="contents-index">
+            {concepts
+              .filter((concept) => concept.data.group === group)
+              .map((concept) => (
+                <li>
+                  <a href={`/concepts/${concept.id}`}>
+                    <span class="num">→</span>
+                    <span>{concept.data.title}</span>
+                  </a>
+                  <p>{concept.data.description}</p>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,96 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import References from '../components/References.astro';
+import Related, { type RelatedLink } from '../components/Related.astro';
+import { SITE, canonicalUrl, type Source } from '../lib/site';
+
+interface Crumb {
+  href?: string;
+  label: string;
+}
+
+type AnyEntry =
+  | CollectionEntry<'protocols'>
+  | CollectionEntry<'guides'>
+  | CollectionEntry<'concepts'>
+  | CollectionEntry<'site'>;
+
+interface Props {
+  entry: AnyEntry;
+  headings: MarkdownHeading[];
+  crumbs: Crumb[];
+  kicker: string;
+  related: RelatedLink[];
+  readingMinutes: number;
+}
+
+const { entry, headings, crumbs, kicker, related, readingMinutes } = Astro.props;
+const data = entry.data;
+const pathname = Astro.url.pathname;
+const sources = data.sources as Source[];
+const versionContext = 'versionContext' in data ? data.versionContext : undefined;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: data.title,
+  description: data.description,
+  dateModified: data.lastVerified,
+  url: canonicalUrl(pathname),
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+  },
+};
+---
+
+<BaseLayout title={data.title} description={data.description} type="article" jsonLd={jsonLd}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <article>
+      <header class="article-header">
+        <Breadcrumbs items={crumbs} />
+        <p class="kicker">{kicker}</p>
+        <h1>{data.title}</h1>
+        <p class="lede">{data.summary}</p>
+        <dl class="meta-list">
+          <div>
+            <dt>Published</dt>
+            <dd><time datetime={data.published}>{data.published}</time></dd>
+          </div>
+          <div>
+            <dt>Last verified</dt>
+            <dd><time datetime={data.lastVerified}>{data.lastVerified}</time></dd>
+          </div>
+          <div>
+            <dt>Reading time</dt>
+            <dd>About {readingMinutes} min</dd>
+          </div>
+          {
+            versionContext && (
+              <div>
+                <dt>Version context</dt>
+                <dd>{versionContext}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </header>
+      <div class="article-grid">
+        <div class="prose">
+          <slot />
+          <References sources={sources} />
+          <Related links={related} />
+        </div>
+        <TableOfContents headings={headings} />
+      </div>
+    </article>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

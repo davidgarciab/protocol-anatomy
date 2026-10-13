@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { readingMinutes } from '../../lib/reading';
+import { guideLinks } from '../../lib/relate';
+
+export async function getStaticPaths() {
+  const protocols = await getCollection('protocols');
+  const guides = await getCollection('guides');
+  const concepts = await getCollection('concepts');
+  const library = { protocols, guides, concepts };
+  return guides.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry, library },
+  }));
+}
+
+const { entry, library } = Astro.props;
+const { Content, headings } = await render(entry);
+const protocol = library.protocols.find((item) => item.id === entry.data.protocol);
+---
+
+<ArticleLayout
+  entry={entry}
+  headings={headings}
+  kicker="Version guide"
+  readingMinutes={readingMinutes(entry.body)}
+  crumbs={[
+    { href: '/guides', label: 'Guides' },
+    { href: protocol ? `/protocols/${protocol.id}` : '/protocols', label: protocol?.data.title ?? entry.data.protocol },
+    { label: entry.data.title },
+  ]}
+  related={guideLinks(entry, library)}
+>
+  <Content />
+  <h2>Version status</h2>
+  <div class="table-wrap" tabindex="0" aria-label="Scrollable table">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Version</th>
+          <th scope="col">Status</th>
+          <th scope="col">What that status means here</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          entry.data.versions.map((version) => (
+            <tr>
+              <td>{version.name}</td>
+              <td>{version.status}</td>
+              <td>{version.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</ArticleLayout>

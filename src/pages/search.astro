@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { glossary } from '../data/glossary';
+import { stripMarkdown, type SearchEntry } from '../lib/search';
+
+const protocols = await getCollection('protocols');
+const guides = await getCollection('guides');
+const concepts = await getCollection('concepts');
+
+const entries: SearchEntry[] = [
+  ...protocols.map((entry) => ({
+    title: entry.data.title,
+    url: `/protocols/${entry.id}`,
+    kind: 'Protocol',
+    summary: entry.data.summary,
+    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
+    protocol: entry.data.title,
+  })),
+  ...guides.map((entry) => ({
+    title: entry.data.title,
+    url: `/guides/${entry.id}`,
+    kind: 'Guide',
+    summary: entry.data.summary,
+    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
+    protocol: entry.data.protocol,
+  })),
+  ...concepts.map((entry) => ({
+    title: entry.data.title,
+    url: `/concepts/${entry.id}`,
+    kind: 'Concept',
+    summary: entry.data.summary,
+    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
+  })),
+  ...glossary.map((entry) => ({
+    title: entry.term,
+    url: `/glossary#${entry.id}`,
+    kind: 'Glossary',
+    summary: entry.definition,
+    text: `${entry.term} ${entry.definition}`,
+  })),
+];
+
+const payload = JSON.stringify(entries).replace(/</g, '\\u003c');
+const description = 'Search protocol overviews, version guides, concepts, and glossary terms.';
+---
+
+<BaseLayout title="Search" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Index</p>
+      <h1>Search</h1>
+      <p class="lede">
+        The index is built from the pages in this publication. It does not search protocol documentation sites or unpublished drafts.
+      </p>
+    </header>
+    <form class="search-form" id="search-form" role="search">
+      <label for="search-q">Search titles, summaries, and article text</label>
+      <input id="search-q" type="search" name="q" placeholder="Try liquidation, tick, or stETH" />
+      <div class="filter-row" role="group" aria-label="Filter by type">
+        <button type="button" data-kind="all" aria-pressed="true">All</button>
+        <button type="button" data-kind="Protocol" aria-pressed="false">Protocols</button>
+        <button type="button" data-kind="Guide" aria-pressed="false">Guides</button>
+        <button type="button" data-kind="Concept" aria-pressed="false">Concepts</button>
+        <button type="button" data-kind="Glossary" aria-pressed="false">Glossary</button>
+      </div>
+    </form>
+    <p id="search-status" aria-live="polite"></p>
+    <ul id="search-results" class="result-list"></ul>
+    <noscript>
+      <p>JavaScript is disabled, so the filter cannot run. Every published page is listed below.</p>
+      <ul class="result-list">
+        {
+          entries.map((entry) => (
+            <li>
+              <a href={entry.url}>{entry.title}</a>
+              <div class="kind">{entry.kind}</div>
+              <p>{entry.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </noscript>
+    <script type="application/json" id="search-data" set:html={payload} />
+  </main>
+  <Footer slot="footer" />
+  <script>
+    import { filterEntries, type SearchEntry } from '../lib/search';
+
+    const data = document.querySelector<HTMLScriptElement>('#search-data');
+    const input = document.querySelector<HTMLInputElement>('#search-q');
+    const status = document.querySelector<HTMLElement>('#search-status');
+    const results = document.querySelector<HTMLElement>('#search-results');
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-kind]')];
+    const entries = JSON.parse(data?.textContent || '[]') as SearchEntry[];
+    let kind = 'all';
+
+    function render() {
+      if (!results || !status || !input) return;
+      const query = input.value;
+      const matched = filterEntries(entries, query, kind);
+      results.replaceChildren();
+      if (query.trim() && matched.length === 0) {
+        const item = document.createElement('li');
+        item.textContent = `No pages match “${query.trim()}”.`;
+        results.append(item);
+      } else {
+        for (const entry of matched) {
+          const item = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = entry.url;
+          link.textContent = entry.title;
+          const meta = document.createElement('div');
+          meta.className = 'kind';
+          meta.textContent = entry.kind;
+          const summary = document.createElement('p');
+          summary.textContent = entry.summary;
+          item.append(link, meta, summary);
+          results.append(item);
+        }
+      }
+      const label = query.trim() ? `${matched.length} result${matched.length === 1 ? '' : 's'}` : `${matched.length} published pages`;
+      status.textContent = label;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (input && params.get('q')) input.value = params.get('q') ?? '';
+    input?.addEventListener('input', () => {
+      const url = new URL(window.location.href);
+      const value = input.value.trim();
+      if (value) url.searchParams.set('q', value);
+      else url.searchParams.delete('q');
+      window.history.replaceState(null, '', url);
+      render();
+    });
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        kind = button.dataset.kind ?? 'all';
+        for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+        render();
+      });
+    }
+    render();
+  </script>
+</BaseLayout>

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Page not found" description="That page is not part of Protocol Anatomy." noindex={true}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">404</p>
+      <h1>This page is not in the publication</h1>
+      <p class="lede">The address does not match a protocol, guide, concept, or glossary entry.</p>
+      <p><a class="button" href="/">Go to the homepage</a> <a href="/search">Search the site</a></p>
+    </header>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

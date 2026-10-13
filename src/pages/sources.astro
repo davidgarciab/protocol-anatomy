@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { sourceKindLabel, type Source } from '../lib/site';
+
+const collections = [
+  ...(await getCollection('protocols')).map((entry) => ({ entry, href: `/protocols/${entry.id}` })),
+  ...(await getCollection('guides')).map((entry) => ({ entry, href: `/guides/${entry.id}` })),
+  ...(await getCollection('concepts')).map((entry) => ({ entry, href: `/concepts/${entry.id}` })),
+  ...(await getCollection('site')).map((entry) => ({ entry, href: `/${entry.id}` })),
+];
+
+const byUrl = new Map<string, { source: Source; pages: { href: string; title: string }[] }>();
+for (const { entry, href } of collections) {
+  for (const source of entry.data.sources) {
+    const existing = byUrl.get(source.url);
+    const page = { href, title: entry.data.title };
+    if (existing) existing.pages.push(page);
+    else byUrl.set(source.url, { source, pages: [page] });
+  }
+}
+const sources = [...byUrl.values()].sort((a, b) => a.source.title.localeCompare(b.source.title));
+const description = 'Primary and secondary sources cited by the protocol, version, and concept guides.';
+---
+
+<BaseLayout title="Sources" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Reference</p>
+      <h1>Sources</h1>
+      <p class="lede">
+        Every article ends with the sources used for that page. This index is the same set, grouped by URL. A listed source supports the article that cites it. It is not a general endorsement of the publisher.
+      </p>
+    </header>
+    <ol class="references">
+      {
+        sources.map(({ source, pages }) => (
+          <li>
+            <a href={source.url}>{source.title}</a>
+            <div class="kind">
+              {sourceKindLabel(source.kind)} · {source.publisher}
+            </div>
+            <div>
+              {pages.map((page, index) => (
+                <>
+                  {index > 0 && ' · '}
+                  <a href={page.href}>{page.title}</a>
+                </>
+              ))}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

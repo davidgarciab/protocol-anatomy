@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const protocols = await getCollection('protocols');
+const description = 'Comparisons of deployed protocol versions and the architectural changes between them.';
+
+function protocolTitle(id: string): string {
+  return protocols.find((protocol) => protocol.id === id)?.data.title ?? id;
+}
+---
+
+<BaseLayout title="Version guides" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Architecture</p>
+      <h1>Version guides</h1>
+      <p class="lede">
+        These pages compare designs that were released or that the project’s own documents still treat as production architecture. A proposal is labeled as a proposal.
+      </p>
+    </header>
+    <ul class="contents-index">
+      {
+        guides.map((guide) => (
+          <li>
+            <a href={`/guides/${guide.id}`}>
+              <span class="num">→</span>
+              <span>{guide.data.title}</span>
+              <span class="cat">{protocolTitle(guide.data.protocol)}</span>
+            </a>
+            <p>{guide.data.versionContext}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { glossary } from '../../data/glossary';
+
+const letters = [...new Set(glossary.map((entry) => entry.term[0].toUpperCase()))].sort();
+const grouped = letters.map((letter) => ({
+  letter,
+  entries: glossary.filter((entry) => entry.term[0].toUpperCase() === letter),
+}));
+const description = 'Short definitions for the accounting, pricing, and governance terms used in the protocol guides.';
+---
+
+<BaseLayout title="Glossary" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Reference</p>
+      <h1>Glossary</h1>
+      <p class="lede">
+        Definitions are scoped to the protocols in this publication. A term that means one thing in Aave can be a different object in Maker or Curve.
+      </p>
+    </header>
+    <div class="glossary-tools">
+      <label for="glossary-filter">Filter terms</label>
+      <input id="glossary-filter" type="search" placeholder="Filter by term" />
+    </div>
+    <nav class="letter-nav" aria-label="Glossary letters">
+      {letters.map((letter) => <a href={`#letter-${letter.toLowerCase()}`}>{letter}</a>)}
+    </nav>
+    <p id="glossary-status" class="muted" aria-live="polite"></p>
+    {
+      grouped.map((group) => (
+        <section aria-labelledby={`letter-${group.letter.toLowerCase()}`}>
+          <h2 id={`letter-${group.letter.toLowerCase()}`} class="letter-heading">
+            {group.letter}
+          </h2>
+          <ul class="glossary-list">
+            {group.entries.map((entry) => (
+              <li id={entry.id} data-term={`${entry.term} ${entry.definition}`}>
+                <h3>{entry.term}</h3>
+                <p>{entry.definition}</p>
+                {entry.related.length > 0 && (
+                  <p>
+                    {entry.related.map((link, index) => (
+                      <>
+                        {index > 0 && ' · '}
+                        <a href={link.href}>{link.label}</a>
+                      </>
+                    ))}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+  <Footer slot="footer" />
+  <script>
+    const input = document.querySelector<HTMLInputElement>('#glossary-filter');
+    const status = document.querySelector<HTMLElement>('#glossary-status');
+    const items = [...document.querySelectorAll<HTMLElement>('.glossary-list li')];
+    const sections = [...document.querySelectorAll<HTMLElement>('.glossary-list')].map((list) => list.closest('section'));
+
+    function apply() {
+      const query = input?.value.trim().toLowerCase() ?? '';
+      let visible = 0;
+      for (const item of items) {
+        const haystack = item.dataset.term?.toLowerCase() ?? '';
+        const show = query.length === 0 || haystack.includes(query);
+        item.hidden = !show;
+        if (show) visible += 1;
+      }
+      for (const section of sections) {
+        if (!section) continue;
+        const any = [...section.querySelectorAll<HTMLElement>('.glossary-list li')].some((item) => !item.hidden);
+        section.hidden = !any;
+      }
+      if (status) {
+        status.textContent = query ? `${visible} matching term${visible === 1 ? '' : 's'}` : '';
+      }
+    }
+
+    input?.addEventListener('input', apply);
+  </script>
+</BaseLayout>

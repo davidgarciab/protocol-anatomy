@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { readingMinutes } from '../../lib/reading';
+import { protocolLinks } from '../../lib/relate';
+
+export async function getStaticPaths() {
+  const protocols = await getCollection('protocols');
+  const guides = await getCollection('guides');
+  const concepts = await getCollection('concepts');
+  const library = { protocols, guides, concepts };
+  return protocols.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry, library },
+  }));
+}
+
+const { entry, library } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<ArticleLayout
+  entry={entry}
+  headings={headings}
+  kicker={entry.data.category}
+  readingMinutes={readingMinutes(entry.body)}
+  crumbs={[{ href: '/protocols', label: 'Protocols' }, { label: entry.data.title }]}
+  related={protocolLinks(entry, library)}
+>
+  <Content />
+  <h2>Versions in this overview</h2>
+  <ul class="version-list">
+    {
+      entry.data.versions.map((version) => (
+        <li>
+          <strong>{version.name}</strong> <span class="kind">({version.status})</span> {version.note}
+        </li>
+      ))
+    }
+  </ul>
+</ArticleLayout>
