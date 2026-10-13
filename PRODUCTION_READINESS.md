@@ -41,8 +41,17 @@ Updated 13 October 2026. This file records what was checked and what is actually
 
 ### Live result
 
-`https://protocol-anatomy.pages.dev` is the live Pages production URL for deployment `f5fa4d25-fdf5-440b-9251-7020ef8d44a1` (commit `020f437`). The trailing-slash correction is not in that deployment until the next `main` build finishes.
+Checked 13 October 2026 against deployment `90b92b02-86a8-4570-8e4e-ca2e010672b2` (commit `6df2cdd`, production, Active).
 
-`protocols.davidgarciab.com` is attached to the Pages project (domain id `8f1966da-f6fd-4267-93a2-1e1a6d269c11`) with status `pending`. Verification says `CNAME record not set`. DNS list and create calls return HTTP 403 with the current Wrangler token, which has zone read but not DNS edit. The dashboard session used for this check was not signed in.
+- `https://protocol-anatomy.pages.dev/` and the directory routes for all five protocols, all five version guides, concepts, glossary, methodology, sources, and search returned HTTP 200.
+- `/protocols/aave` redirects with HTTP 308 to `/protocols/aave/`, whose canonical is `https://protocols.davidgarciab.com/protocols/aave/`.
+- `robots.txt` allows crawling and points at `https://protocols.davidgarciab.com/sitemap-index.xml`. The sitemap lists the protocol and guide URLs with trailing slashes.
+- Unknown paths return HTTP 404 with `noindex`.
+- Response headers include `nosniff`, `strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, and `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+- The `protocol-anatomy.pages.dev` certificate is valid (Let's Encrypt, issued 13 October 2026, expires 11 January 2027).
+- In the browser: homepage, Aave overview (breadcrumbs, table of contents, two diagrams), search for `stETH` (16 results) and `zzznomatchtoken` (0 results), glossary filter `stETH` (5 visible terms), mobile menu open and Escape dismissal, and the 404 page. The 404 page recorded no script errors. The copy button reported `Copy failed` in the automated browser because the document was not focused and clipboard access was denied. That is the existing failure path, not a production exception.
+- GitHub Actions check on `6df2cdd` succeeded.
+
+`protocols.davidgarciab.com` is attached to the Pages project (domain id `8f1966da-f6fd-4267-93a2-1e1a6d269c11`) with status `pending`. Verification says `CNAME record not set`. `dig` returned no CNAME or A record, and HTTPS to that hostname did not connect. DNS list and create calls return HTTP 403 with the current Wrangler token, which has zone read but not DNS edit. The dashboard session used for this check was not signed in.
 
 Required record, and nothing else: proxied CNAME `protocols` → `protocol-anatomy.pages.dev` on zone `davidgarciab.com` (`54d48c045d5bd2b1a741b2f11d980a99`). Do not change nameservers or other records.
