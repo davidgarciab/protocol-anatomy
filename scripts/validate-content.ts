@@ -74,7 +74,7 @@ const catalog: Catalog = {
   concepts: new Set(docs.filter((doc) => doc.collection === 'concepts').map((doc) => doc.id)),
   glossary: new Set(glossary.map((entry) => entry.id)),
   diagrams: diagramNames,
-  paths: new Set(['/', '/protocols', '/guides', '/concepts', '/glossary', '/methodology', '/sources', '/search']),
+  paths: new Set(['/', '/protocols', '/guides', '/concepts', '/glossary', '/methodology', '/sources', '/search', '/about', '/changes', '/privacy', '/rss.xml']),
   headings: new Map([['/glossary', new Set(glossary.map((entry) => entry.id))]]),
 };
 

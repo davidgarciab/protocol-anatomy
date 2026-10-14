@@ -128,6 +128,20 @@ export function validateDocument(doc: CheckedDocument, catalog: Catalog): string
     if (!value || !isIsoDate(value)) errors.push(`${prefix}: ${key} must be YYYY-MM-DD`);
   }
 
+  if (data.changes !== undefined) {
+    const published = asString(data.published);
+    if (!Array.isArray(data.changes)) errors.push(`${prefix}: changes must be a list`);
+    else
+      data.changes.forEach((change, index) => {
+        const record = (change ?? {}) as Record<string, unknown>;
+        const date = asString(record.date);
+        if (!date || !isIsoDate(date)) errors.push(`${prefix}: change ${index} date must be YYYY-MM-DD`);
+        else if (published && date < published) errors.push(`${prefix}: change ${index} predates publication`);
+        const summary = asString(record.summary);
+        if (!summary || summary.trim().length < 20) errors.push(`${prefix}: change ${index} needs a summary of what changed`);
+      });
+  }
+
   const tags = asStringArray(data.tags);
   if (!tags || tags.length === 0) errors.push(`${prefix}: tags must be a non-empty list`);
 

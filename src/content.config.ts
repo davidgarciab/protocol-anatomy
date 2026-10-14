@@ -29,6 +29,8 @@ const shared = {
   status: z.literal('published'),
   published: date,
   lastVerified: date,
+  /** Substantive content changes after publication. Re-verifying sources alone is not a change. */
+  changes: z.array(z.object({ date, summary: z.string().min(20) })).default([]),
   tags: z.array(z.string().min(2)).min(1),
   sources: z.array(source).min(1),
   order: z.number().int().positive(),

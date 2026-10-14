@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import InlineCode from '../components/InlineCode.astro';
+import { changeLog } from '../lib/changes';
+import { publishedPages } from '../lib/published-pages';
+
+const entries = changeLog(await publishedPages());
+const byDate = new Map<string, typeof entries>();
+for (const entry of entries) byDate.set(entry.date, [...(byDate.get(entry.date) ?? []), entry]);
+const description = 'New articles and substantive corrections to Protocol Anatomy, newest first, with an RSS feed.';
+---
+
+<BaseLayout title="What changed" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">About this publication</p>
+      <h1>What changed</h1>
+      <p class="lede">
+        Every new article and every substantive change to an existing one, newest first. Follow along with the <a href="/rss.xml">RSS feed</a>.
+      </p>
+    </header>
+    <div class="prose">
+      <p>
+        A change is listed when an article’s explanation, figures, or version claims change. Re-reading the sources without changing the text moves the “Last verified” date on that page and is not listed here. A weekly check compares the cited contract files and releases with the versions that were read, and a difference leads to a review, not to an automatic edit. The <a href="/methodology/">methodology</a> explains both dates.
+      </p>
+      {
+        [...byDate].map(([date, items]) => (
+          <section class="change-day" aria-labelledby={`day-${date}`}>
+            <h2 id={`day-${date}`}>
+              <time datetime={date}>{date}</time>
+            </h2>
+            <ul class="result-list">
+              {items.map((entry) => (
+                <li>
+                  <a href={entry.url}>{entry.title}</a>
+                  <div class="kind">{entry.kind === 'published' ? 'Published' : 'Updated'}</div>
+                  <p>
+                    <InlineCode text={entry.summary} />
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

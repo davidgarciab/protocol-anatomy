@@ -102,6 +102,7 @@ Required editorial checks before treating an article as done:
 - Code blocks say whether they are an excerpt or an educational sketch, and excerpts name the file and tag or commit.
 - Educational Solidity is not described as compiled, audited, or safe for assets.
 - `lastVerified` is the date those sources were actually read, in `YYYY-MM-DD`.
+- A substantive change to a published article adds an entry to its `changes` list (`date`, one-line `summary`). That date becomes the page’s “Updated” date and `dateModified`, and the entry appears on `/changes/` and in `/rss.xml`. Moving `lastVerified` alone is not a change.
 - Internal links point at published pages or glossary ids.
 - The article is useful without the protocol’s marketing homepage.
 

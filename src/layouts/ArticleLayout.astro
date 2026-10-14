@@ -9,6 +9,8 @@ import TableOfContents from '../components/TableOfContents.astro';
 import References from '../components/References.astro';
 import Related, { type RelatedLink } from '../components/Related.astro';
 import { SITE, authorJsonLd, canonicalUrl, type Source } from '../lib/site';
+import { lastModified } from '../lib/changes';
+import InlineCode from '../components/InlineCode.astro';
 
 interface Crumb {
   href?: string;
@@ -36,6 +38,8 @@ const pathname = Astro.url.pathname;
 const sources = data.sources as Source[];
 const versionContext = 'versionContext' in data ? data.versionContext : undefined;
 const pageUrl = canonicalUrl(pathname);
+const modified = lastModified(data);
+const changes = [...data.changes].sort((a, b) => b.date.localeCompare(a.date));
 const ogImage = `/og/${pathname.replace(/^\/+|\/+$/g, '')}.png`;
 const sourceFile = entry.filePath;
 const issueUrl = `${SITE.repoUrl}/issues/new?template=correction.yml&title=${encodeURIComponent(`Correction: ${data.title}`)}`;
@@ -58,7 +62,7 @@ const jsonLd = {
       headline: data.title,
       description: data.description,
       datePublished: data.published,
-      dateModified: data.lastVerified,
+      dateModified: modified,
       url: pageUrl,
       image: new URL(ogImage, SITE.url).href,
       mainEntityOfPage: pageUrl,
@@ -100,6 +104,16 @@ const jsonLd = {
             <dt>Published</dt>
             <dd><time datetime={data.published}>{data.published}</time></dd>
           </div>
+          {
+            modified !== data.published && (
+              <div>
+                <dt>Updated</dt>
+                <dd>
+                  <time datetime={modified}>{modified}</time> <a href="#changes">What changed</a>
+                </dd>
+              </div>
+            )
+          }
           <div>
             <dt>Last verified</dt>
             <dd>
@@ -125,6 +139,23 @@ const jsonLd = {
         <div class="prose">
           <slot />
           <References sources={sources} />
+          {
+            changes.length > 0 && (
+              <section class="changes" aria-labelledby="changes">
+                <h2 id="changes">Changes</h2>
+                <ul>
+                  {changes.map((change) => (
+                    <li>
+                      <time datetime={change.date}>{change.date}</time> <InlineCode text={change.summary} />
+                    </li>
+                  ))}
+                </ul>
+                <p>
+                  Every change to the publication is listed on <a href="/changes/">What changed</a>.
+                </p>
+              </section>
+            )
+          }
           <Related links={related} />
           <p class="improve">
             See something wrong or missing?

@@ -24,6 +24,8 @@ const required = [
   'search-index.json',
   'privacy/index.html',
   'about/index.html',
+  'changes/index.html',
+  'rss.xml',
   '404.html',
   'robots.txt',
   'sitemap-index.xml',
@@ -68,6 +70,15 @@ if (existsSync(join(dist, 'search/index.html'))) {
   const search = read('search/index.html');
   if (!search.includes('noindex')) errors.push('Search page is indexable duplicate content');
   if (search.length > 80_000) errors.push(`Search page is ${search.length} bytes; the index belongs in search-index.json`);
+}
+
+if (existsSync(join(dist, 'rss.xml'))) {
+  const feed = read('rss.xml');
+  if (!feed.includes('<link>https://protocols.davidgarciab.com/concepts/constant-product/</link>')) {
+    errors.push('rss.xml is missing published articles');
+  }
+  const guids = [...feed.matchAll(/<guid[^>]*>([^<]+)<\/guid>/g)].map((match) => match[1]);
+  if (new Set(guids).size !== guids.length) errors.push('rss.xml has duplicate guids');
 }
 
 if (existsSync(join(dist, 'search-index.json'))) {

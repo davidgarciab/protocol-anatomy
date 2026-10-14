@@ -13,6 +13,7 @@ const pages = [
   'search/index.html',
   'methodology/index.html',
   'about/index.html',
+  'changes/index.html',
   '404.html',
 ];
 

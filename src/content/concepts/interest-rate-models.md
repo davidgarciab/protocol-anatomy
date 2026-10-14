@@ -5,6 +5,9 @@ summary: "Aave sets a variable borrow rate from utilization, with a kink at an o
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-14"
+changes:
+  - date: "2026-10-14"
+    summary: "Corrected how Aave rates compound: the liquidity index accrues linearly and the variable-borrow index uses a binomial approximation, as `MathUtils.sol` shows."
 order: 6
 group: "credit"
 tags:

@@ -5,6 +5,9 @@ summary: "Concentrated liquidity is constant-product inventory that is only acti
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-14"
+changes:
+  - date: "2026-10-14"
+    summary: "Added which tokens a position holds below, inside, and above its range, with excerpts from the v3 and v4 `SqrtPriceMath` and `LiquidityAmounts` libraries."
 order: 4
 group: "markets"
 tags:

@@ -5,6 +5,9 @@ summary: "Aave scales aToken balances by a liquidity index. Maker stores normali
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-14"
+changes:
+  - date: "2026-10-14"
+    summary: "Added how the Aave V3 liquidity and variable-borrow indexes move, with excerpts from `MathUtils.sol`, `ReserveLogic.sol`, `AToken.sol`, and `WadRayMath.sol`."
 order: 13
 group: "engineering"
 tags:

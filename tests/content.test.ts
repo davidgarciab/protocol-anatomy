@@ -10,6 +10,7 @@ import {
   type Catalog,
 } from '../src/lib/content-rules';
 import { readingMinutes } from '../src/lib/reading';
+import { changeLog, lastModified } from '../src/lib/changes';
 import { canonicalUrl } from '../src/lib/site';
 
 const catalog: Catalog = {
@@ -106,5 +107,26 @@ describe('canonical URLs', () => {
     expect(canonicalUrl('/glossary#health-factor')).toBe('https://protocols.davidgarciab.com/glossary/#health-factor');
     expect(canonicalUrl('/')).toBe('https://protocols.davidgarciab.com/');
     expect(canonicalUrl('/protocols/aave')).not.toContain('localhost');
+  });
+});
+
+describe('change log', () => {
+  const change = { date: '2026-10-20', summary: 'Corrected the liquidation bonus example.' };
+
+  it('uses the latest change as the modified date and ignores lastVerified', () => {
+    expect(lastModified({ published: '2026-10-13' })).toBe('2026-10-13');
+    expect(lastModified({ published: '2026-10-13', changes: [change, { ...change, date: '2026-10-15' }] })).toBe('2026-10-20');
+  });
+
+  it('lists publications and changes newest first', () => {
+    const log = changeLog([
+      { title: 'A', url: '/a/', description: 'About A', data: { published: '2026-10-13', changes: [change] } },
+      { title: 'B', url: '/b/', description: 'About B', data: { published: '2026-10-14' } },
+    ]);
+    expect(log.map((entry) => `${entry.date} ${entry.kind} ${entry.title}`)).toEqual([
+      '2026-10-20 updated A',
+      '2026-10-14 published B',
+      '2026-10-13 published A',
+    ]);
   });
 });
