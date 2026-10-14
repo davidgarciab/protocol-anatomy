@@ -5,6 +5,9 @@ summary: "Liquid staking gives the depositor a transferable claim while validato
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+changes:
+  - date: "2026-10-14"
+    summary: "Added a worked example of one share count held as stETH and as wstETH across a reward and a penalty."
 order: 11
 group: "monetary"
 tags:
@@ -61,6 +64,8 @@ Lido V3 [staking vaults](/glossary#staking-vault) are the documented exception t
 That socialization is the product. It is also the risk. One operator’s slashing changes the share rate for holders who never chose that operator. Module design and operator limits are how the protocol tries to bound the blast radius. They are governance parameters. The share math will apply whatever the report contains.
 
 wstETH is the same share with a fixed balance. The wrapper locks stETH and mints the share count. Use it where a rebase would corrupt internal accounting. Do not use it as if it were a different asset with a different exit. Unwrapping or requesting withdrawal returns to the same queue.
+
+A worked example, with an illustrative ratio of 1.20 pooled ether per share. A holder with 10 stETH owns 10 / 1.20 = 8.3333 shares. Wrapping locks the 10 stETH and mints 8.3333 wstETH. An oracle report that adds rewards moves the ratio to 1.21. The unwrapped holder’s stETH balance becomes 8.3333 × 1.21 = 10.0833 without a transfer. The wstETH balance is still 8.3333, and unwrapping it now returns 10.0833 stETH. Both holders earned the same reward. Only where the number changes is different. A report in which penalties exceed rewards, moving the ratio to 1.19, takes both to 9.9167 stETH of value in the same way.
 
 ## The exit
 

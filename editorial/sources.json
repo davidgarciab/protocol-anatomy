@@ -236,5 +236,38 @@
       "src/content/concepts/concentrated-liquidity.md"
     ],
     "why": "v4 getLiquidityForAmounts repeats the three range branches and takes the minimum liquidity inside the range."
+  },
+  {
+    "id": "uniswap-v2-library",
+    "kind": "github-file",
+    "repo": "Uniswap/v2-periphery",
+    "path": "contracts/libraries/UniswapV2Library.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/concepts/constant-product.md"
+    ],
+    "why": "The worked swap and the swap calculator use getAmountOut from this file."
+  },
+  {
+    "id": "aave-v3-origin-generic-logic",
+    "kind": "github-file",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/libraries/logic/GenericLogic.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/collateral-and-liquidation.md"
+    ],
+    "why": "The worked liquidation and the health-factor calculator compute the health factor as this file does."
+  },
+  {
+    "id": "aave-v3-origin-liquidation-logic",
+    "kind": "github-file",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/libraries/logic/LiquidationLogic.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/collateral-and-liquidation.md"
+    ],
+    "why": "The worked liquidation quotes the close-factor thresholds, the dust rule, and the bonus and protocol-fee split from this file. The calculator applies the same close-factor rule."
   }
 ]

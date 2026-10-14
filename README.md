@@ -124,6 +124,8 @@ Add a diagram by exporting a new HTML figure from `src/diagrams/registry.ts` and
 
 The figure needs a caption and a text description. Label simplified flows as simplified. The build fails on an unknown diagram name. Rendered Markdown is cached by file digest, so a diagram-plugin change does not rebuild articles until you delete `node_modules/.astro` and run the build again.
 
+A calculator is a registry entry built with `calculator()`: a form whose inputs carry the worked example’s values and whose `<output>` elements are pre-filled with that example’s results, so the figure reads correctly without JavaScript. `src/components/Calculators.astro` makes it live using the pure functions in `src/lib/calculators.ts`, which `tests/calculators.test.ts` pins to the numbers printed in the articles. Change an example and its test together.
+
 Code samples use fenced blocks. The article layout adds a Copy button when JavaScript is available. The code remains readable without it.
 
 ## Social preview images

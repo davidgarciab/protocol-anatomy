@@ -1,0 +1,46 @@
+---
+/** Makes the calculator figures from the diagram registry live. Without it they show the worked example. */
+---
+
+<script>
+  import { closeFactorLabel, constantProductQuote, formatNumber, healthCheck } from '../lib/calculators';
+
+  type Results = Record<string, string> | null;
+
+  const compute: Record<string, (value: (name: string) => number) => Results> = {
+    swap: (value) => {
+      const quote = constantProductQuote(value('reserveIn'), value('reserveOut'), value('amountIn'), value('feeBps'));
+      if (!quote) return null;
+      return {
+        amountOut: formatNumber(quote.amountOut),
+        averagePrice: formatNumber(quote.averagePrice),
+        spotBefore: formatNumber(quote.spotBefore),
+        spotAfter: formatNumber(quote.spotAfter),
+        priceGap: `${formatNumber(quote.priceGap)}%`,
+        kGrowth: `${formatNumber(quote.kGrowth, 4)}%`,
+      };
+    },
+    health: (value) => {
+      const check = healthCheck(value('collateralAmount'), value('collateralPrice'), value('threshold'), value('debt'));
+      if (!check) return null;
+      return {
+        healthFactor: formatNumber(check.healthFactor, 4),
+        liquidationPrice: formatNumber(check.liquidationPrice),
+        closeFactor: closeFactorLabel(check),
+      };
+    },
+  };
+
+  document.querySelectorAll<HTMLFormElement>('form[data-calculator]').forEach((form) => {
+    const run = compute[form.dataset.calculator ?? ''];
+    if (!run) return;
+    const update = () => {
+      const results = run((name) => Number((form.elements.namedItem(name) as HTMLInputElement | null)?.value));
+      form.querySelectorAll('output').forEach((output) => {
+        output.value = results ? (results[output.name] ?? '') : '—';
+      });
+    };
+    form.addEventListener('input', update);
+    form.addEventListener('submit', (event) => event.preventDefault());
+  });
+</script>

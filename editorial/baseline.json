@@ -9,6 +9,16 @@
     "observedAt": "2026-10-14",
     "url": "https://github.com/aave/aave-v3-core/commit/2437c5600c12ab0faefc8173fff1ca9615732ce5"
   },
+  "aave-v3-origin-generic-logic": {
+    "observed": "cf4e138c5959b1434a08c72c759d422c227bd47e",
+    "observedAt": "2026-10-14",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/cf4e138c5959b1434a08c72c759d422c227bd47e"
+  },
+  "aave-v3-origin-liquidation-logic": {
+    "observed": "2f6a0fc96a957265fb38913053831e0880345d1f",
+    "observedAt": "2026-10-14",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/2f6a0fc96a957265fb38913053831e0880345d1f"
+  },
   "aave-v3-pool": {
     "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
     "observedAt": "2026-10-14",
@@ -58,6 +68,11 @@
     "observed": "e5660deac9434c79d48ecde879c29f37fb89f2dc",
     "observedAt": "2026-10-14",
     "url": "https://github.com/sky-ecosystem/sdai/commit/e5660deac9434c79d48ecde879c29f37fb89f2dc"
+  },
+  "uniswap-v2-library": {
+    "observed": "87edfdcaf49ccc52591502993db4c8c08ea9eec0",
+    "observedAt": "2026-10-14",
+    "url": "https://github.com/Uniswap/v2-periphery/commit/87edfdcaf49ccc52591502993db4c8c08ea9eec0"
   },
   "uniswap-v3-liquidity-amounts": {
     "observed": "b6b885569786a319d853acc610ed03884fda9bee",

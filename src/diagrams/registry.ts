@@ -1,3 +1,5 @@
+import { closeFactorLabel, constantProductQuote, formatNumber, healthCheck } from '../lib/calculators';
+
 function figure(title: string, kicker: string, body: string, note: string): string {
   return `<figure class="diagram">
   <figcaption><span class="diagram-kicker">${kicker}</span> <span class="diagram-title">${title}</span></figcaption>
@@ -15,6 +17,33 @@ function flow(items: { label: string; detail: string }[]): string {
     .join('');
   return `<ol class="flow">${steps}</ol>`;
 }
+
+interface CalculatorField {
+  name: string;
+  label: string;
+  value: number;
+  step?: string;
+}
+
+function calculator(
+  kind: string,
+  fields: CalculatorField[],
+  results: { name: string; label: string; value: string }[],
+): string {
+  const inputs = fields
+    .map(
+      (field) =>
+        `<label><span>${field.label}</span><input type="number" name="${field.name}" value="${field.value}" min="0" step="${field.step ?? 'any'}" inputmode="decimal"></label>`,
+    )
+    .join('');
+  const outputs = results
+    .map((result) => `<div><dt>${result.label}</dt><dd><output name="${result.name}">${result.value}</output></dd></div>`)
+    .join('');
+  return `<form class="calculator" data-calculator="${kind}"><div class="calc-inputs">${inputs}</div><dl class="calc-results" aria-live="polite">${outputs}</dl></form>`;
+}
+
+const swap = constantProductQuote(100, 300_000, 1, 30)!;
+const health = healthCheck(10, 1_850, 80, 15_000)!;
 
 export const diagrams: Record<string, string> = {
   'swap-flow': figure(
@@ -184,6 +213,47 @@ export const diagrams: Record<string, string> = {
       },
     ]),
     'The three cases are the branches in Uniswap v3 LiquidityAmounts.getAmountsForLiquidity and in v4 LiquidityAmounts.getLiquidityForAmounts. This is not a plot of a live pool, and a hook with custom accounting can opt out of the curve.',
+  ),
+  'swap-calculator': figure(
+    'Try a constant-product swap',
+    'Calculator',
+    calculator(
+      'swap',
+      [
+        { name: 'reserveIn', label: 'Reserve of the token paid in', value: 100 },
+        { name: 'reserveOut', label: 'Reserve of the token paid out', value: 300_000 },
+        { name: 'amountIn', label: 'Amount paid in', value: 1 },
+        { name: 'feeBps', label: 'Fee in basis points (v2: 30)', value: 30, step: '1' },
+      ],
+      [
+        { name: 'amountOut', label: 'Amount out', value: formatNumber(swap.amountOut) },
+        { name: 'averagePrice', label: 'Average price paid', value: formatNumber(swap.averagePrice) },
+        { name: 'spotBefore', label: 'Spot price before', value: formatNumber(swap.spotBefore) },
+        { name: 'spotAfter', label: 'Spot price after', value: formatNumber(swap.spotAfter) },
+        { name: 'priceGap', label: 'Average price below spot', value: `${formatNumber(swap.priceGap)}%` },
+        { name: 'kGrowth', label: 'Growth of x · y', value: `${formatNumber(swap.kGrowth, 4)}%` },
+      ],
+    ),
+    'Uses the v2 getAmountOut formula with real numbers instead of integer division, so the last digits can differ from a pair. Prices are in units of the output token per unit of the input token. With JavaScript off, the values shown are the worked example above.',
+  ),
+  'health-factor-calculator': figure(
+    'Try an Aave health factor',
+    'Calculator',
+    calculator(
+      'health',
+      [
+        { name: 'collateralAmount', label: 'Collateral amount', value: 10 },
+        { name: 'collateralPrice', label: 'Collateral price in USD', value: 1_850 },
+        { name: 'threshold', label: 'Liquidation threshold, percent', value: 80 },
+        { name: 'debt', label: 'Debt in USD', value: 15_000 },
+      ],
+      [
+        { name: 'healthFactor', label: 'Health factor', value: formatNumber(health.healthFactor, 4) },
+        { name: 'liquidationPrice', label: 'Collateral price at HF 1', value: formatNumber(health.liquidationPrice) },
+        { name: 'closeFactor', label: 'Max repaid in one call', value: closeFactorLabel(health) },
+      ],
+    ),
+    'One collateral asset and one debt asset priced at 1 USD. The threshold is an input, not a live Aave parameter. The repay limit follows the V3.3 LiquidationLogic rule quoted above. With JavaScript off, the values shown are the worked example above.',
   ),
 };
 

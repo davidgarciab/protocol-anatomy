@@ -11,6 +11,7 @@ import Related, { type RelatedLink } from '../components/Related.astro';
 import { SITE, authorJsonLd, canonicalUrl, type Source } from '../lib/site';
 import { lastModified } from '../lib/changes';
 import InlineCode from '../components/InlineCode.astro';
+import Calculators from '../components/Calculators.astro';
 
 interface Crumb {
   href?: string;
@@ -146,7 +147,7 @@ const jsonLd = {
                 <ul>
                   {changes.map((change) => (
                     <li>
-                      <time datetime={change.date}>{change.date}</time> <InlineCode text={change.summary} />
+                      <time datetime={change.date}>{change.date}</time>: <InlineCode text={change.summary} />
                     </li>
                   ))}
                 </ul>
@@ -168,4 +169,5 @@ const jsonLd = {
     </article>
   </main>
   <Footer slot="footer" />
+  <Calculators />
 </BaseLayout>

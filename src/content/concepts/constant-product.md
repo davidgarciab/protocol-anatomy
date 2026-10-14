@@ -5,6 +5,9 @@ summary: "Constant-product pricing keeps the product of two reserves from fallin
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+changes:
+  - date: "2026-10-14"
+    summary: "Added a worked v2 swap with the fee split out, from `getAmountOut` in `UniswapV2Library.sol`, and a swap calculator."
 order: 3
 group: "markets"
 tags:
@@ -21,6 +24,10 @@ related:
   - concentrated-liquidity
   - liquidity-pools
 sources:
+  - title: "UniswapV2Library.sol at 87edfdca"
+    url: "https://github.com/Uniswap/v2-periphery/blob/87edfdcaf49ccc52591502993db4c8c08ea9eec0/contracts/libraries/UniswapV2Library.sol"
+    kind: "code"
+    publisher: "Uniswap"
   - title: "How Uniswap works"
     url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
     kind: "docs"
@@ -48,6 +55,26 @@ The spot price of `y` in units of `x` is `x / y` only as a marginal price, befor
 The v2 flash-swap guide puts the fee at 0.30 percent on the input. The familiar quote multiplies the input by 997 and the reserve by 1000 so that only 99.7 percent of the input counts toward the product. The pool can therefore increase `k` slightly. It must not decrease `k` using the post-fee balances. That increase is the LP’s fee income, left in the reserves so that each LP token claims a larger inventory.
 
 A sketch of the quote, with the rounding made obvious, is on the [Uniswap](/protocols/uniswap) page. The deployed pair does not trust the caller’s arithmetic. It measures token balances. If the product check fails, the swap reverts. There is no partial fill.
+
+## A worked swap
+
+Take a v2 pool that holds 100 ETH and 300,000 USDC, and ignore token decimals. The spot price is 300,000 / 100 = 3,000 USDC per ETH. A trader sends 1 ETH. `getAmountOut` in the v2 periphery library ([`UniswapV2Library.sol` at `87edfdca`](https://github.com/Uniswap/v2-periphery/blob/87edfdcaf49ccc52591502993db4c8c08ea9eec0/contracts/libraries/UniswapV2Library.sol), read on 14 October 2026) multiplies the input by 997 and the reserve by 1,000:
+
+```text
+Worked arithmetic for the example above, not contract code.
+
+amountInWithFee = 1 × 997                               = 997
+amountOut       = 997 × 300,000 / (100 × 1,000 + 997)
+                = 299,100,000 / 100,997                 ≈ 2,961.47 USDC
+```
+
+The trader pays an average of 2,961.47 USDC per ETH, 1.28 percent below the 3,000 spot price. Without the fee the same trade would return 2,970.30 USDC, so about 0.99 percentage points of the gap is the curve and the rest is the fee. After the trade the pool holds 101 ETH and 297,038.53 USDC. The new spot price is 2,940.98, and the next buyer of ETH starts from there.
+
+The product moved from 30,000,000 to about 30,000,891, up 0.003 percent. That growth is the 0.003 ETH of fee that the formula did not count toward the trade. It stays in the reserves and belongs to the LPs.
+
+Size is what changes the picture. A 10 ETH input into the same pool returns 27,198.33 USDC, an average of 2,719.83: 9.34 percent below spot, of which the fee is still only a small part. The trade is a tenth of the ETH reserve, and the curve charges for that.
+
+<diagram-placeholder name="swap-calculator"></diagram-placeholder>
 
 ## Where the rule is local
 

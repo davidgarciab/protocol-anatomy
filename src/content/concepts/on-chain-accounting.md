@@ -7,6 +7,8 @@ published: "2026-10-13"
 lastVerified: "2026-10-14"
 changes:
   - date: "2026-10-14"
+    summary: "Added a worked example of two aToken balances growing with one liquidity index."
+  - date: "2026-10-14"
     summary: "Added how the Aave V3 liquidity and variable-borrow indexes move, with excerpts from `MathUtils.sol`, `ReserveLogic.sol`, `AToken.sol`, and `WadRayMath.sol`."
 order: 13
 group: "engineering"
@@ -104,6 +106,14 @@ The library comment gives the series it is approximating, and says full exponent
 The implementation keeps the constant term and the first three powers. `n` is the elapsed seconds. `x` is the annual rate divided by `SECONDS_PER_YEAR`, evaluated with `rayMul` rather than real-number division. The return is `RAY` plus those terms. If no time has passed, the function returns `RAY` and the index does not move. The comment says the approximation slightly underpays liquidity providers and undercharges borrowers relative to the exponentiation it replaces, and it points at the whitepaper for an error table. In this commit the liquidity index does not call the compounded function. The comment describes the variable-debt approximation. It is not a second, hidden formula inside the aToken.
 
 The visible aToken balance can therefore change in a view because normalized income applies pending linear interest. The stored liquidity index changes when a state-changing call runs `_updateIndexes`. A simulation that reads the index slot and skips the pending linear term will disagree with `balanceOf`.
+
+## A worked aToken balance
+
+The index values here are illustrative, and rounding at 27 decimals is ignored. Alice supplies 1,000 USDC when the reserve’s liquidity index is 1.02. The pool records 1,000 / 1.02 = 980.3922 scaled units for her. Later the index is 1.05. `balanceOf` returns 980.3922 × 1.05 = 1,029.41 USDC. No transfer happened and her stored number did not change.
+
+Bob supplies 1,000 USDC at that moment, at index 1.05. He gets 952.3810 scaled units, fewer than Alice for the same deposit, because each unit is now worth more. When the index reaches 1.10, Alice’s balance is 1,078.43 and Bob’s is 1,047.62. From 1.05 to 1.10 both grew by the same 4.76 percent. Alice’s larger balance is the interest she earned from 1.02 to 1.05, before Bob arrived.
+
+One write to the reserve’s index moved both balances. That is the point of the design: interest reaches every supplier without a loop over accounts. It is also why an integration that copies `balanceOf` into its own storage is wrong one block later.
 
 ## Lazy updates
 
