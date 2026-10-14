@@ -6,6 +6,10 @@ Tagline: Understand the code. Follow the money. Trace the evolution.
 
 The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lido. The canonical site is `https://protocols.davidgarciab.com`.
 
+## Contributing
+
+Built by [David Garcia](https://github.com/davidgarciab). Corrections, new topics, and tooling improvements are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the editorial rules and workflow, or open a [correction](https://github.com/davidgarciab/protocol-anatomy/issues/new?template=correction.yml) or [topic proposal](https://github.com/davidgarciab/protocol-anatomy/issues/new?template=topic.yml).
+
 ## Stack
 
 - [Astro](https://astro.build/) 7 renders the site to static HTML.

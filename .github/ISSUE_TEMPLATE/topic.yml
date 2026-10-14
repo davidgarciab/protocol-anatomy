@@ -1,0 +1,36 @@
+name: Topic proposal
+description: Suggest a new protocol, version guide, concept, or glossary term
+labels: [topic]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [Protocol, Version guide, Concept, Glossary term, Diagram]
+    validations:
+      required: true
+  - type: input
+    id: title
+    attributes:
+      label: Working title
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What mechanism does it explain, and why does it belong here?
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Primary sources you plan to cite
+      description: Docs, whitepaper, source files at a tag or commit, governance posts.
+    validations:
+      required: true
+  - type: checkboxes
+    id: write
+    attributes:
+      label: Who writes it
+      options:
+        - label: I would like to write it

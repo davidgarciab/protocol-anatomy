@@ -735,6 +735,14 @@ th {
   gap: 0.8rem;
 }
 
+.improve {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.95em;
+}
+
 .footer-nav {
   display: flex;
   flex-wrap: wrap;

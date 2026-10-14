@@ -2,6 +2,9 @@ export const SITE = {
   name: 'Protocol Anatomy',
   tagline: 'Understand the code. Follow the money. Trace the evolution.',
   url: 'https://protocols.davidgarciab.com',
+  author: 'David Garcia',
+  authorUrl: 'https://github.com/davidgarciab',
+  repoUrl: 'https://github.com/davidgarciab/protocol-anatomy',
   description:
     'A technical field guide to how major DeFi protocols account for assets, price trades, liquidate collateral, and change their contracts.',
 } as const;

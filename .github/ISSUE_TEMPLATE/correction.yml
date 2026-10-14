@@ -1,0 +1,32 @@
+name: Correction
+description: A claim on the site is wrong, outdated, or unsupported
+labels: [correction]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: URL of the page
+      placeholder: https://protocols.davidgarciab.com/concepts/proxies/
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: What is wrong
+      description: Quote the sentence and explain the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Primary source
+      description: Link to the docs, source file (with tag or commit), or governance post that supports the correction.
+    validations:
+      required: true
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Pull request
+      options:
+        - label: I am happy to open a pull request for this

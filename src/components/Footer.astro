@@ -22,5 +22,9 @@ const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
   <p>
     Educational notes on published protocol designs. This is not an audit, a recommendation to allocate capital, or financial advice. The protocols named here are independent projects.
   </p>
-  <p>Prepared for <span>{SITE.url}</span>.</p>
+  <p>
+    Built by <a href={SITE.authorUrl}>{SITE.author}</a>. Open source on
+    <a href={SITE.repoUrl}>GitHub</a>. Found a mistake or want to add a protocol?
+    <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>Contributions are welcome</a>.
+  </p>
 </footer>

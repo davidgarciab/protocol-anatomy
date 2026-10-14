@@ -36,6 +36,8 @@ const pathname = Astro.url.pathname;
 const sources = data.sources as Source[];
 const versionContext = 'versionContext' in data ? data.versionContext : undefined;
 const pageUrl = canonicalUrl(pathname);
+const sourceFile = entry.filePath;
+const issueUrl = `${SITE.repoUrl}/issues/new?template=correction.yml&title=${encodeURIComponent(`Correction: ${data.title}`)}`;
 const breadcrumb = [
   { name: 'Home', item: canonicalUrl('/') },
   ...crumbs.map((crumb, index) => ({
@@ -117,6 +119,11 @@ const jsonLd = {
           <slot />
           <References sources={sources} />
           <Related links={related} />
+          <p class="improve">
+            See something wrong or missing?
+            {sourceFile && <><a href={`${SITE.repoUrl}/edit/main/${sourceFile}`}>Suggest an edit on GitHub</a> or </>}
+            <a href={issueUrl}>report a correction</a>. See <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>how to contribute</a>.
+          </p>
         </div>
         <TableOfContents headings={headings} />
       </div>
