@@ -1,50 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { glossary } from '../data/glossary';
-import { pagePath } from '../lib/site';
-import { stripMarkdown, type SearchEntry } from '../lib/search';
+import { buildSearchEntries } from '../lib/search-index';
 
-const protocols = await getCollection('protocols');
-const guides = await getCollection('guides');
-const concepts = await getCollection('concepts');
-
-const entries: SearchEntry[] = [
-  ...protocols.map((entry) => ({
-    title: entry.data.title,
-    url: pagePath(`/protocols/${entry.id}`),
-    kind: 'Protocol',
-    summary: entry.data.summary,
-    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
-    protocol: entry.data.title,
-  })),
-  ...guides.map((entry) => ({
-    title: entry.data.title,
-    url: pagePath(`/guides/${entry.id}`),
-    kind: 'Guide',
-    summary: entry.data.summary,
-    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
-    protocol: entry.data.protocol,
-  })),
-  ...concepts.map((entry) => ({
-    title: entry.data.title,
-    url: pagePath(`/concepts/${entry.id}`),
-    kind: 'Concept',
-    summary: entry.data.summary,
-    text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
-  })),
-  ...glossary.map((entry) => ({
-    title: entry.term,
-    url: pagePath(`/glossary#${entry.id}`),
-    kind: 'Glossary',
-    summary: entry.definition,
-    text: `${entry.term} ${entry.definition}`,
-  })),
-];
-
-const payload = JSON.stringify(entries).replace(/</g, '\\u003c');
+const entries = await buildSearchEntries();
 const description = 'Search protocol overviews, version guides, concepts, and glossary terms.';
 ---
 
@@ -85,22 +45,25 @@ const description = 'Search protocol overviews, version guides, concepts, and gl
         }
       </ul>
     </noscript>
-    <script type="application/json" id="search-data" set:html={payload} />
   </main>
   <Footer slot="footer" />
   <script>
     import { filterEntries, type SearchEntry } from '../lib/search';
 
-    const data = document.querySelector<HTMLScriptElement>('#search-data');
     const input = document.querySelector<HTMLInputElement>('#search-q');
     const status = document.querySelector<HTMLElement>('#search-status');
     const results = document.querySelector<HTMLElement>('#search-results');
     const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-kind]')];
-    const entries = JSON.parse(data?.textContent || '[]') as SearchEntry[];
+    let entries: SearchEntry[] = [];
+    let failed = false;
     let kind = 'all';
 
     function render() {
       if (!results || !status || !input) return;
+      if (failed) {
+        status.textContent = 'The search index could not be loaded. Reload the page to try again.';
+        return;
+      }
       const query = input.value;
       const matched = filterEntries(entries, query, kind);
       results.replaceChildren();
@@ -144,6 +107,18 @@ const description = 'Search protocol overviews, version guides, concepts, and gl
         render();
       });
     }
-    render();
+    if (status) status.textContent = 'Loading the search index…';
+    fetch('/search-index.json')
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<SearchEntry[]>;
+      })
+      .then((loaded) => {
+        entries = loaded;
+      })
+      .catch(() => {
+        failed = true;
+      })
+      .finally(render);
   </script>
 </BaseLayout>

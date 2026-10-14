@@ -16,7 +16,7 @@ Built by [David Garcia](https://github.com/davidgarciab). Corrections, new topic
 - TypeScript and Zod schemas in `src/content.config.ts` validate article metadata at build time.
 - Markdown in `src/content/` is the article source. MDX is enabled for a future article that needs a component, but the current articles are Markdown.
 - Diagrams are HTML fragments in `src/diagrams/registry.ts`, inserted by a rehype plugin wherever an article contains `<diagram-placeholder name="..."></diagram-placeholder>`.
-- Search is a client-side filter over an index built from the published pages. There is no search service.
+- Search is a client-side filter over `/search-index.json`, which the build writes from the published pages and the search page fetches on load. There is no search service. Without JavaScript, the search page lists every page.
 - Styling is plain CSS in `src/styles/global.css`. Type is a system font stack. There is no remote font request. Analytics are PostHog behind a consent banner; see [Analytics and consent](#analytics-and-consent).
 
 pnpm is the package manager. The lockfile is `pnpm-lock.yaml`.

@@ -21,6 +21,7 @@ const required = [
   'methodology/index.html',
   'sources/index.html',
   'search/index.html',
+  'search-index.json',
   'privacy/index.html',
   'about/index.html',
   '404.html',
@@ -66,6 +67,14 @@ if (existsSync(join(dist, '404.html'))) {
 if (existsSync(join(dist, 'search/index.html'))) {
   const search = read('search/index.html');
   if (!search.includes('noindex')) errors.push('Search page is indexable duplicate content');
+  if (search.length > 80_000) errors.push(`Search page is ${search.length} bytes; the index belongs in search-index.json`);
+}
+
+if (existsSync(join(dist, 'search-index.json'))) {
+  const index = JSON.parse(read('search-index.json')) as { url: string; text: string }[];
+  if (!index.some((entry) => entry.url === '/protocols/aave/' && entry.text.length > 1000)) {
+    errors.push('search-index.json is missing the Aave overview text');
+  }
 }
 
 if (existsSync(join(dist, 'protocols/aave/index.html'))) {
