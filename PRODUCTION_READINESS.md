@@ -2,6 +2,19 @@
 
 Updated 14 October 2026. This file records what was checked and what is actually deployed. It is not a substitute for the production site responding.
 
+## 14 October 2026, audit follow-up
+
+- HSTS is enabled in the Cloudflare dashboard: `strict-transport-security: max-age=15552000; includeSubDomains; preload`, confirmed on the live site. HTTP redirects to HTTPS with 301. The preload list requires `max-age` of at least 31536000, so `preload` has no effect until the dashboard value is raised.
+- A hash-based Content-Security-Policy is emitted as a meta tag by Astro’s `security.csp`. Navigation, copy buttons, search, the consent banner (built with a test key), and both calculators ran in headless Chrome against `astro preview` with no CSP violations, console errors, or failed requests. PostHog loading under the CSP on the production host is checked after deployment.
+- `/_astro/*` is cached for a year as immutable. `/search-index.json` is cached for an hour.
+- Articles name the author as a schema.org `Person`. `/about/` is a `ProfilePage`.
+- The search index moved from inline JSON (search page 217 KB) to `/search-index.json` (search page 36 KB).
+- Every article has a 1200×630 social preview image and a `summary_large_image` card.
+- `/changes/` and `/rss.xml` list new articles and recorded changes. `dateModified` comes from the `changes` list, not from `lastVerified`.
+- Worked examples were added to the constant-product, collateral and liquidation, on-chain accounting, and liquid staking concepts, with swap and health-factor calculators. The three newly cited contract files are in `editorial/sources.json`, and the baseline records the commits that were read.
+- Local checks: `pnpm check` 0 errors, `pnpm test` 35/35, `pnpm validate` 27 articles, 49 glossary entries, 10 diagrams, `pnpm verify:dist` 26 routes, `pnpm audit:a11y` 10 pages, `pnpm check:assets` within limits.
+- Search Console is still not connected. It needs the property owner’s verification token.
+
 ## 14 October 2026, later pass
 
 - Concentrated-liquidity amounts now follow the v3 and v4 `LiquidityAmounts` branches and the `SqrtPriceMath` comments. `pnpm distribute -- concepts/concentrated-liquidity` prints social drafts and rejects URLs the article does not cite.
