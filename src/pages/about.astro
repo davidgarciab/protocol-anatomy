@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, authorJsonLd, canonicalUrl } from '../lib/site';
+
+const description = `Who writes ${SITE.name}, why it exists, and how its articles are sourced and corrected.`;
+const profiles = [
+  { href: 'https://davidgarciab.com/', label: 'davidgarciab.com' },
+  { href: 'https://github.com/davidgarciab', label: 'GitHub' },
+  { href: 'https://www.linkedin.com/in/davidgarciab/', label: 'LinkedIn' },
+  { href: 'https://x.com/davidgarciab', label: 'X' },
+];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: canonicalUrl('/about/'),
+  name: `About ${SITE.name}`,
+  mainEntity: authorJsonLd(),
+};
+---
+
+<BaseLayout title="About" description={description} jsonLd={jsonLd}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">About this publication</p>
+      <h1>About</h1>
+      <p class="lede">
+        {SITE.name} is an independent technical publication written by {SITE.authorFullName}. It explains how major DeFi protocols hold assets, price trades, liquidate collateral, and change their contracts, from the protocols’ own documentation and source code.
+      </p>
+    </header>
+    <div class="prose">
+      <h2 id="author">The author</h2>
+      <p>{SITE.authorBio}</p>
+      <ul class="profile-links">
+        {profiles.map((profile) => <li><a href={profile.href} rel="me">{profile.label}</a></li>)}
+      </ul>
+
+      <h2 id="why">Why this exists</h2>
+      <p>
+        Protocol documentation explains how to integrate, and marketing pages explain why to use a protocol. Neither usually says where the money sits after a transaction, which invariant the contract enforces, or which behavior belongs to a version that integrations still call. Each article here answers those questions for one protocol or one mechanism, and points at the file, paper, or governance post that supports each claim.
+      </p>
+
+      <h2 id="how-articles-are-checked">How articles are checked</h2>
+      <p>
+        Every article lists its sources, and every claim about a version cites a primary source. The “Last verified” date on a page is the date those sources were read. A weekly job compares the cited contract files and releases with the versions that were read and flags changes for review. The <a href="/methodology/">methodology</a> describes the rules in full, and the <a href="/sources/">source index</a> lists everything cited.
+      </p>
+
+      <h2 id="corrections">Corrections and contributions</h2>
+      <p>
+        Each article ends with a link to report a correction or suggest an edit on GitHub. Corrections are welcome from anyone. The repository is public at <a href={SITE.repoUrl}>{SITE.repoUrl.replace('https://', '')}</a>, and <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>CONTRIBUTING.md</a> explains the editorial rules.
+      </p>
+
+      <h2 id="what-this-is-not">What this is not</h2>
+      <p>
+        These are educational notes on published protocol designs. They are not a security audit, a live risk dashboard, or advice to allocate capital. The protocols named here are independent projects, and their names belong to their owners.
+      </p>
+
+      <h2 id="license">License</h2>
+      <p>
+        Articles, glossary entries, and diagrams are licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The site’s code is <a href={`${SITE.repoUrl}/blob/main/LICENSE`}>MIT</a>. Quoted source code stays under its owners’ terms.
+      </p>
+    </div>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

@@ -3,7 +3,16 @@ export const SITE = {
   tagline: 'Understand the code. Follow the money. Trace the evolution.',
   url: 'https://protocols.davidgarciab.com',
   author: 'David Garcia',
-  authorUrl: 'https://github.com/davidgarciab',
+  authorFullName: 'David Garcia Berenguer',
+  authorUrl: 'https://davidgarciab.com/',
+  authorBio:
+    'Engineering leader and hands-on engineer with 20+ years building teams, scalable systems and reliable products across SaaS, payments, AI and blockchain.',
+  authorProfiles: [
+    'https://davidgarciab.com/',
+    'https://github.com/davidgarciab',
+    'https://www.linkedin.com/in/davidgarciab/',
+    'https://x.com/davidgarciab',
+  ],
   repoUrl: 'https://github.com/davidgarciab/protocol-anatomy',
   description:
     'A technical field guide to how major DeFi protocols account for assets, price trades, liquidate collateral, and change their contracts.',
@@ -43,6 +52,19 @@ export interface VersionNote {
   name: string;
   status: VersionStatus;
   note: string;
+}
+
+/** schema.org Person for the author, shared by article and About page structured data. */
+export function authorJsonLd(): Record<string, unknown> {
+  return {
+    '@type': 'Person',
+    '@id': `${SITE.url}/about/#author`,
+    name: SITE.authorFullName,
+    alternateName: SITE.author,
+    url: SITE.authorUrl,
+    description: SITE.authorBio,
+    sameAs: SITE.authorProfiles,
+  };
 }
 
 /** Cloudflare Pages serves each directory index at a trailing slash. */

@@ -173,7 +173,6 @@ PostHog (EU cloud) measures page views. It is off unless `PUBLIC_POSTHOG_KEY` is
 - Link checking can be blocked by a host even when the page exists.
 - Automated accessibility scans disable color-contrast because the headless DOM does not reliably compute it. Contrast was reviewed in the design tokens and should be rechecked in a browser after visual changes.
 - Some historical Maker documentation URLs now redirect into Sky’s documentation shell. Prefer the `dss` source when a redirected page no longer contains the module text.
-- No author biography is published, because none was supplied.
 - Google Search Console is not connected, and this repository has no Search Console credential. Indexing status is not known from here. To submit the sitemap, add the URL-prefix property `https://protocols.davidgarciab.com/` in Search Console, verify it, and submit `https://protocols.davidgarciab.com/sitemap-index.xml`. The HTML-file or HTML-tag method avoids a DNS change. Google displays the token during verification. Do not invent one. This maintenance pass does not change DNS.
 - Analytics are PostHog behind consent (see Analytics and consent). Search queries and impressions remain a Search Console question.
 

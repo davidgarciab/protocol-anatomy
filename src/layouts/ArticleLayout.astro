@@ -8,7 +8,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import References from '../components/References.astro';
 import Related, { type RelatedLink } from '../components/Related.astro';
-import { SITE, canonicalUrl, type Source } from '../lib/site';
+import { SITE, authorJsonLd, canonicalUrl, type Source } from '../lib/site';
 
 interface Crumb {
   href?: string;
@@ -60,6 +60,7 @@ const jsonLd = {
       dateModified: data.lastVerified,
       url: pageUrl,
       mainEntityOfPage: pageUrl,
+      author: authorJsonLd(),
       publisher: {
         '@type': 'Organization',
         name: SITE.name,
@@ -89,6 +90,10 @@ const jsonLd = {
         <h1>{data.title}</h1>
         <p class="lede">{data.summary}</p>
         <dl class="meta-list">
+          <div>
+            <dt>Written by</dt>
+            <dd><a href="/about/" rel="author">{SITE.author}</a></dd>
+          </div>
           <div>
             <dt>Published</dt>
             <dd><time datetime={data.published}>{data.published}</time></dd>

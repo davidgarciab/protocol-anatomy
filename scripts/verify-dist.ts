@@ -22,6 +22,7 @@ const required = [
   'sources/index.html',
   'search/index.html',
   'privacy/index.html',
+  'about/index.html',
   '404.html',
   'robots.txt',
   'sitemap-index.xml',
@@ -71,6 +72,7 @@ if (existsSync(join(dist, 'protocols/aave/index.html'))) {
   const aave = read('protocols/aave/index.html');
   if (!aave.includes('datePublished')) errors.push('Article structured data is missing datePublished');
   if (!aave.includes('BreadcrumbList')) errors.push('Article structured data is missing BreadcrumbList');
+  if (!/"author":\{"@type":"Person"/.test(aave)) errors.push('Article structured data is missing a Person author');
 }
 
 if (existsSync(dist)) {

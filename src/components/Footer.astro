@@ -16,6 +16,7 @@ const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
     <a href="/methodology/">Methodology</a>
     <a href="/sources/">Sources</a>
     <a href="/search/">Search</a>
+    <a href="/about/">About</a>
     <a href="/privacy/">Privacy</a>
     {analytics && <button type="button" class="link-button" data-consent-open hidden>Cookie settings</button>}
   </nav>
@@ -23,7 +24,7 @@ const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
     Educational notes on published protocol designs. This is not an audit, a recommendation to allocate capital, or financial advice. The protocols named here are independent projects.
   </p>
   <p>
-    Built by <a href={SITE.authorUrl}>{SITE.author}</a>. Open source on
+    Written and built by <a href="/about/">{SITE.author}</a>. Open source on
     <a href={SITE.repoUrl}>GitHub</a>. Found a mistake or want to add a protocol?
     <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>Contributions are welcome</a>.
     Code is <a href={`${SITE.repoUrl}/blob/main/LICENSE`}>MIT</a>; articles are
