@@ -1,6 +1,6 @@
 # Implementation plan
 
-Status: implemented locally. Not deployed.
+Status: implemented and deployed to `https://protocols.davidgarciab.com` (see PRODUCTION_READINESS.md). The sections below record the original build plan.
 
 ## Decisions
 

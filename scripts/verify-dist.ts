@@ -108,7 +108,10 @@ if (existsSync(dist)) {
     if (/<script[^>]+src="[^"]*posthog/i.test(html)) {
       errors.push(`${file} loads PostHog directly; it must load only after consent`);
     }
-    const hasBanner = /<section[^>]+data-consent-banner/.test(html);
+    const csp = html.match(/<meta http-equiv="content-security-policy" content="([^"]*)"/)?.[1];
+    if (!csp) errors.push(`${file} has no Content-Security-Policy meta tag`);
+    else if (/script-src[^;]*'unsafe-inline'/.test(csp)) errors.push(`${file} allows inline scripts in its CSP`);
+    const hasBanner =/<section[^>]+data-consent-banner/.test(html);
     if (hasKey !== hasBanner) {
       errors.push(`${file} ${hasKey ? 'is missing the consent banner' : 'has a consent banner but no PostHog key was set'}`);
     }

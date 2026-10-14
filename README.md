@@ -139,7 +139,9 @@ Pages build settings:
 
 The v3 Pages image does not read `packageManager` or the lockfile to choose pnpm, so `PNPM_VERSION` has to be set on the project. Do not add a paid build feature. The only analytics is PostHog, described below.
 
-`public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy. There is no Content-Security-Policy because the navigation, copy, and consent scripts are inline.
+`public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy, and marks the hashed files in `/_astro/` as immutable for a year. HSTS is set in the Cloudflare dashboard, not in `_headers`.
+
+The Content-Security-Policy is a `<meta>` tag that Astro writes from `security.csp` in `astro.config.ts`. `script-src` lists `'self'`, the PostHog asset host, and a SHA-256 hash for each inline script, so an injected script does not run. `style-src` allows `'unsafe-inline'` because Shiki writes inline `style` attributes; the build prints a warning about that, which is expected. The PostHog hosts follow `PUBLIC_POSTHOG_HOST` at build time. `pnpm verify:dist` fails if a page has no CSP or allows inline scripts. A meta CSP cannot set `frame-ancestors`; `X-Frame-Options` covers framing.
 
 Custom domain: `https://protocols.davidgarciab.com`. The zone `davidgarciab.com` is already on this Cloudflare account, on the Free plan, with nameservers `shubhi.ns.cloudflare.com` and `albert.ns.cloudflare.com`. The hostname is attached to the Pages project and is active. Public DNS resolves it to Cloudflare’s proxied addresses, and the certificate is issued for `protocols.davidgarciab.com`.
 
