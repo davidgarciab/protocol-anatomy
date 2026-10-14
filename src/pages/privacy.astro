@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const description = 'What Protocol Anatomy measures with PostHog, what each cookie choice changes, and how to change your choice.';
+const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
+---
+
+<BaseLayout title="Privacy and cookies" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">About this publication</p>
+      <h1>Privacy and cookies</h1>
+      <p class="lede">
+        The site measures which pages are read, using PostHog. You choose how much it may collect. Nothing is sent until you choose.
+      </p>
+    </header>
+    <div class="prose">
+      <h2 id="what-is-measured">What is measured</h2>
+      <p>
+        Page views, the page that referred you, and your approximate country, browser, and device type. Requests to PostHog necessarily include your IP address and browser user agent. PostHog’s EU cloud receives the data. Session recordings, surveys, and advertising features are switched off at both levels.
+      </p>
+
+      <h2 id="your-choices">Your choices</h2>
+      <p>The first visit shows a banner with two equal options.</p>
+      <ul>
+        <li>
+          <strong>Simple tracking.</strong> Anonymous page views only. Nothing is written to cookies or local storage by PostHog, so each page load counts as a separate anonymous visit. Clicks and time on page are not recorded.
+        </li>
+        <li>
+          <strong>Enhanced tracking.</strong> PostHog sets a first-party cookie and a local-storage entry (names starting <code>ph_</code>) so return visits and sessions can be linked. Clicks on page elements and page-leave events are also recorded. These cookies are scoped to this site only.
+        </li>
+      </ul>
+      <p>
+        Your choice is remembered in your browser’s local storage under <code>pa-consent</code>. That entry is needed to remember the choice and holds no identifier. A browser that sends Do Not Track is not measured at either level.
+      </p>
+
+      <h2 id="change-your-choice">Change your choice</h2>
+      <p>
+        {
+          analytics ? (
+            <>
+              Use <strong>Cookie settings</strong> in the footer to reopen the banner. Switching from enhanced to simple deletes the PostHog cookie and local-storage entries and reloads the page.
+            </>
+          ) : (
+            <>This build of the site has analytics switched off, so there is nothing to change.</>
+          )
+        }
+      </p>
+
+      <h2 id="not-measured">Where nothing is measured</h2>
+      <p>
+        Analytics are not loaded when the site is run locally or on a preview deployment. Only the production hostname sends events.
+      </p>
+    </div>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

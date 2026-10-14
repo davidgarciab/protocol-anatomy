@@ -13,7 +13,7 @@ The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lid
 - Markdown in `src/content/` is the article source. MDX is enabled for a future article that needs a component, but the current articles are Markdown.
 - Diagrams are HTML fragments in `src/diagrams/registry.ts`, inserted by a rehype plugin wherever an article contains `<diagram-placeholder name="..."></diagram-placeholder>`.
 - Search is a client-side filter over an index built from the published pages. There is no search service.
-- Styling is plain CSS in `src/styles/global.css`. Type is a system font stack. There is no analytics beacon and no remote font request.
+- Styling is plain CSS in `src/styles/global.css`. Type is a system font stack. There is no remote font request. Analytics are PostHog behind a consent banner; see [Analytics and consent](#analytics-and-consent).
 
 pnpm is the package manager. The lockfile is `pnpm-lock.yaml`.
 
@@ -133,9 +133,9 @@ Pages build settings:
 - `NODE_VERSION`: `24.21.0` (also `.nvmrc`)
 - `PNPM_VERSION`: `12.13.0`
 
-The v3 Pages image does not read `packageManager` or the lockfile to choose pnpm, so `PNPM_VERSION` has to be set on the project. Do not add analytics or a paid build feature.
+The v3 Pages image does not read `packageManager` or the lockfile to choose pnpm, so `PNPM_VERSION` has to be set on the project. Do not add a paid build feature. The only analytics is PostHog, described below.
 
-`public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy. There is no Content-Security-Policy because the navigation and copy buttons use a small inline script.
+`public/_headers` sets `nosniff`, a strict referrer policy, `X-Frame-Options: DENY`, and a permissions policy. There is no Content-Security-Policy because the navigation, copy, and consent scripts are inline.
 
 Custom domain: `https://protocols.davidgarciab.com`. The zone `davidgarciab.com` is already on this Cloudflare account, on the Free plan, with nameservers `shubhi.ns.cloudflare.com` and `albert.ns.cloudflare.com`. The hostname is attached to the Pages project and is active. Public DNS resolves it to Cloudflare’s proxied addresses, and the certificate is issued for `protocols.davidgarciab.com`.
 
@@ -149,6 +149,17 @@ Inspect status with `npx wrangler pages deployment list --project-name protocol-
 
 Pages serves `404.html` for unknown paths. Cloudflare’s free allowance changes. Check the current Pages terms before relying on them. This project does not add Workers, images, or other paid features.
 
+## Analytics and consent
+
+PostHog (EU cloud) measures page views. It is off unless `PUBLIC_POSTHOG_KEY` is set at build time, and it sends nothing until a visitor chooses in the consent banner (`src/components/ConsentBanner.astro`). The footer's "Cookie settings" button reopens the banner, and `/privacy/` describes both levels.
+
+- **Simple:** anonymous page views, `persistence: 'memory'`, no autocapture. Nothing is written to cookies or storage.
+- **Enhanced:** cookie plus localStorage identity, autocapture, and page-leave events.
+- Session recording and surveys are disabled at both levels, and Do Not Track is respected. Options live in `src/lib/analytics.ts` and are covered by `tests/analytics*.test.ts`.
+- **Production only.** Events are sent only when the build is a production build and the hostname is `protocols.davidgarciab.com`. Local dev, `astro preview`, and `*.pages.dev` previews never load PostHog. To see the banner locally, put `PUBLIC_POSTHOG_KEY=phc_...` in `.env`; choices are stored but nothing is sent.
+- **Setup:** add `PUBLIC_POSTHOG_KEY` (the project API key, which is public by design) to the Pages project's environment variables. `PUBLIC_POSTHOG_HOST` defaults to `https://eu.i.posthog.com`; change it for a US project.
+- PostHog's library is loaded from PostHog's asset host by the official loader snippet, not bundled, to stay within the `check:assets` limit. `pnpm verify:dist` fails if a page carries a PostHog script tag, or if the banner is present or absent in disagreement with `PUBLIC_POSTHOG_KEY`.
+
 ## Known limits
 
 - The publication is not an audit and does not track live risk parameters or balances.
@@ -158,4 +169,4 @@ Pages serves `404.html` for unknown paths. Cloudflare’s free allowance changes
 - Some historical Maker documentation URLs now redirect into Sky’s documentation shell. Prefer the `dss` source when a redirected page no longer contains the module text.
 - No author biography is published, because none was supplied.
 - Google Search Console is not connected, and this repository has no Search Console credential. Indexing status is not known from here. To submit the sitemap, add the URL-prefix property `https://protocols.davidgarciab.com/` in Search Console, verify it, and submit `https://protocols.davidgarciab.com/sitemap-index.xml`. The HTML-file or HTML-tag method avoids a DNS change. Google displays the token during verification. Do not invent one. This maintenance pass does not change DNS.
-- Production HTML does not load an analytics script. Cloudflare’s Web Analytics docs describe a JavaScript beacon that does not collect or use visitors’ personal data, and they say a Pages project can enable it so the next deployment injects the snippet. Do that in the Cloudflare dashboard. Do not paste a guessed site token into the repository. The beacon reports page views. Search queries and impressions remain a Search Console question. Zone request logs in the same dashboard are available to the account owner and were not queried for this publication.
+- Analytics are PostHog behind consent (see Analytics and consent). Search queries and impressions remain a Search Console question.

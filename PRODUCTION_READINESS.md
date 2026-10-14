@@ -5,7 +5,7 @@ Updated 14 October 2026. This file records what was checked and what is actually
 ## 14 October 2026, later pass
 
 - Concentrated-liquidity amounts now follow the v3 and v4 `LiquidityAmounts` branches and the `SqrtPriceMath` comments. `pnpm distribute -- concepts/concentrated-liquidity` prints social drafts and rejects URLs the article does not cite.
-- Production HTML still has no analytics beacon. Search Console remains unauthorized. The weekly editorial review was extended with the four newly cited Uniswap files and still reports no change after the baseline refresh.
+- PostHog and a consent banner are added in the repository but not yet deployed; they stay off until `PUBLIC_POSTHOG_KEY` is set on the Pages project. Search Console remains unauthorized. The weekly editorial review was extended with the four newly cited Uniswap files and still reports no change after the baseline refresh.
 
 ## 14 October 2026
 

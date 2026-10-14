@@ -6,7 +6,7 @@ Status: implemented locally. Not deployed.
 
 - Astro 7, TypeScript, static output, pnpm. The repository was empty, so there was no existing stack to extend.
 - Markdown collections with Zod metadata. MDX is installed and enabled, and the current articles stay in Markdown so formulas and braces do not have to be escaped.
-- No database, CMS, analytics, remote fonts, or API keys.
+- No database, CMS, remote fonts, or server-side API keys. Analytics were added later: PostHog behind a consent banner (see README).
 - Canonical origin is `https://protocols.davidgarciab.com`, set in `astro.config.ts` and `src/lib/site.ts`.
 - Version status vocabulary: `released`, `active`, `historical`, `deprecated`, `proposed`, `in-development`.
 

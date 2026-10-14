@@ -745,6 +745,69 @@ th {
   color: var(--muted);
 }
 
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--ink);
+}
+
+.consent-banner {
+  position: fixed;
+  z-index: 50;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  max-width: 38rem;
+  background: var(--bg-raised);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 22%);
+  padding: 1rem 1.15rem;
+  font-size: 0.95rem;
+}
+
+.consent-banner[hidden] {
+  display: none;
+}
+
+.consent-banner h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.consent-banner p,
+.consent-banner ul {
+  margin: 0 0 0.6rem;
+}
+
+.consent-options {
+  padding-left: 1.1rem;
+}
+
+.consent-status:empty {
+  display: none;
+}
+
+.consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
+  align-items: center;
+}
+
+.consent-actions .button {
+  cursor: pointer;
+  font: inherit;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -824,6 +887,7 @@ th {
 @media print {
   .site-header,
   .site-footer,
+  .consent-banner,
   .toc,
   .copy-button,
   .header-search {

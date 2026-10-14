@@ -1,5 +1,7 @@
 ---
 import { SITE } from '../lib/site';
+
+const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
 ---
 
 <footer class="site-footer">
@@ -14,6 +16,8 @@ import { SITE } from '../lib/site';
     <a href="/methodology/">Methodology</a>
     <a href="/sources/">Sources</a>
     <a href="/search/">Search</a>
+    <a href="/privacy/">Privacy</a>
+    {analytics && <button type="button" class="link-button" data-consent-open hidden>Cookie settings</button>}
   </nav>
   <p>
     Educational notes on published protocol designs. This is not an audit, a recommendation to allocate capital, or financial advice. The protocols named here are independent projects.

@@ -21,6 +21,7 @@ const required = [
   'methodology/index.html',
   'sources/index.html',
   'search/index.html',
+  'privacy/index.html',
   '404.html',
   'robots.txt',
   'sitemap-index.xml',
@@ -96,6 +97,20 @@ if (existsSync(dist)) {
     const html = readFileSync(file, 'utf8');
     if (/rel="canonical" href="[^"]*localhost/.test(html)) {
       errors.push(`Canonical localhost URL in ${file}`);
+    }
+  }
+}
+
+if (existsSync(dist)) {
+  const hasKey = Boolean(process.env.PUBLIC_POSTHOG_KEY);
+  for (const file of walk(dist)) {
+    const html = readFileSync(file, 'utf8');
+    if (/<script[^>]+src="[^"]*posthog/i.test(html)) {
+      errors.push(`${file} loads PostHog directly; it must load only after consent`);
+    }
+    const hasBanner = /<section[^>]+data-consent-banner/.test(html);
+    if (hasKey !== hasBanner) {
+      errors.push(`${file} ${hasKey ? 'is missing the consent banner' : 'has a consent banner but no PostHog key was set'}`);
     }
   }
 }

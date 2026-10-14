@@ -1,0 +1,128 @@
+---
+import { DEFAULT_POSTHOG_HOST } from '../lib/analytics';
+
+const key = import.meta.env.PUBLIC_POSTHOG_KEY;
+const host = import.meta.env.PUBLIC_POSTHOG_HOST || DEFAULT_POSTHOG_HOST;
+---
+
+{
+  key && (
+    <section
+      class="consent-banner"
+      aria-labelledby="consent-title"
+      data-consent-banner
+      data-posthog-key={key}
+      data-posthog-host={host}
+      hidden
+    >
+      <h2 id="consent-title">Analytics and cookies</h2>
+      <p>
+        This site uses PostHog to see which pages are read. Choose how much it may collect. Either way, no session
+        recordings are made and nothing is used for advertising.
+      </p>
+      <ul class="consent-options">
+        <li>
+          <strong>Simple:</strong> anonymous page views only. No cookies, no local storage, no click tracking.
+        </li>
+        <li>
+          <strong>Enhanced:</strong> a cookie and local storage recognise return visits and sessions, and clicks and
+          time on page are recorded.
+        </li>
+      </ul>
+      <p class="consent-status" data-consent-status aria-live="polite" />
+      <div class="consent-actions">
+        <button type="button" class="button" data-consent-choice="simple">Simple tracking</button>
+        <button type="button" class="button" data-consent-choice="enhanced">Enhanced tracking</button>
+        <a href="/privacy/">Privacy details</a>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import {
+    CONSENT_KEY,
+    clearPostHogStorage,
+    installPostHogStub,
+    isConsentLevel,
+    isTrackingHost,
+    posthogOptions,
+    type ConsentLevel,
+  } from '../lib/analytics';
+
+  const banner = document.querySelector<HTMLElement>('[data-consent-banner]');
+
+  if (banner) {
+    const key = banner.dataset.posthogKey ?? '';
+    const host = banner.dataset.posthogHost ?? '';
+    const status = banner.querySelector<HTMLElement>('[data-consent-status]');
+    let started: ConsentLevel | null = null;
+
+    const readChoice = (): ConsentLevel | null => {
+      try {
+        const value = window.localStorage.getItem(CONSENT_KEY);
+        return isConsentLevel(value) ? value : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const writeChoice = (level: ConsentLevel) => {
+      try {
+        window.localStorage.setItem(CONSENT_KEY, level);
+      } catch {
+        // The choice then lasts for this page only.
+      }
+    };
+
+    const start = (level: ConsentLevel) => {
+      if (!import.meta.env.PROD || !isTrackingHost(window.location.hostname)) {
+        console.info(`[analytics] Not tracking on ${window.location.hostname}; PostHog is only loaded on production.`);
+        return;
+      }
+      installPostHogStub();
+      (window as unknown as { posthog: { init: (key: string, options: Record<string, unknown>) => void } }).posthog.init(
+        key,
+        posthogOptions(level, host),
+      );
+      started = level;
+    };
+
+    const show = (focus: boolean) => {
+      const current = readChoice();
+      if (status) {
+        status.textContent = current ? `Current setting: ${current === 'simple' ? 'Simple' : 'Enhanced'}.` : '';
+      }
+      banner.hidden = false;
+      if (focus) banner.querySelector<HTMLElement>('[data-consent-choice]')?.focus();
+    };
+
+    const choose = (level: ConsentLevel) => {
+      writeChoice(level);
+      banner.hidden = true;
+      if (started === null) {
+        start(level);
+      } else if (started !== level) {
+        // PostHog fixes its storage mode at init, so a change takes effect on a fresh page load.
+        clearPostHogStorage();
+        window.location.reload();
+      }
+    };
+
+    banner.querySelectorAll<HTMLButtonElement>('[data-consent-choice]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const level = button.dataset.consentChoice;
+        if (isConsentLevel(level)) choose(level);
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-consent-open]').forEach((trigger) => {
+      trigger.hidden = false;
+      trigger.addEventListener('click', () => show(true));
+    });
+
+    const stored = readChoice();
+    if (stored) start(stored);
+    else show(false);
+  }
+</script>

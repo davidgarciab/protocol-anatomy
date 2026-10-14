@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ConsentBanner from '../components/ConsentBanner.astro';
 import { SITE, canonicalUrl } from '../lib/site';
 
 interface Props {
@@ -49,6 +50,7 @@ const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <ConsentBanner />
     <slot name="header" />
     <slot />
     <slot name="footer" />
