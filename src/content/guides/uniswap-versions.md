@@ -89,7 +89,7 @@ Uniswap’s versions are easy to flatten into “v4 is newer, so it replaces v3.
 
 v2 liquidity is uniform. The LP token is an ERC-20 claim on a share of both reserves. Any two holders of the same pair token are in the same position, scaled by balance. Fees stay in the reserves and raise the value of that token. There is no range to manage and no NFT to transfer.
 
-v3 liquidity is a choice of range. The concentrated-liquidity documentation and the v3 whitepaper define the range by [ticks](/glossary#tick) of `1.0001^i`. A position earns fees only inside its ticks. The claim is an ERC-721 from `NonfungiblePositionManager`, because two ranges are not fungible. Fees are collected to the position. They do not rebase the NFT’s token id.
+v3 liquidity is a choice of range. The concentrated-liquidity documentation and the v3 whitepaper define the range by [ticks](/glossary#tick) of `1.0001^i`. A position earns fees only inside its ticks. The claim is an ERC-721 from `NonfungiblePositionManager`, because two ranges are not fungible. Fees are collected to the position. They do not rebase the NFT’s token id. How much token0 and token1 that range holds, including when price is outside it, is derived on the [concentrated liquidity](/concepts/concentrated-liquidity) page.
 
 v4 keeps concentrated liquidity for a hookless pool and changes the contract that mints the receipt. `PositionManager` mints an ERC-721, “Uniswap v4 Positions NFT”, one token id per position. That is the same standard as v3 and a different contract from `NonfungiblePositionManager`. Transferring the v3 NFT does not migrate the position. ERC-6909 claims, minted by `PoolManager` when a caller leaves tokens on deposit, are settlement balances. They are not the liquidity position.
 

@@ -192,5 +192,49 @@
       "src/content/guides/curve-generations.md"
     ],
     "why": "NG factory behavior, including how new pools are deployed and that existing pools stay immutable, is part of the Curve version guide."
+  },
+  {
+    "id": "uniswap-v3-sqrt-price-math",
+    "kind": "github-file",
+    "repo": "Uniswap/v3-core",
+    "path": "contracts/libraries/SqrtPriceMath.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/concentrated-liquidity.md"
+    ],
+    "why": "The concentrated-liquidity page quotes the token0 and token1 delta comments and the v3 signed rounding direction from this file."
+  },
+  {
+    "id": "uniswap-v3-liquidity-amounts",
+    "kind": "github-file",
+    "repo": "Uniswap/v3-periphery",
+    "path": "contracts/libraries/LiquidityAmounts.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/concentrated-liquidity.md"
+    ],
+    "why": "The three price-versus-range branches for how much of each token a position holds come from getAmountsForLiquidity."
+  },
+  {
+    "id": "uniswap-v4-sqrt-price-math",
+    "kind": "github-file",
+    "repo": "Uniswap/v4-core",
+    "path": "src/libraries/SqrtPriceMath.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/concentrated-liquidity.md"
+    ],
+    "why": "v4 uses the same delta comments as v3 and the opposite sign on the signed helpers. A change to either would affect the concentrated-liquidity page."
+  },
+  {
+    "id": "uniswap-v4-liquidity-amounts",
+    "kind": "github-file",
+    "repo": "Uniswap/v4-periphery",
+    "path": "src/libraries/LiquidityAmounts.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/concepts/concentrated-liquidity.md"
+    ],
+    "why": "v4 getLiquidityForAmounts repeats the three range branches and takes the minimum liquidity inside the range."
   }
 ]

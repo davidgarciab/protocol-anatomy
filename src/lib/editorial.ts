@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const SOURCE_BOUND = 20;
+export const SOURCE_BOUND = 24;
 
 export const REVIEW_ACTION =
   'Read the linked change. Update an article only if a claim that cites this source no longer matches. A new commit or release can be formatting, a deployment script, or an unrelated feature. Leave lastVerified unchanged until the sources have actually been read.';

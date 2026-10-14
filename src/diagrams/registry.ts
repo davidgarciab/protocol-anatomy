@@ -166,6 +166,25 @@ export const diagrams: Record<string, string> = {
     </ul>`,
     'The paths are drawn to show the idea. They are not a plot of a live pool and they are not the StableSwap invariant evaluated at a particular amplification coefficient.',
   ),
+  'range-holdings': figure(
+    'What a concentrated position holds',
+    'Simplified model',
+    flow([
+      {
+        label: 'Price below the range',
+        detail: 'The position holds token0 only. Token1 is zero. The liquidity is not earning fees.',
+      },
+      {
+        label: 'Price inside the range',
+        detail: 'The position holds both tokens. Fees accrue in proportion to its liquidity over other active liquidity.',
+      },
+      {
+        label: 'Price above the range',
+        detail: 'The position holds token1 only. Token0 is zero. The liquidity is not earning fees.',
+      },
+    ]),
+    'The three cases are the branches in Uniswap v3 LiquidityAmounts.getAmountsForLiquidity and in v4 LiquidityAmounts.getLiquidityForAmounts. This is not a plot of a live pool, and a hook with custom accounting can opt out of the curve.',
+  ),
 };
 
 export const diagramNames = new Set(Object.keys(diagrams));

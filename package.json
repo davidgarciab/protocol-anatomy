@@ -18,6 +18,7 @@
     "audit:a11y": "tsx scripts/audit-a11y.ts",
     "check:links": "tsx scripts/check-links.ts",
     "editorial:review": "tsx scripts/editorial-review.ts",
+    "distribute": "tsx scripts/distribute.ts",
     "check:assets": "tsx scripts/check-assets.ts"
   },
   "dependencies": {

@@ -13,7 +13,7 @@ The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lid
 - Markdown in `src/content/` is the article source. MDX is enabled for a future article that needs a component, but the current articles are Markdown.
 - Diagrams are HTML fragments in `src/diagrams/registry.ts`, inserted by a rehype plugin wherever an article contains `<diagram-placeholder name="..."></diagram-placeholder>`.
 - Search is a client-side filter over an index built from the published pages. There is no search service.
-- Styling is plain CSS in `src/styles/global.css`. Type is a system font stack. There is no analytics and no remote font request.
+- Styling is plain CSS in `src/styles/global.css`. Type is a system font stack. There is no analytics beacon and no remote font request.
 
 pnpm is the package manager. The lockfile is `pnpm-lock.yaml`.
 
@@ -51,10 +51,13 @@ pnpm preview
 | `pnpm check:assets` | Fail if a built JS, CSS, or HTML file exceeds the review limit | No |
 | `pnpm check:links` | Fetch cited https URLs and write `link-report.json` | Yes |
 | `pnpm editorial:review` | Compare cited files and releases with `editorial/baseline.json` | Yes |
+| `pnpm distribute -- concepts/<id>` | Print reviewable social drafts for one article | No |
 
 `pnpm check:links` is intentionally outside the default test run. A 403 or a timeout is reported as restricted or temporary. Only HTTP 404 and 410 fail the command. A successful response does not prove a sentence is supported.
 
 `pnpm editorial:review` reads `editorial/sources.json`, a bounded list of GitHub files and releases. It writes `editorial/review.md` and does not edit articles. `--write-baseline` records the SHAs and tags just observed. `--refresh` ignores the six-hour cache in `editorial/.cache.json`. A source that does not answer is listed as unavailable and the previous baseline entry is kept. The same finding is not treated as a new review merely because the command runs again. GitHub Actions runs this weekly, in `.github/workflows/editorial-review.yml`, and opens or updates one `editorial-review` issue when the diff changes. That workflow is separate from `.github/workflows/check.yml`, so a GitHub outage does not fail the production build. No token is stored in the repository. Actions uses its built-in `GITHUB_TOKEN`.
+
+`pnpm distribute -- concepts/concentrated-liquidity` prints the drafts in `distribution/concentrated-liquidity.md` after checking that every https URL in them is the article’s canonical URL or one of its sources. It does not call a network API and it does not publish. A missing draft file prints the article’s headings and sources so the next drafts can be written against them.
 
 GitHub Actions runs the offline commands on push and pull request. See `.github/workflows/check.yml`.
 
@@ -155,3 +158,4 @@ Pages serves `404.html` for unknown paths. Cloudflare’s free allowance changes
 - Some historical Maker documentation URLs now redirect into Sky’s documentation shell. Prefer the `dss` source when a redirected page no longer contains the module text.
 - No author biography is published, because none was supplied.
 - Google Search Console is not connected, and this repository has no Search Console credential. Indexing status is not known from here. To submit the sitemap, add the URL-prefix property `https://protocols.davidgarciab.com/` in Search Console, verify it, and submit `https://protocols.davidgarciab.com/sitemap-index.xml`. The HTML-file or HTML-tag method avoids a DNS change. Google displays the token during verification. Do not invent one. This maintenance pass does not change DNS.
+- Production HTML does not load an analytics script. Cloudflare’s Web Analytics docs describe a JavaScript beacon that does not collect or use visitors’ personal data, and they say a Pages project can enable it so the next deployment injects the snippet. Do that in the Cloudflare dashboard. Do not paste a guessed site token into the repository. The beacon reports page views. Search queries and impressions remain a Search Console question. Zone request logs in the same dashboard are available to the account owner and were not queried for this publication.

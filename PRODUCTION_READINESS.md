@@ -2,6 +2,11 @@
 
 Updated 14 October 2026. This file records what was checked and what is actually deployed. It is not a substitute for the production site responding.
 
+## 14 October 2026, later pass
+
+- Concentrated-liquidity amounts now follow the v3 and v4 `LiquidityAmounts` branches and the `SqrtPriceMath` comments. `pnpm distribute -- concepts/concentrated-liquidity` prints social drafts and rejects URLs the article does not cite.
+- Production HTML still has no analytics beacon. Search Console remains unauthorized. The weekly editorial review was extended with the four newly cited Uniswap files and still reports no change after the baseline refresh.
+
 ## 14 October 2026
 
 - Search is `noindex, follow` and is omitted from the sitemap. Article pages include `TechArticle` (`datePublished`, `dateModified`) and a `BreadcrumbList` that matches the visible breadcrumbs.
