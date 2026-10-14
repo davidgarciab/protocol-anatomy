@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
       link: entry.url,
       pubDate: new Date(`${entry.date}T00:00:00Z`),
       description: entry.summary.replaceAll('`', ''),
-      customData: `<guid isPermaLink="false">${new URL(entry.url, SITE.url).href}#${entry.kind}-${entry.date}</guid>`,
+      customData: `<guid isPermaLink="false">${new URL(entry.url, SITE.url).href}#${entry.id}</guid>`,
     })),
   });
 };

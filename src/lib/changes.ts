@@ -9,6 +9,8 @@ export interface ChangeLogEntry {
   title: string;
   url: string;
   summary: string;
+  /** Unique per page: the feed guid is the page URL plus this id. */
+  id: string;
 }
 
 interface Dated {
@@ -25,9 +27,20 @@ export function lastModified(data: Dated): string {
 export function changeLog(pages: { title: string; url: string; description: string; data: Dated }[]): ChangeLogEntry[] {
   const entries: ChangeLogEntry[] = [];
   for (const page of pages) {
-    entries.push({ date: page.data.published, kind: 'published', title: page.title, url: page.url, summary: page.description });
+    entries.push({
+      date: page.data.published,
+      kind: 'published',
+      title: page.title,
+      url: page.url,
+      summary: page.description,
+      id: `published-${page.data.published}`,
+    });
+    const seen = new Map<string, number>();
     for (const change of page.data.changes ?? []) {
-      entries.push({ date: change.date, kind: 'updated', title: page.title, url: page.url, summary: change.summary });
+      const count = (seen.get(change.date) ?? 0) + 1;
+      seen.set(change.date, count);
+      const id = `updated-${change.date}${count > 1 ? `-${count}` : ''}`;
+      entries.push({ date: change.date, kind: 'updated', title: page.title, url: page.url, summary: change.summary, id });
     }
   }
   return entries.sort(

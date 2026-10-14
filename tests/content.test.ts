@@ -129,4 +129,9 @@ describe('change log', () => {
       '2026-10-13 published A',
     ]);
   });
+
+  it('gives same-day changes to one page distinct ids', () => {
+    const log = changeLog([{ title: 'A', url: '/a/', description: 'About A', data: { published: '2026-10-13', changes: [change, change] } }]);
+    expect(new Set(log.map((entry) => entry.id)).size).toBe(3);
+  });
 });
