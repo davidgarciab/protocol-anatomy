@@ -174,3 +174,11 @@ PostHog (EU cloud) measures page views. It is off unless `PUBLIC_POSTHOG_KEY` is
 - No author biography is published, because none was supplied.
 - Google Search Console is not connected, and this repository has no Search Console credential. Indexing status is not known from here. To submit the sitemap, add the URL-prefix property `https://protocols.davidgarciab.com/` in Search Console, verify it, and submit `https://protocols.davidgarciab.com/sitemap-index.xml`. The HTML-file or HTML-tag method avoids a DNS change. Google displays the token during verification. Do not invent one. This maintenance pass does not change DNS.
 - Analytics are PostHog behind consent (see Analytics and consent). Search queries and impressions remain a Search Console question.
+
+## License
+
+- **Source code** is licensed under the [MIT License](LICENSE).
+- **Original editorial content** (articles, glossary entries, diagrams) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). You may share and adapt it, including commercially, with attribution, a link to the license, and a note of any changes.
+- **Third-party material** (quoted source-code excerpts, trademarks, logos, quotations) stays under its owners' terms and is not relicensed here.
+
+Protocol names belong to their respective owners. Protocol Anatomy is an independent educational publication. Details and suggested attribution are in [CONTENT_LICENSE.md](CONTENT_LICENSE.md).

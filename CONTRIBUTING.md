@@ -72,4 +72,4 @@ Be respectful and assume good faith. Disagree about claims by pointing at source
 
 ## License
 
-No license file has been published for this repository yet. Until one is added, please open an issue before investing in a large contribution.
+This repository uses two licenses: code is [MIT](LICENSE), and original articles, glossary entries, and diagrams are [CC BY 4.0](CONTENT_LICENSE.md). By opening a pull request you agree your contribution is licensed under the matching terms. Only contribute work you wrote or have the right to license, and do not paste text or code from other projects beyond a short, cited excerpt.

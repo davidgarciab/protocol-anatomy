@@ -2,6 +2,8 @@
   "name": "protocol-anatomy",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
+  "author": "David Garcia (https://github.com/davidgarciab)",
   "type": "module",
   "engines": {
     "node": ">=24.11.0 <25"
