@@ -119,6 +119,10 @@ if (existsSync(dist)) {
     if (/<script[^>]+src="[^"]*posthog/i.test(html)) {
       errors.push(`${file} loads PostHog directly; it must load only after consent`);
     }
+    const ogImage = html.match(/<meta property="og:image" content="https:\/\/protocols\.davidgarciab\.com\/([^"]+)"/)?.[1];
+    if (!ogImage) errors.push(`${file} has no og:image on the production host`);
+    else if (!existsSync(join(dist, ogImage))) errors.push(`${file} og:image ${ogImage} was not built`);
+    if (!html.includes('content="summary_large_image"')) errors.push(`${file} is not a large-image Twitter card`);
     const csp = html.match(/<meta http-equiv="content-security-policy" content="([^"]*)"/)?.[1];
     if (!csp) errors.push(`${file} has no Content-Security-Policy meta tag`);
     else if (/script-src[^;]*'unsafe-inline'/.test(csp)) errors.push(`${file} allows inline scripts in its CSP`);

@@ -125,6 +125,10 @@ The figure needs a caption and a text description. Label simplified flows as sim
 
 Code samples use fenced blocks. The article layout adds a Copy button when JavaScript is available. The code remains readable without it.
 
+## Social preview images
+
+`src/pages/og/[...path].png.ts` renders a 1200×630 PNG for each protocol, guide, concept, and methodology page at build time, plus `og/default.png` for every other page. `src/lib/og.ts` lays the card out with Satori, which turns text into paths using the Source Serif 4 and Source Sans 3 files from `@fontsource`, and sharp rasterizes it. The build therefore does not depend on fonts installed on the Cloudflare image. The card uses the article’s kicker, title, and `description`, so keep descriptions readable on their own. `pnpm verify:dist` fails if a page’s `og:image` file was not built.
+
 ## Deploy to Cloudflare Pages
 
 Production is the Cloudflare Pages project `protocol-anatomy` on the existing `davidgarciab@gmail.com` account. Pushes to `main` build and deploy. Other branches and pull requests get preview deployments. The site is static: no Worker, database, or API token is required at runtime.

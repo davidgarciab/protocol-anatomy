@@ -36,6 +36,7 @@ const pathname = Astro.url.pathname;
 const sources = data.sources as Source[];
 const versionContext = 'versionContext' in data ? data.versionContext : undefined;
 const pageUrl = canonicalUrl(pathname);
+const ogImage = `/og/${pathname.replace(/^\/+|\/+$/g, '')}.png`;
 const sourceFile = entry.filePath;
 const issueUrl = `${SITE.repoUrl}/issues/new?template=correction.yml&title=${encodeURIComponent(`Correction: ${data.title}`)}`;
 const breadcrumb = [
@@ -59,6 +60,7 @@ const jsonLd = {
       datePublished: data.published,
       dateModified: data.lastVerified,
       url: pageUrl,
+      image: new URL(ogImage, SITE.url).href,
       mainEntityOfPage: pageUrl,
       author: authorJsonLd(),
       publisher: {
@@ -80,7 +82,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={data.title} description={data.description} type="article" jsonLd={jsonLd}>
+<BaseLayout title={data.title} description={data.description} type="article" jsonLd={jsonLd} ogImage={ogImage}>
   <Header slot="header" />
   <main id="main" class="page">
     <article>
