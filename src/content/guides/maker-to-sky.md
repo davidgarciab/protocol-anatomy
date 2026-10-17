@@ -82,7 +82,7 @@ The Vat still stores vaults as urns. Collateral is `ink`. Normalized debt is `ar
 
 `UsdsJoin`, in the `sky-ecosystem/usds` repository, mints the USDS ERC-20 against internal `vat.dai` and burns it to release that balance. That is the same shape as DAI’s join. USDS is another token window onto the same debt, which is why a one-for-one converter is possible. If the two tokens were backed by different ledgers, a fee-free unlimited converter would be a solvency bug. The route docs state the shared issuance source explicitly.
 
-The [stability fee](/glossary#stability-fee) and the [Sky Savings Rate](/glossary#sky-savings-rate) remain different numbers. The fee accrues on vault debt. The savings rate accrues to USDS deposited in sUSDS. Governance sets both. Neither is a utilization slope.
+The [stability fee](/glossary/stability-fee/) and the [Sky Savings Rate](/glossary/sky-savings-rate/) remain different numbers. The fee accrues on vault debt. The savings rate accrues to USDS deposited in sUSDS. Governance sets both. Neither is a utilization slope.
 
 ## What the token routes actually specify
 
@@ -97,7 +97,7 @@ The [protocol token routes](https://developers.skyeco.com/quick-start/protocol-t
 
 DAI is still in the table. The docs do not tell holders that DAI is frozen or that it must be converted. An integration can keep using DAI, USDS, or both, and should not assume balances are interchangeable without the converter. They are the same face value only after that conversion, not the same ERC-20 address.
 
-The routes page does not list [stUSDS](/glossary#stusds). Sky’s stUSDS page documents a separate ERC-4626 deposit of USDS that funds SKY-backed borrowing and pays an stUSDS rate. That share price is not the sUSDS savings price and not the DAI converter.
+The routes page does not list [stUSDS](/glossary/stusds/). Sky’s stUSDS page documents a separate ERC-4626 deposit of USDS that funds SKY-backed borrowing and pays an stUSDS rate. That share price is not the sUSDS savings price and not the DAI converter.
 
 USDS is upgradeable. The token page says it uses UUPS and ERC-1967. DAI’s join model and USDS’s proxy are different administrative surfaces. Converting to USDS moves the balance into a token that can be upgraded by its admin. That is a change in governance exposure, separate from the one-for-one rate.
 

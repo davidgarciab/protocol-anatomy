@@ -8,7 +8,10 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import References from '../components/References.astro';
 import Related, { type RelatedLink } from '../components/Related.astro';
-import { SITE, authorJsonLd, canonicalUrl, type Source } from '../lib/site';
+import { getCollection } from 'astro:content';
+import PathNav from '../components/PathNav.astro';
+import { glossary } from '../data/glossary';
+import { CONTENT_LICENSE_URL, SITE, authorJsonLd, canonicalUrl, organizationJsonLd, type Source } from '../lib/site';
 import { lastModified } from '../lib/changes';
 import InlineCode from '../components/InlineCode.astro';
 import Calculators from '../components/Calculators.astro';
@@ -44,6 +47,25 @@ const changes = [...data.changes].sort((a, b) => b.date.localeCompare(a.date));
 const ogImage = `/og/${pathname.replace(/^\/+|\/+$/g, '')}.png`;
 const sourceFile = entry.filePath;
 const issueUrl = `${SITE.repoUrl}/issues/new?template=correction.yml&title=${encodeURIComponent(`Correction: ${data.title}`)}`;
+const pathKey = pathname.replace(/^\/+|\/+$/g, '');
+const protocolTitles = new Map((await getCollection('protocols')).map((item) => [item.id, item.data.title]));
+const aboutNames: string[] =
+  entry.collection === 'protocols'
+    ? [data.title]
+    : entry.collection === 'guides'
+      ? [protocolTitles.get(entry.data.protocol) ?? entry.data.protocol]
+      : entry.collection === 'concepts'
+        ? entry.data.protocols.map((id) => protocolTitles.get(id) ?? id)
+        : [];
+const mentions = glossary
+  .filter((term) => 'glossary' in data && data.glossary.includes(term.id))
+  .map((term) => ({ '@type': 'DefinedTerm', name: term.term, url: canonicalUrl(`/glossary/${term.id}`) }));
+const parentGuide =
+  entry.collection === 'guides'
+    ? { '@type': 'WebPage', url: canonicalUrl(`/protocols/${entry.data.protocol}`) }
+    : undefined;
+const wordCount = (entry.body ?? '').replace(/```[\s\S]*?```/g, ' ').split(/\s+/).filter(Boolean).length;
+const faq = data.faq;
 const breadcrumb = [
   { name: 'Home', item: canonicalUrl('/') },
   ...crumbs.map((crumb, index) => ({
@@ -68,11 +90,22 @@ const jsonLd = {
       image: new URL(ogImage, SITE.url).href,
       mainEntityOfPage: pageUrl,
       author: authorJsonLd(),
-      publisher: {
-        '@type': 'Organization',
-        name: SITE.name,
-        url: SITE.url,
-      },
+      publisher: organizationJsonLd(),
+      isPartOf: [{ '@type': 'WebSite', '@id': `${SITE.url}/#website` }, ...(parentGuide ? [parentGuide] : [])],
+      inLanguage: 'en',
+      isAccessibleForFree: true,
+      license: CONTENT_LICENSE_URL,
+      keywords: data.tags.join(', '),
+      articleSection: kicker,
+      wordCount,
+      ...(aboutNames.length > 0 ? { about: aboutNames.map((name) => ({ '@type': 'Thing', name })) } : {}),
+      ...(mentions.length > 0 ? { mentions } : {}),
+      citation: sources.map((source) => ({
+        '@type': 'CreativeWork',
+        name: source.title,
+        url: source.url,
+        publisher: { '@type': 'Organization', name: source.publisher },
+      })),
     },
     {
       '@type': 'BreadcrumbList',
@@ -83,11 +116,23 @@ const jsonLd = {
         ...(crumb.item ? { item: crumb.item } : {}),
       })),
     },
+    ...(faq.length > 0
+      ? [
+          {
+            '@type': 'FAQPage',
+            mainEntity: faq.map((item) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: { '@type': 'Answer', text: item.answer.replaceAll('`', '') },
+            })),
+          },
+        ]
+      : []),
   ],
 };
 ---
 
-<BaseLayout title={data.title} description={data.description} type="article" jsonLd={jsonLd} ogImage={ogImage}>
+<BaseLayout title={data.seoTitle ?? data.title} description={data.description} type="article" jsonLd={jsonLd} ogImage={ogImage}>
   <Header slot="header" />
   <main id="main" class="page">
     <article>
@@ -95,7 +140,10 @@ const jsonLd = {
         <Breadcrumbs items={crumbs} />
         <p class="kicker">{kicker}</p>
         <h1>{data.title}</h1>
-        <p class="lede">{data.summary}</p>
+        <p class="lede">
+          {entry.collection !== 'site' && <span class="lede-label">Short answer</span>}
+          {data.summary}
+        </p>
         <dl class="meta-list">
           <div>
             <dt>Written by</dt>
@@ -139,6 +187,21 @@ const jsonLd = {
       <div class="article-grid">
         <div class="prose">
           <slot />
+          {
+            faq.length > 0 && (
+              <section class="faq" aria-labelledby="common-questions">
+                <h2 id="common-questions">Common questions</h2>
+                {faq.map((item) => (
+                  <div class="faq-item">
+                    <h3>{item.question}</h3>
+                    <p>
+                      <InlineCode text={item.answer} />
+                    </p>
+                  </div>
+                ))}
+              </section>
+            )
+          }
           <References sources={sources} />
           {
             changes.length > 0 && (
@@ -158,6 +221,14 @@ const jsonLd = {
             )
           }
           <Related links={related} />
+          <PathNav current={pathKey} />
+          <aside class="author-box" aria-labelledby="author-box-heading">
+            <h2 id="author-box-heading">About the author</h2>
+            <p>
+              <a href="/about/" rel="author">{SITE.authorFullName}</a>. {SITE.authorBio}
+              Sources last read on <time datetime={data.lastVerified}>{data.lastVerified}</time>; see the <a href="/methodology/">methodology</a>.
+            </p>
+          </aside>
           <p class="improve">
             See something wrong or missing?
             {sourceFile && <><a href={`${SITE.repoUrl}/edit/main/${sourceFile}`}>Suggest an edit on GitHub</a> or </>}

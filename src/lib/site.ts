@@ -101,3 +101,40 @@ export function sourceKindLabel(kind: SourceKind): string {
       return kind;
   }
 }
+
+const CONTENT_LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
+
+/** The publication as one entity, referenced by `@id` from every page. */
+export function organizationJsonLd(): Record<string, unknown> {
+  return {
+    '@type': 'Organization',
+    '@id': `${SITE.url}/#organization`,
+    name: SITE.name,
+    url: SITE.url,
+    description: SITE.description,
+    founder: authorJsonLd(),
+    sameAs: [SITE.repoUrl],
+  };
+}
+
+export function websiteJsonLd(): Record<string, unknown> {
+  return {
+    '@type': 'WebSite',
+    '@id': `${SITE.url}/#website`,
+    name: SITE.name,
+    url: SITE.url,
+    inLanguage: 'en',
+    license: CONTENT_LICENSE_URL,
+    publisher: { '@id': `${SITE.url}/#organization` },
+  };
+}
+
+export const glossarySetJsonLd = {
+  '@type': 'DefinedTermSet',
+  '@id': `${SITE.url}/glossary/#set`,
+  name: `${SITE.name} glossary`,
+  url: `${SITE.url}/glossary/`,
+  inLanguage: 'en',
+};
+
+export { CONTENT_LICENSE_URL };

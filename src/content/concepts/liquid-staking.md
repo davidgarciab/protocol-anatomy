@@ -1,5 +1,6 @@
 ---
 title: "Liquid staking"
+seoTitle: "How liquid staking works: stETH and Lido"
 description: "How a liquid staking token represents pooled validator deposits, and why a transfer is not a withdrawal."
 summary: "Liquid staking gives the depositor a transferable claim while validators earn rewards. Lido’s claim is a share of pooled ether. stETH rebases. wstETH does not. Getting ETH back is a queue finalized by an oracle, and the operators running validators are a separate trust assumption."
 status: "published"
@@ -8,6 +9,13 @@ lastVerified: "2026-10-13"
 changes:
   - date: "2026-10-14"
     summary: "Added a worked example of one share count held as stETH and as wstETH across a reward and a penalty."
+faq:
+  - question: "Does selling a liquid staking token exit the validator?"
+    answer: "No. The lock remains, and the token is not the validator key. A transfer finds a buyer, while a withdrawal asks the protocol for ETH through a queue that mints an NFT, waits for the accounting report to finalize the request, and pays ETH on claim."
+  - question: "What happens to holders if one validator operator is slashed?"
+    answer: "In Lido Core every holder is in one pool, so a penalty is socialized across shares rather than charged to a validator the user picked. One operator’s slashing changes the share rate for holders who never chose that operator."
+  - question: "Why use wstETH instead of stETH?"
+    answer: "wstETH is the same share with a fixed balance. Use it where a rebase would corrupt internal accounting. The worked example on this page shows both holders earning the same reward, only where the number changes is different."
 order: 11
 group: "monetary"
 tags:
@@ -57,9 +65,9 @@ Staking locks an asset in a validator so the consensus protocol will pay rewards
 
 ## The share
 
-Lido Core mints shares when ETH is submitted. The stETH balance is shares times pooled ether over total shares. Rewards increase pooled ether. A slashing decreases it. Every Core holder is in one pool, so a penalty is socialized across shares rather than charged to a validator that user picked. Users do not pick a validator in the basic Core deposit. The protocol assigns stake to [operators](/glossary#node-operator).
+Lido Core mints shares when ETH is submitted. The stETH balance is shares times pooled ether over total shares. Rewards increase pooled ether. A slashing decreases it. Every Core holder is in one pool, so a penalty is socialized across shares rather than charged to a validator that user picked. Users do not pick a validator in the basic Core deposit. The protocol assigns stake to [operators](/glossary/node-operator/).
 
-Lido V3 [staking vaults](/glossary#staking-vault) are the documented exception to that socialization. One vault has one owner and one operator. It can mint stETH against its own reported value, up to a reserve ratio, and the technical design says operator-group losses are supposed to stay in that group up to a DAO-set level. The minted token is still stETH. The exit of the underlying validators is the vault’s exit, described on the [Lido](/protocols/lido) page, not a second share token.
+Lido V3 [staking vaults](/glossary/staking-vault/) are the documented exception to that socialization. One vault has one owner and one operator. It can mint stETH against its own reported value, up to a reserve ratio, and the technical design says operator-group losses are supposed to stay in that group up to a DAO-set level. The minted token is still stETH. The exit of the underlying validators is the vault’s exit, described on the [Lido](/protocols/lido) page, not a second share token.
 
 That socialization is the product. It is also the risk. One operator’s slashing changes the share rate for holders who never chose that operator. Module design and operator limits are how the protocol tries to bound the blast radius. They are governance parameters. The share math will apply whatever the report contains.
 

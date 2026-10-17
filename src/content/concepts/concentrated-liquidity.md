@@ -1,5 +1,6 @@
 ---
 title: "Concentrated liquidity"
+seoTitle: "Concentrated liquidity: Uniswap v3 and v4 ticks"
 description: "How a Uniswap v3 or v4 position holds token0, token1, or both as price moves through its tick range."
 summary: "Concentrated liquidity is constant-product inventory that is only active between two prices. Below the range the position is token0. Above it, token1. Inside, both. Leaving the range stops fees. It is not a liquidation. v4 uses the same amount formulas and the opposite sign on the settled delta."
 status: "published"
@@ -8,6 +9,13 @@ lastVerified: "2026-10-14"
 changes:
   - date: "2026-10-14"
     summary: "Added which tokens a position holds below, inside, and above its range, with excerpts from the v3 and v4 `SqrtPriceMath` and `LiquidityAmounts` libraries."
+faq:
+  - question: "Which tokens does a Uniswap v3 or v4 position hold at the current price?"
+    answer: "It depends on three branches. At or below the lower price the position is entirely token0. Strictly inside the range it holds both tokens. At or above the upper price it is entirely token1."
+  - question: "Is leaving the price range a liquidation?"
+    answer: "No. Fee accrual stops and the position is entirely one token, but nothing in the amount functions seizes the position or charges a penalty. If the price returns, the position becomes active again without a new deposit."
+  - question: "How do v3 and v4 differ in the sign of the liquidity amounts?"
+    answer: "In the v3 file a positive liquidity delta returns a positive token amount, rounded up, which the user pays. In v4, adding liquidity returns a negative delta, still using the round-up path, and a negative v4 delta means the caller owes the pool. Reading a v4 delta with v3’s sign convention gets it backwards."
 order: 4
 group: "markets"
 tags:

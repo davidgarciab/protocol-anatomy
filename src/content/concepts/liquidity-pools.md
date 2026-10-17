@@ -62,7 +62,7 @@ Uniswap’s overview draws the version line clearly.
 
 v2 mints a fungible ERC-20. Balance is proportional share. Fees increase reserve value per token. Two holders can be pooled, transferred, and composed like any other token. The cost of that simplicity is that nobody chooses a price range.
 
-v3 mints an ERC-721 through `NonfungiblePositionManager` because a range is part of the position. The NFT is not a share of the whole pool. It is a share of liquidity between two [ticks](/glossary#tick). Two NFTs in one pool can be in different ranges and earn different fees. They should not be added together as if they were v2 LP tokens.
+v3 mints an ERC-721 through `NonfungiblePositionManager` because a range is part of the position. The NFT is not a share of the whole pool. It is a share of liquidity between two [ticks](/glossary/tick/). Two NFTs in one pool can be in different ranges and earn different fees. They should not be added together as if they were v2 LP tokens.
 
 v4’s `PositionManager` mints another ERC-721, named “Uniswap v4 Positions NFT” in the contract. The range is still the position. The contract address is not v3’s `NonfungiblePositionManager`, so an indexer that only watches that v3 contract misses v4 liquidity. ERC-6909 on `PoolManager` is a claim on tokens left in the singleton. It can sit beside a position when a manager opts to settle that way. It is not a substitute token id for the NFT.
 

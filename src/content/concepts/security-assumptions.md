@@ -1,5 +1,6 @@
 ---
 title: "Security assumptions"
+seoTitle: "DeFi security assumptions: what is not trustless"
 description: "The assumptions these protocols still require, grouped so a design is not described as trustless by default."
 summary: "Each protocol enforces an invariant and leaves a set of assumptions outside it: prices, upgrades, operators, governance parameters, and the behavior of other contracts in the same transaction. Naming those assumptions is part of reading the design. It is not a finding that the design has failed."
 status: "published"
@@ -69,7 +70,7 @@ A useful way to read a protocol is to write down what the contracts check and wh
 
 **The rest of the transaction can re-enter or lie.** Tokens with callbacks, hooks, and flash swaps run attacker-controlled code before the outer call finishes. Composition is the feature. It is also the path. The [composability](/concepts/composability) article separates what is atomic from what only looks atomic.
 
-**Someone has to take the other side of a failure.** Liquidators must find it profitable to repay bad positions. Auction bidders must show up. Arbitrage must pull a StableSwap pool back toward the peg. If they do not, the protocol holds [bad debt](/glossary#bad-debt) or a depegged inventory. The mechanism does not contain a hidden buyer of last resort unless a specific module, such as a peg stability module with inventory, was funded.
+**Someone has to take the other side of a failure.** Liquidators must find it profitable to repay bad positions. Auction bidders must show up. Arbitrage must pull a StableSwap pool back toward the peg. If they do not, the protocol holds [bad debt](/glossary/bad-debt/) or a depegged inventory. The mechanism does not contain a hidden buyer of last resort unless a specific module, such as a peg stability module with inventory, was funded.
 
 ## Assumptions that belong to one protocol
 

@@ -3,17 +3,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { glossary } from '../../data/glossary';
-import { pagePath } from '../../lib/site';
+import { canonicalUrl, glossarySetJsonLd, pagePath } from '../../lib/site';
 
 const letters = [...new Set(glossary.map((entry) => entry.term[0].toUpperCase()))].sort();
 const grouped = letters.map((letter) => ({
   letter,
   entries: glossary.filter((entry) => entry.term[0].toUpperCase() === letter),
 }));
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      ...glossarySetJsonLd,
+      hasDefinedTerm: glossary.map((entry) => ({
+        '@type': 'DefinedTerm',
+        name: entry.term,
+        url: canonicalUrl(`/glossary/${entry.id}`),
+      })),
+    },
+  ],
+};
 const description = 'Short definitions for the accounting, pricing, and governance terms used in the protocol guides.';
 ---
 
-<BaseLayout title="Glossary" description={description}>
+<BaseLayout title="DeFi glossary: Aave, Uniswap, Maker, Curve and Lido terms" description={description} jsonLd={jsonLd}>
   <Header slot="header" />
   <main id="main" class="page">
     <header class="article-header">
@@ -40,7 +53,7 @@ const description = 'Short definitions for the accounting, pricing, and governan
           <ul class="glossary-list">
             {group.entries.map((entry) => (
               <li id={entry.id} data-term={`${entry.term} ${entry.definition}`}>
-                <h3>{entry.term}</h3>
+                <h3><a href={pagePath(`/glossary/${entry.id}`)}>{entry.term}</a></h3>
                 <p>{entry.definition}</p>
                 {entry.related.length > 0 && (
                   <p>

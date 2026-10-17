@@ -25,6 +25,12 @@ const version = z.object({
 const shared = {
   title: z.string().min(3),
   description: z.string().min(40).max(180),
+  /** Search-result title when the article title alone says too little. The page heading stays `title`. */
+  seoTitle: z.string().min(10).max(60).optional(),
+  /** Questions a reader or search engine would ask, answered from this article's own text. */
+  faq: z
+    .array(z.object({ question: z.string().min(15).endsWith('?'), answer: z.string().min(80) }))
+    .default([]),
   summary: z.string().min(80),
   status: z.literal('published'),
   published: date,

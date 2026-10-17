@@ -28,7 +28,7 @@ export function protocolLinks(entry: CollectionEntry<'protocols'>, library: Libr
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary/${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }
@@ -48,7 +48,7 @@ export function guideLinks(entry: CollectionEntry<'guides'>, library: Library): 
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary/${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }
@@ -66,7 +66,7 @@ export function conceptLinks(entry: CollectionEntry<'concepts'>, library: Librar
     ...entry.data.glossary.map((id) => {
       const term = glossary.find((item) => item.id === id);
       if (!term) throw new Error(`Unknown glossary id "${id}"`);
-      return { href: pagePath(`/glossary#${term.id}`), title: term.term, kind: 'Glossary' };
+      return { href: pagePath(`/glossary/${term.id}`), title: term.term, kind: 'Glossary' };
     }),
   ];
 }

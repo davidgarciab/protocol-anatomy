@@ -1,10 +1,20 @@
 ---
 title: "MakerDAO / Sky"
+seoTitle: "How MakerDAO and Sky work: vaults, DAI, USDS"
 description: "How Maker vaults account for collateral and DAI debt, and how Sky’s USDS relates to that system."
 summary: "Maker’s Vat is a ledger of collateral and stablecoin debt. A vault locks collateral, draws DAI, and pays a stability fee that accrues by raising a per-collateral rate. Sky keeps a one-for-one path between DAI and USDS and adds a savings token, sUSDS, without replacing the vault ledger with an AMM."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+faq:
+  - question: "How does Maker track the debt of a vault?"
+    answer: "The Vat stores normalized debt `art` per vault and an accumulated stability-fee multiplier `rate` per collateral type. Current debt is `art * rate`, not `art` alone. One update to `rate` reprices every vault of that collateral type."
+  - question: "When is a Maker vault liquidated?"
+    answer: "A vault is unsafe when `art * rate` exceeds `ink * spot`. The Vat function `grab` confiscates it, taking collateral and normalized debt off the vault and recording the debt as unbacked `sin`. Selling the collateral is a separate auction module, not a fixed close factor inside the Vat."
+  - question: "Is the Maker stability fee a utilization rate like Aave’s?"
+    answer: "No. Governance sets it, and it does not rise automatically because more DAI has been drawn. It reaches vaults when someone calls `Jug.drip`, which adds the elapsed-time change onto the collateral type’s `rate`. Until `drip` is called, `rate` is stale."
+  - question: "What is the difference between sUSDS and stUSDS?"
+    answer: "sUSDS is an ERC-4626 deposit of USDS into the Sky Savings Rate. stUSDS is another ERC-4626 deposit of USDS, described by Sky as a risk-capital token that funds SKY-backed borrowing. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price stUSDS."
 order: 3
 category: "Collateralized stablecoin"
 mechanism: "Overcollateralized stablecoin debt against vaults, with a governance-set stability fee and a savings rate."
@@ -105,7 +115,7 @@ The Vat is the accounting contract. The [Vat documentation](https://docs.makerda
 | `dust` | Ilk | Minimum debt for a vault that is not fully repaid |
 | `Art` | Ilk | Sum of normalized debt for the collateral type |
 
-Current debt on a vault is `art * rate`, not `art` alone. `rate` starts at 1e27 and only increases as fees accrue. That is why the stored debt is called [normalized](/glossary#normalized-debt). One update to `rate` reprices every vault of that collateral type.
+Current debt on a vault is `art * rate`, not `art` alone. `rate` starts at 1e27 and only increases as fees accrue. That is why the stored debt is called [normalized](/glossary/normalized-debt/). One update to `rate` reprices every vault of that collateral type.
 
 `gem` is the Vat’s internal collateral balance. `dai` is the internal stablecoin balance, in rad (1e45), not the ERC-20 in a user’s wallet. The ERC-20 DAI and USDS tokens are minted by join adapters when internal `dai` is converted out, and burned when it is converted back. The USDS repository describes `UsdsJoin` as the adapter that mints USDS against `vat.dai`, analogous to `DaiJoin`.
 
@@ -125,7 +135,7 @@ A user locks collateral, then draws stablecoin. Both adjustments meet in `frob`.
 
 The rates module explains why someone must call `Jug.drip(ilk)` for fees to move. The Jug stores a per-second duty for the collateral type plus a global base. `drip` computes the multiplier for the elapsed time and calls `Vat.fold`, which adds the change onto `Ilk.rate` and credits the system surplus. Until `drip` is called, `rate` is stale. A vault opened and closed between drips does not pay the fee that would have accrued in that gap. The Jug docs treat that as a property of lazy accrual, and they note that keepers and governance have reasons to call it.
 
-The [stability fee](/glossary#stability-fee) is therefore not a utilization curve. Governance sets it. It does not automatically rise because more DAI has been drawn, except insofar as governance reacts. That is the main contrast with [Aave](/protocols/aave).
+The [stability fee](/glossary/stability-fee/) is therefore not a utilization curve. Governance sets it. It does not automatically rise because more DAI has been drawn, except insofar as governance reacts. That is the main contrast with [Aave](/protocols/aave).
 
 ## Liquidation
 
@@ -137,11 +147,11 @@ Selling the seized collateral is a different module. `src/dog.sol` sits next to 
 
 Sky’s token docs describe USDS as an ERC-20 with permit support, upgradeable through the UUPS pattern and ERC-1967 storage. The [DAI–USDS converter](https://developers.skyeco.com/protocol/tokens/usds/) exchanges the two tokens at one-to-one in both directions. The same page says no fee is charged and that a fee cannot be enabled later on that route. The converter is a convenience over the joins. It does not reprice DAI.
 
-The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary#sky-savings-rate). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
+The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary/sky-savings-rate/). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
 
-The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts: a fixed one-to-one swap against an external stablecoin, subject to the module’s liquidity, not a Curve invariant. That is the [peg stability module](/glossary#peg-stability-module) idea. It can hold the market price near one dollar only while it has inventory and while governance leaves it open. It does not make a vault safer.
+The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts: a fixed one-to-one swap against an external stablecoin, subject to the module’s liquidity, not a Curve invariant. That is the [peg stability module](/glossary/peg-stability-module/) idea. It can hold the market price near one dollar only while it has inventory and while governance leaves it open. It does not make a vault safer.
 
-[stUSDS](/glossary#stusds) is another ERC-4626 deposit of USDS, and it is not sUSDS. Sky’s token page calls it a risk-capital token: supplying USDS funds SKY-backed borrowing and pays an stUSDS rate. The page documents `deposit` and `mint` plus permit. It does not document a one-for-one path with DAI, and it does not document the Sky Savings Rate. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price this deposit.
+[stUSDS](/glossary/stusds/) is another ERC-4626 deposit of USDS, and it is not sUSDS. Sky’s token page calls it a risk-capital token: supplying USDS funds SKY-backed borrowing and pays an stUSDS rate. The page documents `deposit` and `mint` plus permit. It does not document a one-for-one path with DAI, and it does not document the Sky Savings Rate. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price this deposit.
 
 ## What “decentralized” does not remove
 

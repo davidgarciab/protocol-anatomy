@@ -11,16 +11,20 @@ const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.d
 const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
 const featuredConcepts = concepts.slice(0, 6);
 
+const homeTitle = `${SITE.name}: how Aave, Uniswap, Maker, Curve and Lido work`;
+const homeDescription =
+  'A technical field guide to how Aave, Uniswap, MakerDAO/Sky, Curve and Lido hold assets, price trades, liquidate collateral and upgrade contracts, sourced to code and docs.';
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE.name,
   url: SITE.url,
-  description: SITE.description,
+  description: homeDescription,
 };
 ---
 
-<BaseLayout title={SITE.name} description={SITE.description} jsonLd={jsonLd}>
+<BaseLayout title={homeTitle} description={homeDescription} jsonLd={jsonLd}>
   <Header slot="header" />
   <main id="main" class="page">
     <section class="hero">
@@ -29,7 +33,8 @@ const jsonLd = {
       <p class="tagline">{SITE.tagline}</p>
       <p class="hero-lede">{SITE.description}</p>
       <div class="hero-actions">
-        <a class="button" href="/protocols/">Browse the protocols</a>
+        <a class="button" href="/start/">Start here</a>
+        <a href="/protocols/">Browse the protocols</a>
         <a href="/methodology/">How the research is checked</a>
       </div>
     </section>

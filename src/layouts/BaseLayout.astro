@@ -25,7 +25,7 @@ const {
   ogImage = '/og/default.png',
 } = Astro.props;
 
-const fullTitle = title === SITE.name ? SITE.name : `${title} · ${SITE.name}`;
+const fullTitle = title.startsWith(SITE.name) ? title : `${title} · ${SITE.name}`;
 const canonical = canonicalUrl(pathname);
 const ogImageUrl = new URL(ogImage, SITE.url).href;
 const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';

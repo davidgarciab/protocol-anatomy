@@ -1,5 +1,6 @@
 ---
 title: "Automated market makers"
+seoTitle: "Automated market makers: Uniswap and Curve"
 description: "What an AMM prices, which state it stores, and how Uniswap and Curve implement different invariants."
 summary: "An automated market maker prices a swap from the assets already in a pool. There is no order to match. Uniswap’s constant product and Curve’s StableSwap are two invariants on that idea, with different shapes and different LP claims."
 status: "published"
@@ -58,7 +59,7 @@ Price impact is the movement along the curve during the trade. Slippage, in the 
 
 ## Two shapes, not one AMM
 
-[Constant product](/concepts/constant-product) spends liquidity across all prices. That is the right complaint Curve makes about using it for stablecoins, and the wrong complaint to make about a volatile pair that might trade anywhere. [StableSwap](/glossary#stableswap) spends liquidity near a peg and becomes more product-like when the pool is imbalanced. [Concentrated liquidity](/concepts/concentrated-liquidity) lets each Uniswap v3 or v4 provider choose the interval instead of hard-coding the peg into the invariant.
+[Constant product](/concepts/constant-product) spends liquidity across all prices. That is the right complaint Curve makes about using it for stablecoins, and the wrong complaint to make about a volatile pair that might trade anywhere. [StableSwap](/glossary/stableswap/) spends liquidity near a peg and becomes more product-like when the pool is imbalanced. [Concentrated liquidity](/concepts/concentrated-liquidity) lets each Uniswap v3 or v4 provider choose the interval instead of hard-coding the peg into the invariant.
 
 Calling all three “an AMM” is fine. Calling them the same curve is not. The [Curve](/protocols/curve) and [Uniswap](/protocols/uniswap) pages keep the formulas with the protocols that published them.
 

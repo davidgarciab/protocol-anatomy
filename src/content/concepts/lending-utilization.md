@@ -53,7 +53,7 @@ V4 does not throw this away. The hub overview says the drawn rate is still a uti
 
 ## Claims
 
-Suppliers in V3 hold [aTokens](/glossary#atoken). Borrowers hold non-transferable [variable debt tokens](/glossary#variable-debt-token). The pool contract is the place those claims are minted. V4’s overview uses shares at the hub instead of that token pair. The economic positions are the same shape: a supplied claim that grows, a debt that grows faster when the rate is higher. The contract you call is not the same object. The [version guide](/guides/aave-versions) is the map.
+Suppliers in V3 hold [aTokens](/glossary/atoken/). Borrowers hold non-transferable [variable debt tokens](/glossary/variable-debt-token/). The pool contract is the place those claims are minted. V4’s overview uses shares at the hub instead of that token pair. The economic positions are the same shape: a supplied claim that grows, a debt that grows faster when the rate is higher. The contract you call is not the same object. The [version guide](/guides/aave-versions) is the map.
 
 ## What utilization does not measure
 

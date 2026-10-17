@@ -1,5 +1,6 @@
 ---
 title: "On-chain accounting"
+seoTitle: "Scaled balances and shares in DeFi accounting"
 description: "Why these protocols store scaled balances, normalized debt, and shares instead of rewriting every account."
 summary: "Aave scales aToken balances by a liquidity index. Maker stores normalized vault debt and multiplies by a rate. Lido prices shares by pooled ether. Curve accounts LP claims against the invariant D. The pattern is one global multiplier, updated lazily, instead of a transfer to every holder."
 status: "published"
@@ -72,7 +73,7 @@ These protocols cannot write every balance on every block. They store a small po
 
 ## Three multipliers
 
-An Aave aToken balance is a scaled balance times the reserve’s [liquidity index](/glossary#liquidity-index). The tokenization docs describe the user-visible effect: the balance grows as interest accrues, without a transfer. Variable debt uses the borrow index. If you store a user’s aToken `balanceOf` in your own contract and later assume the stored number is still their claim, you have frozen a moving target. If you try to rebase your own ledger by transferring aTokens in proportion to interest, you will fight the token that is already rebasing. The V3 functions behind that product are quoted in the next section. They are not the same function for supply and debt.
+An Aave aToken balance is a scaled balance times the reserve’s [liquidity index](/glossary/liquidity-index/). The tokenization docs describe the user-visible effect: the balance grows as interest accrues, without a transfer. Variable debt uses the borrow index. If you store a user’s aToken `balanceOf` in your own contract and later assume the stored number is still their claim, you have frozen a moving target. If you try to rebase your own ledger by transferring aTokens in proportion to interest, you will fight the token that is already rebasing. The V3 functions behind that product are quoted in the next section. They are not the same function for supply and debt.
 
 A Maker urn stores `art`, not the DAI owed. The owed amount is `art` times the ilk `rate`. `Jug.drip` changes `rate` once. Every vault is updated conceptually and none is updated in storage. A dashboard that sums `art` across vaults is summing normalized debt. It is not the stablecoin supply. The stablecoin supply is tied to `art * rate` plus the other Vat balances the documentation defines, including surplus and unbacked debt. Leaving those out is how a supply figure drifts.
 

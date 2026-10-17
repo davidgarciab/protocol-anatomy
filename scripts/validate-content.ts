@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { parse } from 'yaml';
 import GithubSlugger from 'github-slugger';
 import { glossary } from '../src/data/glossary';
+import { learningPaths } from '../src/data/paths';
 import { diagramNames } from '../src/diagrams/registry';
 import {
   REQUIRED_CONCEPTS,
@@ -68,6 +69,8 @@ function pathFor(doc: CheckedDocument): string {
 }
 
 const docs = readDocs();
+const articleIds = new Set(docs.map((doc) => `${doc.collection}/${doc.id}`));
+const pathErrors: string[] = [];
 const catalog: Catalog = {
   protocols: new Set(docs.filter((doc) => doc.collection === 'protocols').map((doc) => doc.id)),
   guides: new Set(docs.filter((doc) => doc.collection === 'guides').map((doc) => doc.id)),
@@ -77,6 +80,7 @@ const catalog: Catalog = {
   paths: new Set(['/', '/protocols', '/guides', '/concepts', '/glossary', '/methodology', '/sources', '/search', '/about', '/changes', '/privacy', '/rss.xml']),
   headings: new Map([['/glossary', new Set(glossary.map((entry) => entry.id))]]),
 };
+for (const entry of glossary) catalog.paths.add(`/glossary/${entry.id}`);
 
 for (const doc of docs) {
   const path = pathFor(doc);
@@ -84,7 +88,14 @@ for (const doc of docs) {
   catalog.headings.set(path, headingsFor(doc.body));
 }
 
+for (const path of learningPaths) {
+  for (const step of path.steps) {
+    if (!articleIds.has(step)) pathErrors.push(`Learning path "${path.id}" lists unknown article "${step}"`);
+  }
+}
+
 const errors = [
+  ...pathErrors,
   ...missingRequired(REQUIRED_PROTOCOLS, catalog.protocols, 'protocol'),
   ...missingRequired(REQUIRED_GUIDES, catalog.guides, 'guide'),
   ...missingRequired(REQUIRED_CONCEPTS, catalog.concepts, 'concept'),

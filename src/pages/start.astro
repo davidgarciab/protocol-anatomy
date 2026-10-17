@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { learningPaths } from '../data/paths';
+
+const [protocols, guides, concepts] = await Promise.all([
+  getCollection('protocols'),
+  getCollection('guides'),
+  getCollection('concepts'),
+]);
+const byKey = new Map<string, { title: string; summary: string }>([
+  ...protocols.map((entry) => [`protocols/${entry.id}`, entry.data] as const),
+  ...guides.map((entry) => [`guides/${entry.id}`, entry.data] as const),
+  ...concepts.map((entry) => [`concepts/${entry.id}`, entry.data] as const),
+]);
+const description =
+  'Reading orders through the protocol articles: lending, exchanges, collateralized stablecoins, liquid staking, and engineering risk.';
+---
+
+<BaseLayout title="Start here: DeFi protocol learning paths" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Learning paths</p>
+      <h1>Start here</h1>
+      <p class="lede">
+        Each path puts the general mechanism first, then the protocol that implements it, then the version guide. Pick the question you came with.
+      </p>
+    </header>
+    <div class="prose">
+      {
+        learningPaths.map((path) => (
+          <section aria-labelledby={path.id}>
+            <h2 id={path.id}>{path.title}</h2>
+            <p>{path.summary}</p>
+            <ol>
+              {path.steps.map((key) => (
+                <li>
+                  <a href={`/${key}/`}>{byKey.get(key)?.title}</a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

@@ -5,6 +5,15 @@ summary: "These mechanisms all hand a transaction liquidity it must replace befo
 status: "published"
 published: "2026-10-14"
 lastVerified: "2026-10-14"
+faq:
+  - question: "Why can a flash loan be offered without collateral?"
+    answer: "Because the pool sends tokens, or records a debt, and the same call has to make the pool whole. If it does not, the transaction reverts and the send never happened. Uniswap v2, v3, v4, and Aave V3 all use that atomicity, with different functions, fees, and end states."
+  - question: "How do the flash fees differ between Uniswap v3 and Aave V3?"
+    answer: "Uniswap v3 charges the pool’s own fee tier, rounded up, so a 3000 tier is 0.30 percent. Aave’s flash premium is initialized at deployment to 0.05 percent and can be changed by a governance vote, so the live value is `FLASHLOAN_PREMIUM_TOTAL`, not the initialization number."
+  - question: "Can an Aave flash loan leave debt behind?"
+    answer: "`flashLoan` can, if the borrower opens a variable-rate debt position backed by supplied collateral or credit delegation. That borrow is then subject to health factor and liquidation. `flashLoanSimple` takes one reserve, does not waive the fee, and cannot open a debt position."
+  - question: "What makes a Uniswap v4 flash revert?"
+    answer: "`unlock` reverts with `CurrencyNotSettled` if any currency still has a non-zero delta when the callback returns. `take` sends currency out and `settle` pays it back. There is no `flash` function in this `PoolManager`, and the debt is the delta."
 order: 16
 group: "engineering"
 tags:

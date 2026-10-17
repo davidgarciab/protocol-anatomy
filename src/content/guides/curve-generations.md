@@ -85,7 +85,7 @@ Curve’s version history is not “the AMM, but the fourth one.” The project 
 
 The StableSwap whitepaper defines the pricing rule for pegged assets. Early pools were individual deployments: a contract for a specific set of coins, often with a hand-written name such as the well-known three-pool. The idea of the invariant did not require a factory. The factory came later so a new pegged set could be deployed without a new audit of a new equation.
 
-Stableswap-NG is the factory the current integration guide tells developers to use. It deploys plain pools and [metapools](/glossary#metapool). The pool contract is the LP token. Asset types 0 through 3 cover a plain ERC-20, an oracle rate, a rebasing balance, and an ERC-4626 rate. That is the practical break from the earliest pools, which assumed token balances were the whole story. A rebasing liquid staking token cannot be dropped into a balance-only pool without the pool either syncing balances or mis-accounting a rebase.
+Stableswap-NG is the factory the current integration guide tells developers to use. It deploys plain pools and [metapools](/glossary/metapool/). The pool contract is the LP token. Asset types 0 through 3 cover a plain ERC-20, an oracle rate, a rebasing balance, and an ERC-4626 rate. That is the practical break from the earliest pools, which assumed token balances were the whole story. A rebasing liquid staking token cannot be dropped into a balance-only pool without the pool either syncing balances or mis-accounting a rebase.
 
 NG implementations are indexed. The integration documentation says the factory can add an implementation, and an existing pool keeps its own. There is no global “Curve V4 pool” that every address silently became. When you read a pool, read its implementation, its `A`, its fee, and its asset types.
 
@@ -97,7 +97,7 @@ CryptoSwap’s paper changes the invariant so liquidity can sit around a moving 
 
 Twocrypto and tricrypto pools are CryptoSwap deployments with two or three coins. They are not Stableswap-NG pools with the coin count changed. A metapool is a StableSwap-shaped pool whose second coin is another pool’s LP token.
 
-[FXSwap](/glossary#fxswap) sits beside both. The understanding-FXSwap page describes a two-asset pool that uses StableSwap-style pricing and recenters with a refuel budget because the reference price comes from outside the pool. A refuel is not an oracle write of the spot price. Branching on “Curve pool” without asking which invariant is the integration bug this guide is about.
+[FXSwap](/glossary/fxswap/) sits beside both. The understanding-FXSwap page describes a two-asset pool that uses StableSwap-style pricing and recenters with a refuel budget because the reference price comes from outside the pool. A refuel is not an oracle write of the spot price. Branching on “Curve pool” without asking which invariant is the integration bug this guide is about.
 
 ## crvUSD versions are blueprint versions
 

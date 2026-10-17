@@ -1,10 +1,20 @@
 ---
 title: "Aave"
+seoTitle: "How Aave works: V3 Pool accounting and V4 hub"
 description: "How Aave accounts for supply, variable debt, interest, and liquidation in V3 markets and the V4 hub."
 summary: "Aave is a pooled lending protocol. Suppliers deposit assets into shared liquidity, borrowers post collateral, and interest follows utilization. V3 records that state in one Pool. V4 splits shared liquidity from user-facing markets and prices collateral risk on top of the utilization rate."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+faq:
+  - question: "How does Aave pay interest to suppliers without sending tokens to each lender?"
+    answer: "The reserve keeps a liquidity index. aToken balances are scaled, and the underlying amount is the scaled balance times the normalized income. Touching the reserve accrues the index forward using the time since the last update and the current rate, so a quiet block does not write every account."
+  - question: "How does Aave set the variable borrow rate?"
+    answer: "V3 uses a two-slope utilization model per reserve. Below an optimal utilization the rate rises with the first slope. Above it the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. The optimal utilization and the slopes are per reserve, not one Aave-wide constant."
+  - question: "When can an Aave V3 position be liquidated?"
+    answer: "When its health factor falls below 1, `liquidationCall` can repay debt and seize collateral. The V4 overview says V3’s default close factor is 50 percent, and 100 percent when the health factor is under 0.95 or the position is below a value threshold. The liquidator receives a bonus set on the collateral reserve."
+  - question: "What changes in Aave V4 liquidation?"
+    answer: "Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls, and the overview sets the dust threshold at 1,000 USD of value."
 order: 1
 category: "Lending"
 mechanism: "Pooled overcollateralized borrowing, with utilization-based interest and collateral liquidation."
@@ -85,7 +95,7 @@ This page describes the V3 market that the current Aave developer docs still doc
 
 ## Who uses it
 
-Suppliers transfer an underlying token and receive a claim on the pool plus the interest that borrowers pay. Borrowers lock collateral and receive the borrowed token. Liquidators repay someone else’s debt when a [health factor](/glossary#health-factor) check fails and receive collateral in return. Governance, through the Aave DAO and the roles it grants, chooses reserves, risk parameters, and which contracts may change configuration. Oracle publishers provide prices. None of those prices are computed by the lending invariant itself.
+Suppliers transfer an underlying token and receive a claim on the pool plus the interest that borrowers pay. Borrowers lock collateral and receive the borrowed token. Liquidators repay someone else’s debt when a [health factor](/glossary/health-factor/) check fails and receive collateral in return. Governance, through the Aave DAO and the roles it grants, chooses reserves, risk parameters, and which contracts may change configuration. Oracle publishers provide prices. None of those prices are computed by the lending invariant itself.
 
 In V4 there is a further split. Users call a spoke. The spoke draws liquidity from a hub. The [V4 overview](https://github.com/aave/aave-v4/blob/main/docs/overview.md) describes the hub as the liquidity and accounting core, and the spoke as the user-facing market.
 
@@ -95,8 +105,8 @@ A V3 market is organized around the `Pool`. The developer docs describe it as th
 
 The tokenization docs describe two claims:
 
-- An [aToken](/glossary#atoken) is minted on supply and burned on withdraw. Its balance grows with supply interest, so a transfer of aTokens transfers a growing claim, not a frozen deposit receipt.
-- A [variable debt token](/glossary#variable-debt-token) is minted on borrow. It is not transferable. Its balance is the debt plus accrued variable interest. The pool reference says new borrows should pass interest-rate mode `2`. Stable-rate mode is deprecated in that interface.
+- An [aToken](/glossary/atoken/) is minted on supply and burned on withdraw. Its balance grows with supply interest, so a transfer of aTokens transfers a growing claim, not a frozen deposit receipt.
+- A [variable debt token](/glossary/variable-debt-token/) is minted on borrow. It is not transferable. Its balance is the debt plus accrued variable interest. The pool reference says new borrows should pass interest-rate mode `2`. Stable-rate mode is deprecated in that interface.
 
 `supply` does not itself contain the interest math. In `aave-v3-core`, the pool delegates to a supply library:
 
@@ -129,9 +139,9 @@ Interest is not paid by transferring tokens to each lender. The reserve keeps a 
 
 ## How the rate is chosen
 
-[Utilization](/glossary#utilization) is the fraction of available liquidity that is borrowed. The [interest-rate strategy](https://aave.com/docs/aave-v3/smart-contracts/interest-rate-strategy) is a two-slope model. Below an optimal utilization, the variable borrow rate rises with the first slope. Above it, the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. That cost is meant to pull liquidity back in or push borrowers to repay.
+[Utilization](/glossary/utilization/) is the fraction of available liquidity that is borrowed. The [interest-rate strategy](https://aave.com/docs/aave-v3/smart-contracts/interest-rate-strategy) is a two-slope model. Below an optimal utilization, the variable borrow rate rises with the first slope. Above it, the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. That cost is meant to pull liquidity back in or push borrowers to repay.
 
-The strategy returns a liquidity rate and a variable borrow rate, both in ray units (1e27). The [reserve factor](/glossary#reserve-factor) sends a share of borrow interest to the treasury, so suppliers do not receive the full borrow rate times utilization. The strategy’s inputs also include unbacked liquidity and, when enabled, a virtual underlying balance. Those inputs matter for integrations that assume the textbook ratio `debt / (cash + debt)` is the only definition. Read the reserve’s strategy before hard-coding a formula.
+The strategy returns a liquidity rate and a variable borrow rate, both in ray units (1e27). The [reserve factor](/glossary/reserve-factor/) sends a share of borrow interest to the treasury, so suppliers do not receive the full borrow rate times utilization. The strategy’s inputs also include unbacked liquidity and, when enabled, a virtual underlying balance. Those inputs matter for integrations that assume the textbook ratio `debt / (cash + debt)` is the only definition. Read the reserve’s strategy before hard-coding a formula.
 
 The optimal utilization and the slopes are per reserve. They are not a single Aave-wide constant.
 
@@ -141,7 +151,7 @@ Before a borrow is released, the pool checks that the resulting position stays w
 
 The health factor compares risk-adjusted collateral with debt. The V4 documentation, describing the V3 behavior it replaces, treats a health factor of 1 as the liquidation boundary. Below that, `liquidationCall` can repay debt and seize collateral. The V4 overview says V3’s default close factor is 50 percent, and 100 percent when the health factor is under 0.95 or the position is below a value threshold. The liquidator receives a bonus set on the collateral reserve. A protocol fee can take part of that bonus.
 
-If the collateral cannot cover the debt, the remainder is [bad debt](/glossary#bad-debt). The pool cannot invent assets to fill it. Later suppliers and the reserve’s own accounting bear that loss until governance does something else.
+If the collateral cannot cover the debt, the remainder is [bad debt](/glossary/bad-debt/). The pool cannot invent assets to fill it. Later suppliers and the reserve’s own accounting bear that loss until governance does something else.
 
 V3 also added constraints that are easy to miss from the happy-path functions:
 
@@ -158,7 +168,7 @@ V4 does not give every market its own isolated pool of cash. The [overview](http
 
 <diagram-placeholder name="hub-spoke"></diagram-placeholder>
 
-The drawn interest rate still comes from utilization at the hub. On top of it, V4 charges a [risk premium](/glossary#risk-premium) that depends on the collateral actually covering the debt. Collateral is sorted from lower collateral-risk to higher. The premium uses the safer collateral first. The overview is explicit that actions which can make the position riskier, such as borrowing or withdrawing collateral, refresh the premium, while `supply` and `repay` do not. Premium interest is tracked as extra debt shares plus an offset, so it accrues without being a second principal the user drew from the hub.
+The drawn interest rate still comes from utilization at the hub. On top of it, V4 charges a [risk premium](/glossary/risk-premium/) that depends on the collateral actually covering the debt. Collateral is sorted from lower collateral-risk to higher. The premium uses the safer collateral first. The overview is explicit that actions which can make the position riskier, such as borrowing or withdrawing collateral, refresh the premium, while `supply` and `repay` do not. Premium interest is tracked as extra debt shares plus an offset, so it accrues without being a second principal the user drew from the hub.
 
 Liquidation changes as well. Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls. The overview sets the dust threshold used in that logic at 1,000 USD of value. Deficit accounting lets an authorized spoke cover a shortfall with supplied shares through `eliminateDeficit`.
 

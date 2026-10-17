@@ -1,5 +1,6 @@
 ---
 title: "Constant-product pricing"
+seoTitle: "Constant product formula (x·y=k) in Uniswap v2"
 description: "How the x · y = k invariant sets a Uniswap v2 price, and where v3 and Curve stop using it uniformly."
 summary: "Constant-product pricing keeps the product of two reserves from falling when a swap pays its fee. The spot price is the reserve ratio. The rule is uniform across all prices in v2, only inside a tick range in v3 and v4, and only the outer region of a Curve StableSwap pool."
 status: "published"
@@ -8,6 +9,13 @@ lastVerified: "2026-10-13"
 changes:
   - date: "2026-10-14"
     summary: "Added a worked v2 swap with the fee split out, from `getAmountOut` in `UniswapV2Library.sol`, and a swap calculator."
+faq:
+  - question: "What does x · y = k mean in a Uniswap v2 pool?"
+    answer: "`x` and `y` are the two reserves and their product is `k`. The pool agrees to any trade that does not shrink `x * y` after fees. The last unit of `y` costs more than the first because the reserve of `y` is shrinking while the reserve of `x` is growing."
+  - question: "Where does the Uniswap v2 swap fee go?"
+    answer: "The v2 flash-swap guide puts the fee at 0.30 percent on the input, implemented by counting only 99.7 percent of the input toward the product check. The pool can therefore increase `k` slightly. That increase is the LP’s fee income, left in the reserves."
+  - question: "Does constant-product pricing hold in Uniswap v3 and Curve?"
+    answer: "Not uniformly. The rule is uniform across all prices in v2, only inside a tick range in v3 and v4, and only the outer region of a Curve StableSwap pool."
 order: 3
 group: "markets"
 tags:

@@ -1,5 +1,6 @@
 ---
 title: "Stablecoin mechanisms"
+seoTitle: "How DAI and USDS are minted: stablecoin design"
 description: "How DAI and USDS are minted against collateral, and why a Curve stablecoin pool is a different object."
 summary: "A collateralized stablecoin is debt. Maker mints it against a vault and charges a stability fee. Sky’s USDS is a one-for-one token on that same debt. A Curve StableSwap pool only trades stablecoins. crvUSD is a third design that liquidates through an AMM."
 status: "published"

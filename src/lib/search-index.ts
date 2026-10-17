@@ -35,7 +35,7 @@ export async function buildSearchEntries(): Promise<SearchEntry[]> {
     })),
     ...glossary.map((entry) => ({
       title: entry.term,
-      url: pagePath(`/glossary#${entry.id}`),
+      url: pagePath(`/glossary/${entry.id}`),
       kind: 'Glossary',
       summary: entry.definition,
       text: `${entry.term} ${entry.definition}`,

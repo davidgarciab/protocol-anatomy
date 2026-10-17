@@ -1,10 +1,20 @@
 ---
 title: "Curve Finance"
+seoTitle: "How Curve works: StableSwap, CryptoSwap, NG pools"
 description: "How Curve prices pegged assets with StableSwap, volatile assets with CryptoSwap, and LP claims in Stableswap-NG."
 summary: "Curve runs separate AMMs for pegged assets, volatile assets, and markets priced elsewhere. StableSwap flattens the price near a peg. CryptoSwap concentrates liquidity around a moving scale. FXSwap recenters that kind of curve with a refuel budget. Stableswap-NG is the pegged-pool factory."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+faq:
+  - question: "Why does Curve StableSwap give low slippage near the peg?"
+    answer: "Its invariant sits between a constant sum, which has no slippage, and a constant product, which always has a price. With balances near equal and a large amplification coefficient `A`, the curve behaves like a constant sum, so a trade barely moves the price. When one coin dominates, the product term dominates and the price moves sharply."
+  - question: "What does a Curve liquidity provider hold?"
+    answer: "In Stableswap-NG the pool contract and the LP token are the same contract. The LP token is a share of the pool’s liquidity, accounted against the invariant `D`, not a voucher for the exact basket deposited. After an imbalance, a balanced withdrawal returns the current mix."
+  - question: "Is crvUSD a Curve pool?"
+    answer: "No. crvUSD is a stablecoin minted against approved collateral. Its mechanism is LLAMMA, an AMM that converts collateral toward the stablecoin as the collateral price falls, which makes liquidation soft instead of a single auction at a liquidation ratio. It is not a StableSwap pool."
+  - question: "Can I reuse a StableSwap amplification value in a CryptoSwap pool?"
+    answer: "No, the scales differ. The understanding-CryptoSwap page says an `A` of 10,000 in CryptoSwap corresponds to an `A` of 1 in StableSwap, so copying a stablecoin pool’s `A` into a tricrypto pool uses the wrong scale."
 order: 4
 category: "Automated market maker"
 mechanism: "StableSwap and CryptoSwap invariants, with LP tokens minted against pool liquidity rather than a constant-product share."
@@ -93,7 +103,7 @@ The derivations page writes the invariant as:
 A * n^n * Σ x_i + D = A * D * n^n + D^(n+1) / (n^n * Π x_i)
 ```
 
-`x_i` is the balance of coin `i`, scaled into the pool’s math. `n` is the number of coins. `D` is the invariant, equal to the total balance when every coin is equal. `A` is the [amplification coefficient](/glossary#amplification-coefficient).
+`x_i` is the balance of coin `i`, scaled into the pool’s math. `n` is the number of coins. `D` is the invariant, equal to the total balance when every coin is equal. `A` is the [amplification coefficient](/glossary/amplification-coefficient/).
 
 When balances are near equal and `A` is large, the curve behaves like a constant sum: a trade barely moves the price. When one coin dominates, the product term dominates and the price can move sharply, which is what gives arbitrage a reason to return the pool toward the peg. The understanding-StableSwap page describes high `A` (it gives 500 to 10,000 as examples) as deep liquidity near the peg and a sharp drop if an asset leaves the peg. Lower `A` spreads liquidity and moves the price earlier. Those ranges are illustrations of the shape, not a recommendation for a new pool.
 
@@ -105,7 +115,7 @@ StableSwap is a poor fit for assets that are not meant to share a price. The sam
 
 In Stableswap-NG, the [integration guide](https://docs.curve.finance/developer/integration/stableswap-ng) and the factory overview say the pool contract and the LP token are the same contract. A deposit mints LP tokens. A withdrawal burns them. The LP token is a share of the pool’s liquidity, accounted against `D`, not a voucher for the exact basket deposited. If the pool is imbalanced, the coins you withdraw in a balanced removal are the current mix, and a one-coin withdrawal moves the price and pays the invariant’s slippage.
 
-The NG factory deploys plain pools of up to eight coins and metapools. A [metapool](/glossary#metapool) pairs one coin with the LP token of a base pool, so a swap can reach the base pool’s coins without merging their reserves into one contract.
+The NG factory deploys plain pools of up to eight coins and metapools. A [metapool](/glossary/metapool/) pairs one coin with the LP token of a base pool, so a swap can reach the base pool’s coins without merging their reserves into one contract.
 
 Each coin has an asset type. The factory source documents four:
 
@@ -139,7 +149,7 @@ The internal price is a `price_scale` the pool updates. Liquidity concentrates a
 
 ## FXSwap
 
-[FXSwap](/glossary#fxswap) is a third pool family, for a market whose price is discovered somewhere else: the understanding-FXSwap page gives fiat pairs and an externally priced BTC pair as the examples. It prices with a StableSwap-style invariant so the depth stays concentrated, and it recenters that concentration with a profit buffer plus an explicit refuel budget. The page says refuels pay for the pool’s normal recentering. They do not set the price, and they do not guarantee the pool stays balanced. The page also says FXSwap is generally not the tool for primary price discovery. It is not a CryptoSwap deployment with a new ticker, and it is not a Stableswap-NG metapool.
+[FXSwap](/glossary/fxswap/) is a third pool family, for a market whose price is discovered somewhere else: the understanding-FXSwap page gives fiat pairs and an externally priced BTC pair as the examples. It prices with a StableSwap-style invariant so the depth stays concentrated, and it recenters that concentration with a profit buffer plus an explicit refuel budget. The page says refuels pay for the pool’s normal recentering. They do not set the price, and they do not guarantee the pool stays balanced. The page also says FXSwap is generally not the tool for primary price discovery. It is not a CryptoSwap deployment with a new ticker, and it is not a Stableswap-NG metapool.
 
 ## crvUSD is not a pool type
 

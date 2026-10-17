@@ -18,6 +18,8 @@ const required = [
   'concepts/index.html',
   'concepts/constant-product/index.html',
   'glossary/index.html',
+  'glossary/tick/index.html',
+  'start/index.html',
   'methodology/index.html',
   'sources/index.html',
   'search/index.html',
@@ -28,6 +30,8 @@ const required = [
   'rss.xml',
   '404.html',
   'robots.txt',
+  'llms.txt',
+  'llms-full.txt',
   'sitemap-index.xml',
 ];
 

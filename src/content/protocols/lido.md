@@ -1,10 +1,20 @@
 ---
 title: "Lido"
+seoTitle: "How Lido works: stETH shares and withdrawals"
 description: "How Lido turns staked ether into stETH shares, reports validator balances, and processes withdrawals."
 summary: "Lido is a liquid staking protocol for ether. A deposit mints shares in a pool of validators. stETH rebases so balances track the pool. wstETH wraps those shares into a static balance. Exiting is a queued withdrawal finalized by an accounting report, not a transfer of the liquid token."
 status: "published"
 published: "2026-10-13"
 lastVerified: "2026-10-13"
+faq:
+  - question: "How does the stETH balance grow?"
+    answer: "Internally Lido mints shares, and the visible balance is `shares * totalPooledEther / totalShares`. Rewards change the pooled-ether total, so every share becomes worth more stETH without a transfer. Penalties do the opposite. That balance change is a rebase."
+  - question: "What is wstETH and why does it exist?"
+    answer: "Rebasing breaks integrations that store a balance and expect it to stay still. wstETH is the wrapper: one wstETH is one share locked in the wrapper. Its balance does not change when the oracle reports, while `stEthPerToken` does."
+  - question: "Does selling or transferring stETH unstake it?"
+    answer: "No. A transfer moves the claim, and the stake stays in validators. To receive ETH from the protocol a holder requests a withdrawal, which locks stETH or wstETH and mints an `unstETH` NFT. The ETH is paid when the request is finalized. The Lido interface describes a typical wait of one to five days under normal conditions."
+  - question: "Who runs the validators behind stETH?"
+    answer: "Node operators do. In the basic Core deposit the user does not pick one. Governance and module rules decide which operators are admitted, and Ethereum consensus events such as rewards, downtime penalties, and slashings later show up in the share rate."
 order: 5
 category: "Liquid staking"
 mechanism: "Share-based claims on pooled staked ether, with oracle accounting and a withdrawal queue."
@@ -90,7 +100,7 @@ The mechanism is not an AMM and not a lending market. Nothing in the share rate 
 
 ## Deposit and shares
 
-A user submits ETH to the Lido contract and receives [stETH](/glossary#steth). Internally the protocol mints [shares](/glossary#share). The integration guide defines a share as the holder’s fraction of the ether the protocol controls. The balance people see is that share priced in ether:
+A user submits ETH to the Lido contract and receives [stETH](/glossary/steth/). Internally the protocol mints [shares](/glossary/share/). The integration guide defines a share as the holder’s fraction of the ether the protocol controls. The balance people see is that share priced in ether:
 
 ```text
 stETH balance = shares * totalPooledEther / totalShares
@@ -98,7 +108,7 @@ stETH balance = shares * totalPooledEther / totalShares
 
 The guide describes this as the bookkeeping model. Rounding lives in the contract, so an integration should call the view methods rather than reimplement the division. When new ETH is deposited, new shares are minted in proportion to what that ETH adds to the pool. When rewards arrive, the protocol does not mint a second token to each holder. It changes the pooled-ether total, and every share becomes worth more stETH. Penalties do the opposite.
 
-That balance change is a [rebase](/glossary#rebase). The integration guide says rebases normally follow the consensus-layer accounting report. The report section below records the quorum and the sanity bounds in that guide, including its statement that daily rebases had not been negative at the time of writing. The share math still allows a penalty to reduce balances.
+That balance change is a [rebase](/glossary/rebase/). The integration guide says rebases normally follow the consensus-layer accounting report. The report section below records the quorum and the sanity bounds in that guide, including its statement that daily rebases had not been negative at the time of writing. The share math still allows a penalty to reduce balances.
 
 <diagram-placeholder name="staking-flow"></diagram-placeholder>
 
@@ -106,13 +116,13 @@ Submitted ETH is not instantly one validator. Ethereum requires 32 ETH to activa
 
 ## Who runs the validators
 
-Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary#node-operator) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
+Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary/node-operator/) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
 
 This is the main trust boundary of the pooled token. The token is liquid. The stake is operated by other parties, under Ethereum’s rules, with a governance process deciding the operator set.
 
 ## Staking vaults
 
-Lido’s stVaults pages describe a second live design, which the documentation center calls the core of Lido V3. A [staking vault](/glossary#staking-vault) is one owner and one node operator. The operator address is set when the vault is initialized and the technical design says it cannot be changed. The vault is a `0x02` withdrawal-credentials target, so consensus rewards and exited balances are documented as flowing back to the vault. The operator does not take custody of that ether.
+Lido’s stVaults pages describe a second live design, which the documentation center calls the core of Lido V3. A [staking vault](/glossary/staking-vault/) is one owner and one node operator. The operator address is set when the vault is initialized and the technical design says it cannot be changed. The vault is a `0x02` withdrawal-credentials target, so consensus rewards and exited balances are documented as flowing back to the vault. The operator does not take custody of that ether.
 
 A vault connected to Lido can mint stETH against its reported value. `VaultHub` is the registry that mints and burns that stETH, settles fees, and handles bad debt. `LazyOracle` stores the per-vault report. The amount that can be minted is capped by a reserve ratio, and the technical design says only the DAO changes that ratio. Minted stETH joins the existing token. The vault is not a second rebasing token and not a share of someone else’s Core deposit.
 
@@ -130,7 +140,7 @@ The report is a trusted input. A wrong consensus balance becomes a wrong rebase.
 
 ## wstETH
 
-Rebasing breaks integrations that store a balance and expect it to stay still. [wstETH](/glossary#wsteth) is the wrapper. At core `v3.0.2`, `wrap` does three things: it requires a non-zero amount, it converts stETH to shares with `getSharesByPooledEth`, and it mints that many wstETH while pulling the stETH in.
+Rebasing breaks integrations that store a balance and expect it to stay still. [wstETH](/glossary/wsteth/) is the wrapper. At core `v3.0.2`, `wrap` does three things: it requires a non-zero amount, it converts stETH to shares with `getSharesByPooledEth`, and it mints that many wstETH while pulling the stETH in.
 
 ```solidity
 function wrap(uint256 _stETHAmount) external returns (uint256) {

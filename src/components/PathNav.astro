@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import { learningPaths } from '../data/paths';
+
+interface Props {
+  /** `<collection>/<id>` of the current page. */
+  current: string;
+}
+
+const { current } = Astro.props;
+const [protocols, guides, concepts] = await Promise.all([
+  getCollection('protocols'),
+  getCollection('guides'),
+  getCollection('concepts'),
+]);
+const titles = new Map<string, string>([
+  ...protocols.map((entry) => [`protocols/${entry.id}`, entry.data.title] as [string, string]),
+  ...guides.map((entry) => [`guides/${entry.id}`, entry.data.title] as [string, string]),
+  ...concepts.map((entry) => [`concepts/${entry.id}`, entry.data.title] as [string, string]),
+]);
+const memberships = learningPaths
+  .filter((path) => path.steps.includes(current))
+  .map((path) => {
+    const index = path.steps.indexOf(current);
+    const link = (key: string | undefined) => (key ? { href: `/${key}/`, title: titles.get(key) ?? key } : undefined);
+    return {
+      path,
+      position: index + 1,
+      previous: link(path.steps[index - 1]),
+      next: link(path.steps[index + 1]),
+    };
+  });
+---
+
+{
+  memberships.length > 0 && (
+    <section class="path-nav" aria-labelledby="path-nav-heading">
+      <h2 id="path-nav-heading">Keep reading</h2>
+      {memberships.map(({ path, position, previous, next }) => (
+        <div class="path-step">
+          <p class="path-title">
+            <a href={`/start/#${path.id}`}>{path.title}</a> <span class="kind">Step {position} of {path.steps.length}</span>
+          </p>
+          <p>
+            {previous && <>Previous: <a href={previous.href}>{previous.title}</a></>}
+            {previous && next && ' · '}
+            {next && <>Next: <a href={next.href}>{next.title}</a></>}
+          </p>
+        </div>
+      ))}
+    </section>
+  )
+}
