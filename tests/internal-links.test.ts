@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import type { Root } from 'hast';
+import type { Element, ElementContent, Properties, Root } from 'hast';
 import { rehypeGlossaryLinks } from '../src/plugins/rehype-glossary';
 import { learningPaths } from '../src/data/paths';
 
-const text = (value: string) => ({ type: 'text' as const, value });
-const el = (tagName: string, children: Root['children'], properties: Record<string, unknown> = {}) => ({
-  type: 'element' as const,
+const text = (value: string): ElementContent => ({ type: 'text', value });
+const el = (tagName: string, children: ElementContent[], properties: Properties = {}): Element => ({
+  type: 'element',
   tagName,
   properties,
-  children: children as never,
+  children,
 });
 
 function run(children: Root['children'], glossary: string[]) {
