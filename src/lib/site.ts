@@ -1,6 +1,6 @@
 export const SITE = {
   name: 'Protocol Anatomy',
-  tagline: 'Understand the code. Follow the money. Trace the evolution.',
+  tagline: 'How DeFi protocols work, where the money sits, how they change.',
   url: 'https://protocols.davidgarciab.com',
   author: 'David Garcia',
   authorFullName: 'David Garcia Berenguer',
@@ -15,7 +15,7 @@ export const SITE = {
   ],
   repoUrl: 'https://github.com/davidgarciab/protocol-anatomy',
   description:
-    'A technical field guide to how major DeFi protocols account for assets, price trades, liquidate collateral, and change their contracts.',
+    'An independent educational resource for understanding how DeFi protocols work: how they account for assets, price trades, liquidate collateral, and change across versions.',
 } as const;
 
 export const VERSION_STATUSES = [

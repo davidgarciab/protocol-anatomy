@@ -47,7 +47,7 @@ function read(file: string): string {
 
 if (existsSync(join(dist, 'index.html'))) {
   const home = read('index.html');
-  for (const text of ['Protocol Anatomy', 'Understand the code. Follow the money. Trace the evolution.', 'https://protocols.davidgarciab.com']) {
+  for (const text of ['Protocol Anatomy', 'How DeFi protocols work, where the money sits, how they change.', 'https://protocols.davidgarciab.com']) {
     if (!home.includes(text)) errors.push(`Homepage is missing ${text}`);
   }
   if (/canonical" href="http:\/\/localhost/.test(home)) errors.push('Homepage canonical points at localhost');

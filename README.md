@@ -1,8 +1,8 @@
 # Protocol Anatomy
 
-Protocol Anatomy is a static technical publication about how major DeFi protocols account for assets, price trades, liquidate collateral, and change their contracts.
+Protocol Anatomy is a static, independent educational resource for understanding how major DeFi protocols work: how they account for assets, price trades, liquidate collateral, and change across versions. It is built from open sources only: public documentation, deployed contract code, and governance records.
 
-Tagline: Understand the code. Follow the money. Trace the evolution.
+Tagline: How DeFi protocols work, where the money sits, how they change.
 
 The initial edition covers Aave, Uniswap, MakerDAO / Sky, Curve Finance, and Lido. The canonical site is `https://protocols.davidgarciab.com`.
 

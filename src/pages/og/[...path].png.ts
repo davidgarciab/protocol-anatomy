@@ -13,7 +13,7 @@ export async function getStaticPaths() {
   const card = (path: string, props: OgCard) => ({ params: { path }, props });
 
   return [
-    card('default', { kicker: 'Technical field guide', title: SITE.name, description: SITE.tagline }),
+    card('default', { kicker: 'Independent DeFi protocol research', title: SITE.name, description: SITE.tagline }),
     ...protocols.map((entry) =>
       card(`protocols/${entry.id}`, {
         kicker: `Protocol · ${entry.data.category}`,

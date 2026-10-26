@@ -32,7 +32,7 @@ sources:
     publisher: "Lido"
 ---
 
-Protocol Anatomy explains how a few widely used protocols account for assets. The pages are for engineers who can read a contract and want the mechanism, the version boundary, and the source. They are not price commentary, and they are not a substitute for the protocol’s own docs when you are about to send a transaction.
+Protocol Anatomy explains how a few widely used protocols account for assets. The pages are for anyone who wants the mechanism, the version boundary, and the source, whether or not they read contracts. The research uses open sources only: public documentation, deployed code, and governance records. They are not price commentary, and they are not a substitute for the protocol’s own docs when you are about to send a transaction.
 
 ## What gets cited
 
