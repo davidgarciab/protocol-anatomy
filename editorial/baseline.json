@@ -1,122 +1,127 @@
 {
   "aave-v3-atoken": {
     "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
   },
   "aave-v3-math": {
     "observed": "2437c5600c12ab0faefc8173fff1ca9615732ce5",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v3-core/commit/2437c5600c12ab0faefc8173fff1ca9615732ce5"
   },
   "aave-v3-origin-generic-logic": {
     "observed": "cf4e138c5959b1434a08c72c759d422c227bd47e",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave-dao/aave-v3-origin/commit/cf4e138c5959b1434a08c72c759d422c227bd47e"
   },
   "aave-v3-origin-liquidation-logic": {
     "observed": "2f6a0fc96a957265fb38913053831e0880345d1f",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave-dao/aave-v3-origin/commit/2f6a0fc96a957265fb38913053831e0880345d1f"
   },
   "aave-v3-pool": {
     "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
   },
   "aave-v3-reserve-logic": {
     "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
   },
   "aave-v3-wad-ray": {
     "observed": "32f0e72bafdb5a29e5da5fdbd3539167964083a6",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v3-core/commit/32f0e72bafdb5a29e5da5fdbd3539167964083a6"
   },
   "aave-v4-overview": {
     "observed": "d6dcb7ebbc9095862ba9fa2484eeacdd530168e1",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v4/commit/d6dcb7ebbc9095862ba9fa2484eeacdd530168e1"
   },
   "aave-v4-release": {
     "observed": "v0.5.11",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/aave/aave-v4/releases/tag/v0.5.11"
   },
   "curve-stableswap-ng-factory": {
     "observed": "af7685d3f1389ab6a244f9c35c91603b10dcfa48",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/curvefi/stableswap-ng/commit/af7685d3f1389ab6a244f9c35c91603b10dcfa48"
+  },
+  "lido-accounting-oracle": {
+    "observed": "0665b28bf9d0fbfbab2ceaf776c533fa745e9c69",
+    "observedAt": "2026-10-26",
+    "url": "https://github.com/lidofinance/core/commit/0665b28bf9d0fbfbab2ceaf776c533fa745e9c69"
   },
   "lido-core-release": {
     "observed": "v4.1.0",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/lidofinance/core/releases/tag/v4.1.0"
   },
   "lido-wsteth": {
     "observed": "98c4821638ceab0ce84dbd3b7fdc7c1f83f07622",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/lidofinance/core/commit/98c4821638ceab0ce84dbd3b7fdc7c1f83f07622"
   },
   "maker-vat": {
     "observed": "17187f7d47be2f4c71d218785e1155474bbafe8a",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/sky-ecosystem/dss/commit/17187f7d47be2f4c71d218785e1155474bbafe8a"
   },
   "sky-susds": {
     "observed": "e5660deac9434c79d48ecde879c29f37fb89f2dc",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/sky-ecosystem/sdai/commit/e5660deac9434c79d48ecde879c29f37fb89f2dc"
   },
   "uniswap-v2-library": {
     "observed": "87edfdcaf49ccc52591502993db4c8c08ea9eec0",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v2-periphery/commit/87edfdcaf49ccc52591502993db4c8c08ea9eec0"
   },
   "uniswap-v3-liquidity-amounts": {
     "observed": "b6b885569786a319d853acc610ed03884fda9bee",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v3-periphery/commit/b6b885569786a319d853acc610ed03884fda9bee"
   },
   "uniswap-v3-pool": {
     "observed": "c5ccf4d28a73fde90f0bb9ea3fd299d7d2bcdf83",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v3-core/commit/c5ccf4d28a73fde90f0bb9ea3fd299d7d2bcdf83"
   },
   "uniswap-v3-sqrt-price-math": {
     "observed": "c5ccf4d28a73fde90f0bb9ea3fd299d7d2bcdf83",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v3-core/commit/c5ccf4d28a73fde90f0bb9ea3fd299d7d2bcdf83"
   },
   "uniswap-v4-core-release": {
     "observed": "v4.0.0",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-core/releases/tag/v4.0.0"
   },
   "uniswap-v4-liquidity-amounts": {
     "observed": "6601a199799294378f4df9819e6641b2391ef3c5",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-periphery/commit/6601a199799294378f4df9819e6641b2391ef3c5"
   },
   "uniswap-v4-pool-key": {
     "observed": "fbb9caf19f0dda3e1ef822a567ea5c54ad2e9501",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-core/commit/fbb9caf19f0dda3e1ef822a567ea5c54ad2e9501"
   },
   "uniswap-v4-pool-manager": {
     "observed": "a7cf038cd568801a79a9b4cf92cd5b52c95c8585",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-core/commit/a7cf038cd568801a79a9b4cf92cd5b52c95c8585"
   },
   "uniswap-v4-position-manager": {
     "observed": "363226d9e1e2180b67bf6857023dbaad751010c5",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-periphery/commit/363226d9e1e2180b67bf6857023dbaad751010c5"
   },
   "uniswap-v4-sqrt-price-math": {
     "observed": "0f17b65aa61edee384d5129b7ea080f22905faa0",
-    "observedAt": "2026-10-14",
+    "observedAt": "2026-10-26",
     "url": "https://github.com/Uniswap/v4-core/commit/0f17b65aa61edee384d5129b7ea080f22905faa0"
   }
 }

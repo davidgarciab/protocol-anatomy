@@ -5,7 +5,7 @@ description: "What an AMM prices, which state it stores, and how Uniswap and Cur
 summary: "An automated market maker prices a swap from the assets already in a pool. There is no order to match. Uniswap’s constant product and Curve’s StableSwap are two invariants on that idea, with different shapes and different LP claims."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 1
 group: "markets"
 tags:
@@ -24,11 +24,11 @@ related:
   - concentrated-liquidity
 sources:
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Understanding swaps"
-    url: "https://docs.uniswap.org/concepts/protocol/swaps"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/traders/swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Understanding StableSwap"

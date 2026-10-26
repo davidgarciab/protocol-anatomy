@@ -4,7 +4,7 @@ description: "How a stable address can delegate to replaceable logic, and which 
 summary: "A proxy keeps an address and a storage layout while the logic lives in another contract. Aave V3 markets and Sky’s USDS token document this pattern. Uniswap’s core pools and Aave V4’s hub are documented as non-upgradeable. Reading only the proxy address does not tell you which of those you have."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 12
 group: "engineering"
 tags:
@@ -41,7 +41,7 @@ sources:
     kind: "docs"
     publisher: "Sky"
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Integrating Stableswap-NG"

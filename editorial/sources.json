@@ -169,7 +169,21 @@
     "articles": [
       "src/content/protocols/lido.md"
     ],
-    "why": "The Lido overview quotes wrap() from core v3.0.2. A later edit to this file may mean that quote is no longer the file's current text. The pinned quote can remain accurate as history."
+    "why": "The Lido overview quotes wrap() from core v3.0.2, and the file was byte-identical at v4.1.0 when checked on 26 October 2026. A later edit to this file may mean that quote is no longer the file's current text. The pinned quote can remain accurate as history."
+  },
+  {
+    "id": "lido-accounting-oracle",
+    "kind": "github-file",
+    "repo": "lidofinance/core",
+    "path": "contracts/0.8.9/oracle/AccountingOracle.sol",
+    "ref": "master",
+    "articles": [
+      "src/content/protocols/lido.md",
+      "src/content/guides/lido-exits.md",
+      "src/content/concepts/liquid-staking.md",
+      "src/content/concepts/oracles-and-dependencies.md"
+    ],
+    "why": "The report fields and the simulated-share-rate comment are quoted from core v4.0.0. The report format already changed once, with Staking Router v3 on 27 July 2026, so a later edit can make the description stale."
   },
   {
     "id": "lido-core-release",

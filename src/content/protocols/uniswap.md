@@ -5,7 +5,10 @@ description: "How Uniswap prices swaps, tracks liquidity-provider claims, and se
 summary: "Uniswap is an automated market maker. A swap moves the reserves of a pool and the pool’s invariant sets the price. v2 spreads fungible liquidity across every price. v3 and v4 concentrate it between ticks. v4 keeps that pricing and changes the contracts around it: one PoolManager, flash settlement, and optional hooks."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Moved the cited documentation to its new developers.uniswap.org pages, sourced the v3 position NFT claim to the v3 liquidity-management guide, and sourced the twelve-chain v4 launch list to the Uniswap Foundation."
 faq:
   - question: "What pricing rule does a Uniswap v2 pool use?"
     answer: "The protocol overview states it as `x * y = k`. After a swap, the product of the two reserves must not fall once the fee is taken into account. The spot price is the ratio of the reserves, and a trade that is large relative to the pool moves that ratio more. That movement is price impact, and it is part of the invariant, not a separate fee."
@@ -51,19 +54,19 @@ versions:
     note: "Singleton PoolManager, flash accounting, and optional hooks. Launched 31 January 2025. PositionManager mints an ERC-721. ERC-6909 claims are a separate settlement balance."
 sources:
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Understanding swaps"
-    url: "https://docs.uniswap.org/concepts/protocol/swaps"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/traders/swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Concentrated liquidity"
-    url: "https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/liquidity-providers/concentrated-liquidity"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Using flash swaps"
-    url: "https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps"
+    url: "https://developers.uniswap.org/docs/protocols/v2/guides/flash-swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Uniswap v3 Core whitepaper"
@@ -90,6 +93,14 @@ sources:
     url: "https://github.com/Uniswap/v4-core/blob/main/src/types/PoolKey.sol"
     kind: "code"
     publisher: "Uniswap"
+  - title: "Managing v3 liquidity: set up your contract"
+    url: "https://developers.uniswap.org/docs/protocols/v3/guides/managing-liquidity/getting-started"
+    kind: "docs"
+    publisher: "Uniswap"
+  - title: "Uniswap v4: supercharging DeFi across chains"
+    url: "https://uniswapfoundation.org/blog/uniswap-v4-supercharging-defi-across-chains"
+    kind: "docs"
+    publisher: "Uniswap Foundation"
   - title: "Uniswap v4 is here"
     url: "https://blog.uniswap.org/uniswap-v4-is-here"
     kind: "docs"
@@ -106,7 +117,7 @@ The current docs treat v2, v3, and v4 as one protocol family with different pool
 
 ## The v2 invariant
 
-A v2 pool is a pair of ERC-20 reserves. The [protocol overview](https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works) states the pricing rule as `x * y = k`. After a swap, the product of the reserves must not fall once the fee is taken into account. The spot price is the ratio of the reserves. A trade that is large relative to the pool moves that ratio more. That movement is price impact, and it is part of the invariant, not a separate fee.
+A v2 pool is a pair of ERC-20 reserves. The [protocol overview](https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works) states the pricing rule as `x * y = k`. After a swap, the product of the reserves must not fall once the fee is taken into account. The spot price is the ratio of the reserves. A trade that is large relative to the pool moves that ratio more. That movement is price impact, and it is part of the invariant, not a separate fee.
 
 The v2 flash-swap guide documents the pool fee as 0.30 percent, implemented as a 997/1000 factor on the input. The production quote lives in the v2 periphery library. The function below is an educational sketch of that arithmetic, not the deployed pair. It ignores the pair’s balance check, which is how v2 actually enforces the invariant: tokens are sent to the pair first, and the pair compares its balances with the stored reserves.
 
@@ -130,7 +141,7 @@ Integer division rounds down. A real pair also requires the product check to pas
 
 <diagram-placeholder name="swap-flow"></diagram-placeholder>
 
-The [swap documentation](https://docs.uniswap.org/concepts/protocol/swaps) separates three protections that routers add and that the invariant does not provide by itself: a minimum amount out, a maximum amount in, and a deadline. Those revert the transaction if the pool has moved, or if the transaction waits too long. They are user limits. They do not change `k`.
+The [swap documentation](https://developers.uniswap.org/docs/get-started/concepts/traders/swaps) separates three protections that routers add and that the invariant does not provide by itself: a minimum amount out, a maximum amount in, and a deadline. Those revert the transaction if the pool has moved, or if the transaction waits too long. They are user limits. They do not change `k`.
 
 ## Concentrated liquidity
 
@@ -148,7 +159,7 @@ That excerpt is from `contracts/libraries/TickMath.sol` at commit `d8b1c635c275d
 
 Inside one range, the active liquidity `L` behaves like a constant-product curve that has been shifted so the real reserves run out at the range boundaries. The [concentrated liquidity](/concepts/concentrated-liquidity) article writes that relationship without pretending a single NFT is a v2 LP token.
 
-v3 positions are not fungible ERC-20 shares. The docs say each position is an ERC-721 managed by `NonfungiblePositionManager`. Two positions in the same pool at different ranges are different claims. Fees accrue to the position and are collected; they are not continuously rebasing the NFT balance.
+v3 positions are not fungible ERC-20 shares. The docs describe v3 positions as NFTs, and the v3 liquidity-management guide shows them handled as ERC-721 tokens through the `NonfungiblePositionManager` contract. Two positions in the same pool at different ranges are different claims. Fees accrue to the position and are collected; they are not continuously rebasing the NFT balance.
 
 A v3 swap walks the current tick range, then crosses into the next initialized tick if the price limit allows it. The swap docs say the pool collects payment through `uniswapV3SwapCallback`, and that the swap enforces a price limit `sqrtPriceLimitX96`. This is the opposite order from a naive “transfer, then call” mental model: the pool tells the caller how much input to pay during the callback.
 
@@ -158,7 +169,7 @@ The v4 architecture page says v4 keeps v3’s capital efficiency and adds hooks,
 
 [Hooks](/glossary/hook/) are optional. The hooks documentation says a pool with no hook uses the same concentrated-liquidity behavior as v3. If a hook is set, it is part of the pool key passed to `initialize` and cannot be added or swapped later. The hooks documentation lists callbacks around initialize, liquidity changes, swaps, and donate. The hook declares which of those it implements by flags in its address. The architecture page also describes custom accounting: a hook can charge a fee or opt out of the concentrated-liquidity curve. A hooked pool follows that curve only when its hook leaves the curve in place. The pool will call whatever code was hashed into the pool key.
 
-The launch post dated 31 January 2025 says v4 was live on Ethereum, Polygon, Arbitrum, OP Mainnet, Base, BNB Chain, Blast, World Chain, Avalanche, and Zora. A later Uniswap Foundation note lists twelve chains. Treat the chain list as time-specific. The architectural claims above are about the contract design, not about which deployment an interface routes through today.
+The launch post dated 31 January 2025 says v4 was live on Ethereum, Polygon, Arbitrum, OP Mainnet, Base, BNB Chain, Blast, World Chain, Avalanche, and Zora. The [Uniswap Foundation’s announcement](https://uniswapfoundation.org/blog/uniswap-v4-supercharging-defi-across-chains) of the same day lists twelve chains, adding Ink and Soneium to that list. Treat the chain list as time-specific. The architectural claims above are about the contract design, not about which deployment an interface routes through today.
 
 v4 liquidity positions are still NFTs. `PositionManager` in v4-periphery inherits `ERC721Permit_v4` and names the collection “Uniswap v4 Positions NFT”. The file comment says it mints and manages ERC-721 tokens associated with each position. That was the source on `main` as read on 13 October 2026. `main` can move. The v3 position contract is a different address, `NonfungiblePositionManager`, so a transfer of a v3 token id does not move a v4 position.
 

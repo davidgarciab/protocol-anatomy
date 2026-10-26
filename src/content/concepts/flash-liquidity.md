@@ -4,7 +4,7 @@ description: "How Uniswap v2 flash swaps, v3 flash, v4 deltas, and Aave V3 flash
 summary: "These mechanisms all hand a transaction liquidity it must replace before the call ends. v2 enforces that with the swap product check. v3 charges the pool fee inside flash. v4 reverts unless every delta is settled before unlock returns. Aave V3 can take a fee or, on flashLoan, open debt instead."
 status: "published"
 published: "2026-10-14"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 faq:
   - question: "Why can a flash loan be offered without collateral?"
     answer: "Because the pool sends tokens, or records a debt, and the same call has to make the pool whole. If it does not, the transaction reverts and the send never happened. Uniswap v2, v3, v4, and Aave V3 all use that atomicity, with different functions, fees, and end states."
@@ -33,7 +33,7 @@ related:
   - constant-product
 sources:
   - title: "Uniswap v2 flash swaps"
-    url: "https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps"
+    url: "https://developers.uniswap.org/docs/protocols/v2/guides/flash-swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "UniswapV3Pool.sol at c5ccf4d2"

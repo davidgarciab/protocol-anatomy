@@ -5,7 +5,7 @@ description: "Constant product, concentrated ranges, StableSwap and CryptoSwap c
 summary: "Uniswap v2 spreads liquidity over every price with a constant-product rule. Uniswap v3 and v4 let providers choose a range. Curve StableSwap blends constant sum with constant product for assets that should trade near one price, and CryptoSwap re-centers liquidity for assets that move. Each curve is a different assumption about where trades will happen."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 faq:
   - question: "Why does Curve give lower slippage than Uniswap v2 for stablecoins?"
     answer: "A constant-product pool spreads liquidity from price zero to infinity, and two dollar tokens do not need that. StableSwap's invariant sits between a constant sum, which has no slippage, and a constant product, which always has a price. Near equal balances and a high amplification coefficient it behaves like a constant sum, so a trade barely moves the price."
@@ -34,7 +34,7 @@ tags:
   - liquidity
 sources:
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "UniswapV2Library.sol at 87edfdca"
@@ -42,7 +42,7 @@ sources:
     kind: "code"
     publisher: "Uniswap"
   - title: "Concentrated liquidity"
-    url: "https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/liquidity-providers/concentrated-liquidity"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Uniswap v3 Core whitepaper"

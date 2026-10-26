@@ -4,7 +4,10 @@ description: "How Lido withdrawal requests are finalized, and how Dual Governanc
 summary: "Lido withdrawals are a request, an oracle finalization, and a claim. The claim is an NFT until ETH is paid. Dual Governance, live on Ethereum since 4 July 2025 by Lido’s account, lets stETH holders escrow tokens so a DAO proposal cannot finish before they have had time to exit."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Updated the cited AccountingOracle source to core v4.0.0, the version in force after the Staking Router v3 upgrade."
 order: 5
 protocol: "lido"
 versionContext: "The withdrawal queue is the production exit path. Dual Governance is an additional control on DAO execution, not a replacement for the share-rate accounting."
@@ -41,8 +44,8 @@ sources:
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/lido-tokens-integration-guide.md"
     kind: "docs"
     publisher: "Lido"
-  - title: "AccountingOracle.sol at core v3.0.2"
-    url: "https://github.com/lidofinance/core/blob/v3.0.2/contracts/0.8.9/oracle/AccountingOracle.sol"
+  - title: "AccountingOracle.sol at core v4.0.0"
+    url: "https://github.com/lidofinance/core/blob/v4.0.0/contracts/0.8.9/oracle/AccountingOracle.sol"
     kind: "code"
     publisher: "Lido"
   - title: "Dual Governance overview"
@@ -77,7 +80,7 @@ Lido V3 staking vaults have a different exit for the ether in a vault. The techn
 
 The withdrawal-queue contract is the entry point for exchanging stETH for ETH. The docs assign it four jobs: ordering requests, accepting finalization from the accounting report, holding stETH before finalization and ETH after it, and paying the user on claim. Each request mints an ERC-721, `unstETH`, and burns it on claim. The metadata can change when finalization status changes; the docs cite ERC-4906 for that update.
 
-A request starts with an approval or a permit, then a `requestWithdrawals` call. wstETH is unwrapped in the process. The Lido interface says the pending amount is denominated in stETH for that reason. Finalization does not happen in the user’s transaction. The accounting oracle’s report includes withdrawal-finalization batches and a simulated share rate. The oracle contract at tag `v3.0.2` documents that rate as post-report pooled ether per share at 1e27, calculated as if the finalization batches were empty, and then used so the queue and the rebase agree.
+A request starts with an approval or a permit, then a `requestWithdrawals` call. wstETH is unwrapped in the process. The Lido interface says the pending amount is denominated in stETH for that reason. Finalization does not happen in the user’s transaction. The accounting oracle’s report includes withdrawal-finalization batches and a simulated share rate. The oracle contract at tag `v4.0.0` documents that rate as post-report pooled ether per share at 1e27, calculated as if the finalization batches were empty, and then used so the queue and the rebase agree.
 
 On claim, the NFT owner receives the reserved ETH. Until finalization, the NFT is a place in line, not a balance of ETH. It can be transferred. The buyer of the NFT buys the place in line.
 

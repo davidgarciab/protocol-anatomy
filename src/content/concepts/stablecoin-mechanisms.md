@@ -5,7 +5,7 @@ description: "How DAI and USDS are minted against collateral, and why a Curve st
 summary: "A collateralized stablecoin is debt. Maker mints it against a vault and charges a stability fee. Sky’s USDS is a one-for-one token on that same debt. A Curve StableSwap pool only trades stablecoins. crvUSD is a third design that liquidates through an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 8
 group: "monetary"
 tags:
@@ -25,10 +25,10 @@ related:
   - on-chain-accounting
   - governance-and-upgrades
 sources:
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "Protocol token routes"
     url: "https://developers.skyeco.com/quick-start/protocol-token-routes/"
     kind: "docs"
@@ -39,6 +39,10 @@ sources:
     publisher: "Sky"
   - title: "Understanding StableSwap"
     url: "https://docs.curve.finance/protocol/pool/understanding-stableswap"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "LLAMMA explainer"
+    url: "https://docs.curve.finance/developer/crvusd/llamma-explainer"
     kind: "docs"
     publisher: "Curve"
   - title: "crvUSD overview"

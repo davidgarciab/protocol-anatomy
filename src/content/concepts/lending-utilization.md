@@ -4,7 +4,7 @@ description: "How a shared lending pool measures utilization and why that ratio,
 summary: "A lending pool holds supplied assets and lends them to borrowers who posted collateral. Utilization is borrowed liquidity over supplied liquidity. It is the input to Aave’s interest curve and the reason a nearly empty pool and a nearly full pool are different credit markets."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 5
 group: "credit"
 tags:

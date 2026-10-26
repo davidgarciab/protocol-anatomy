@@ -5,7 +5,7 @@ description: "How aTokens, Maker debt, stETH, wstETH and sUSDS turn a stored num
 summary: "Aave, Maker, Lido and Sky all avoid writing every balance on every block. They store a small number per account and one global multiplier. What differs is which number a holder sees. aTokens and stETH show the product, so the balance changes. wstETH and sUSDS show the stored share, so the balance stays and the exchange rate moves."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 faq:
   - question: "What is the difference between stETH and wstETH balances?"
     answer: "stETH shows shares priced in ether, so the balance changes when the oracle report changes the pooled ether. wstETH is the same share count with a fixed balance, so the balance does not change and stEthPerToken does. Both holders earn the same reward. Only where the number changes differs."
@@ -44,10 +44,10 @@ sources:
     url: "https://github.com/aave/aave-v3-core/blob/6d6fa53d360b43f492ff5b3c7033f95aee4f1335/contracts/protocol/tokenization/AToken.sol"
     kind: "code"
     publisher: "Aave"
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "Lido tokens integration guide"
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/lido-tokens-integration-guide.md"
     kind: "docs"
@@ -97,7 +97,7 @@ A Maker urn stores `art`, not the DAI owed. `Jug.drip` changes `rate` once, and 
 
 ## Which one to integrate
 
-- Use the view methods. Lido’s integration guide says rounding lives in the contract, so call the share conversions instead of reimplementing the division.
+- Use the view methods. Lido’s integration guide notes a rounding difference of one to two wei per stETH transfer and points to `transferShares` for exact amounts, so call the share conversions instead of reimplementing the division.
 - Use wstETH or an ERC-4626 share where a rebase would corrupt your internal accounting. Do not treat the wrapper as a different asset with a different exit.
 - Do not copy `balanceOf` of a rebasing token into storage. It is right for one block.
 - Read what backs an ERC-4626 share. The interface makes the share legible. It does not say what backs the asset: a vault over USDS is a savings claim, and a vault over a risky credit book is a different risk behind the same functions.

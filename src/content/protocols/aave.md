@@ -5,7 +5,10 @@ description: "How Aave accounts for supply, variable debt, interest, and liquida
 summary: "Aave is a pooled lending protocol. Suppliers deposit assets into shared liquidity, borrowers post collateral, and interest follows utilization. V3 records that state in one Pool. V4 splits shared liquidity from user-facing markets and prices collateral risk on top of the utilization rate."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Added the September 2026 update’s V4 networks (Ethereum, Avalanche, Base, Arc), the three-hub, ten-spoke launch layout, and the Base equities hub. Re-verified the V3 and V4 mechanics against the current docs and code."
 faq:
   - question: "How does Aave pay interest to suppliers without sending tokens to each lender?"
     answer: "The reserve keeps a liquidity index. aToken balances are scaled, and the underlying amount is the scaled balance times the normalized income. Touching the reserve accrues the index forward using the time since the last update and the current rate, so a quiet block does not write every account."
@@ -20,7 +23,7 @@ faq:
 order: 1
 category: "Lending"
 mechanism: "Pooled overcollateralized borrowing, with utilization-based interest and collateral liquidation."
-versionContext: "V3 markets remain a production architecture. V4 activated on Ethereum mainnet on 30 March 2026 and was still being expanded, with caps, in September 2026."
+versionContext: "V3 markets remain a production architecture. V4 activated on Ethereum mainnet on 30 March 2026. The September 2026 development update, published on 1 October, lists V4 on Ethereum, Avalanche, Base, and Arc, with caps still being adjusted."
 tags:
   - lending
   - interest
@@ -51,7 +54,7 @@ versions:
     note: "Pool, aToken, and variable-debt-token markets. Stable-rate borrows are deprecated in the current pool interface."
   - name: "V4"
     status: "active"
-    note: "Hub-and-spoke deployment. Ethereum activation was 30 March 2026. September 2026 governance updates describe further network expansion under caps."
+    note: "Hub-and-spoke deployment. Ethereum activation was 30 March 2026. The September 2026 update lists V4 on Avalanche, Base, and Arc as well, under caps."
 sources:
   - title: "Aave V4 overview"
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
@@ -179,7 +182,7 @@ Two further V4 behaviors are governance decisions, not automatic features of eve
 - Dynamic risk configuration can leave existing positions on an older collateral factor when parameters change. A health-decreasing action can rebind the position to the latest configuration only if it would still be solvent.
 - A reinvestment module can sweep idle hub liquidity to an external strategy. The overview says swept funds stay inside the utilization denominator, and that strategy losses are assigned to the governor rather than directly to suppliers. Suppliers opt in by choosing a reserve connected to a hub asset that has reinvestment enabled.
 
-The April 2026 development update says the Ethereum deployment went live on 30 March 2026 with conservative caps and without an incentives program. The September 2026 update reports deposits above $1 billion and about $310 million of active loans, plus deployments beyond Ethereum, and says risk stewards were activated by AIP 523. Those figures are the update’s figures. They are not a live balance this site queries.
+The April 2026 development update says the Ethereum deployment went live on 30 March 2026 with conservative caps and without an incentives program. The activation proposal describes a launch with three hubs and ten spokes. The September 2026 update, published on 1 October, reports V4 deposits above $1 billion for the first time and about $310 million of active loans. It says V4 expanded to two new networks, Arc and Base, alongside Ethereum and Avalanche, and that risk stewards were activated on Ethereum, Avalanche, and Base through AIP 523. It also describes a Base hub listing seven tokenized equities as collateral, with USDC as the only borrowable asset. Those figures are the update’s figures. They are not a live balance this site queries.
 
 ## Governance, upgrades, and trust
 

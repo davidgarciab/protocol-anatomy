@@ -5,7 +5,7 @@ description: "How Aave’s two-slope utilization curve differs from Maker’s go
 summary: "Aave sets a variable borrow rate from utilization, with a kink at an optimal point and a reserve factor that skims the supplier rate. Maker sets a stability fee per collateral type and accrues it by raising a shared rate multiplier. The two are not interchangeable formulas."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 changes:
   - date: "2026-10-14"
     summary: "Corrected how Aave rates compound: the liquidity index accrues linearly and the variable-borrow index uses a binomial approximation, as `MathUtils.sol` shows."
@@ -43,14 +43,14 @@ sources:
     url: "https://github.com/aave/aave-v3-core/blob/6d6fa53d360b43f492ff5b3c7033f95aee4f1335/contracts/protocol/libraries/logic/ReserveLogic.sol"
     kind: "code"
     publisher: "Aave"
-  - title: "Rates module"
-    url: "https://docs.makerdao.com/smart-contract-modules/rates-module"
+  - title: "Rates overview"
+    url: "https://developers.skyeco.com/protocol/rates/ovreview/"
     kind: "docs"
-    publisher: "MakerDAO"
-  - title: "Jug detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/rates-module/jug-detailed-documentation"
+    publisher: "Sky"
+  - title: "Jug (rates module)"
+    url: "https://developers.skyeco.com/protocol/rates/jug/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
 ---
 
 “The protocol pays interest” hides the mechanism that computes it. On this site two mechanisms are documented well enough to contrast. Aave’s rate is a function of how full the reserve is. Maker’s stability fee is a parameter governance sets, accrued by a global multiplier per collateral type.

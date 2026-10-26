@@ -5,7 +5,7 @@ description: "Health factors, vault ratios and LLAMMA bands compared: when a pos
 summary: "Aave closes part of a debt when a health factor falls below 1 and pays the liquidator a bonus. Maker confiscates the whole vault in the Vat and sells the collateral through a separate auction. crvUSD converts collateral gradually as the price moves through bands. The residue in each design is bad debt."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 faq:
   - question: "Does Maker have a close factor like Aave?"
     answer: "No. The Vat's safety check has no close factor. grab removes the vault's collateral and debt from the urn and records the debt as unbacked debt, sin. A separate auction contract sells the collateral for stablecoin so that debt can be cancelled."
@@ -44,14 +44,22 @@ sources:
     url: "https://github.com/aave-dao/aave-v3-origin/blob/2f6a0fc96a957265fb38913053831e0880345d1f/src/contracts/protocol/libraries/logic/LiquidationLogic.sol"
     kind: "code"
     publisher: "Aave"
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
+  - title: "Collateral liquidation"
+    url: "https://developers.skyeco.com/protocol/vaults/collateral-liquidation/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "dog.sol"
     url: "https://github.com/makerdao/dss/blob/master/src/dog.sol"
     kind: "code"
     publisher: "MakerDAO"
+  - title: "LLAMMA explainer"
+    url: "https://docs.curve.finance/developer/crvusd/llamma-explainer"
+    kind: "docs"
+    publisher: "Curve"
   - title: "crvUSD overview"
     url: "https://docs.curve.finance/developer/crvusd/overview/"
     kind: "docs"
@@ -65,7 +73,7 @@ Collateral is an asset the protocol can take if a debt is not covered, and liqui
 | Question | Aave V3 | Aave V4 | Maker / Sky | crvUSD |
 | --- | --- | --- | --- | --- |
 | What marks a position unsafe? | [Health factor](/glossary/health-factor/) below 1 across the user’s enabled collateral | The same boundary | `art * rate > ink * spot`, for one collateral type | The price moving through LLAMMA bands |
-| How much is taken at once? | A [close factor](/glossary/close-factor/): half the debt by default, all of it in the cases below | Enough to restore a target health factor, unless dust rules force more | The whole vault is confiscated by `grab` | Gradual, band by band |
+| How much is taken at once? | A [close factor](/glossary/close-factor/): half the debt by default, all of it in the cases below | Enough to restore a target health factor, unless dust rules force more | The vault is confiscated by `Dog.bark`, normally in full, or in part when the `Hole` limits on active auctions apply | Gradual, band by band |
 | Who sells the collateral? | The liquidator, who repays debt and receives collateral | The liquidator | A separate auction contract, `dog.sol` and the auctions beside it | The AMM itself |
 | What does the liquidator earn? | A static [bonus](/glossary/liquidation-bonus/), minus a protocol fee | A bonus that rises as health falls | The auction’s result, not a bonus inside `grab` | No liquidator transaction is needed for the conversion |
 | What is the residue called? | [Bad debt](/glossary/bad-debt/) | A deficit, which another spoke can clear with supplied shares | `sin`, unbacked debt | Not covered here |
@@ -82,11 +90,11 @@ V4 sizes the repayment to a target health factor and increases the bonus as heal
 
 ## Maker: confiscate, then auction
 
-Maker stores no health factor. One comparison per vault decides safety, and `spot` already contains the liquidation ratio. `grab` takes the collateral and normalized debt off the urn and records the debt as `sin`. Selling the collateral is a different module. The economic point is that liquidation is not a fixed close factor inside the Vat. If the auction does not raise enough stablecoin, `sin` remains until surplus or governance absorbs it.
+Maker stores no health factor. One comparison per vault decides safety, and `spot` already contains the liquidation ratio. `grab` takes the collateral and normalized debt off the urn and records the debt as `sin`. Selling the collateral is a different module: `Dog.bark` sends the collateral to a `Clipper` Dutch auction. The Vat has no close factor, but `Dog` limits how much stablecoin active auctions may need to raise through `Hole` and a per-collateral `hole`, and when a liquidation would exceed them it liquidates only part of the vault. If the auction does not raise enough stablecoin, `sin` remains until surplus or governance absorbs it.
 
 ## crvUSD: a position that converts as it falls
 
-Curve’s overview describes LLAMMA, which converts collateral toward the stablecoin as the price moves through bands. Nothing waits for one ratio and then closes everything. The borrower can end up partially in the stablecoin without a liquidator’s transaction at a single tick. Calling that “the same as Aave” because both involve collateral is how integrations mis-simulate losses.
+Curve’s LLAMMA explainer describes bands that convert collateral toward the stablecoin as the price falls, through arbitrageurs trading against the AMM, and back toward the collateral if the price recovers. A loan that stays in its range until its health reaches zero is fully liquidated. Nothing waits for one ratio and then closes everything. The borrower can end up partially in the stablecoin without a liquidator’s transaction at a single tick. Calling that “the same as Aave” because both involve collateral is how integrations mis-simulate losses.
 
 ## What every design shares
 

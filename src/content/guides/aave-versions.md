@@ -4,7 +4,10 @@ description: "What changed in Aave’s accounting, risk, and liquidation between
 summary: "V3 gathers supply and debt for a market inside one Pool and reprices every position when risk parameters change. V4 keeps utilization interest at an immutable hub, lets spokes define markets, and adds a collateral risk premium plus a target-health-factor liquidation."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Updated the V4 status to the September 2026 update’s network list and corrected who can refresh a position’s dynamic risk configuration."
 order: 1
 protocol: "aave"
 versionContext: "V3 remains the documented Pool architecture. V4 has been active on Ethereum since 30 March 2026, alongside continued V3 markets."
@@ -34,7 +37,7 @@ versions:
     note: "Single Pool per market, aTokens, variable debt tokens, eMode, isolation mode, and a close factor."
   - name: "V4"
     status: "active"
-    note: "Hub and spokes. Activated on Ethereum mainnet on 30 March 2026 and expanded under caps through September 2026."
+    note: "Hub and spokes. Activated on Ethereum mainnet on 30 March 2026. The September 2026 update lists it on Ethereum, Avalanche, Base, and Arc, under caps."
 sources:
   - title: "Aave V4 overview"
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
@@ -88,7 +91,7 @@ The practical consequence: a V4 borrow quote is not “the USDC draw rate.” It
 
 ## Parameters that bind everyone, or parameters that bind a position
 
-The V4 overview calls out a V3 limitation directly: one risk configuration per asset. Lowering a liquidation threshold hits every open position. V4 stores collateral factor, maximum liquidation bonus, and liquidation fee in dynamic configuration keys. New positions bind to the latest key. Older positions keep their key until a risk-increasing action rebinds them, and that rebind is refused if the latest configuration would leave them under-collateralized. Governance can still overwrite an old key, or push a user forward with `updateUserDynamicConfig`. The default path is the conservative one.
+The V4 overview calls out a V3 limitation directly: one risk configuration per asset. Lowering a liquidation threshold hits every open position. V4 stores collateral factor, maximum liquidation bonus, and liquidation fee in dynamic configuration keys. New positions bind to the latest key. Older positions keep their key until a risk-increasing action rebinds them, and that rebind is refused if the latest configuration would leave them under-collateralized. Governance can still overwrite an old key, and the overview says the Governor or the user can refresh a position’s configuration with `updateUserDynamicConfig`. The default path is the conservative one.
 
 This is closer to “existing loans keep their covenant unless you touch them” than V3’s “the reserve’s threshold is the position’s threshold.” It is not a promise that governance cannot touch an old key.
 
@@ -104,7 +107,7 @@ The bonus formula in the overview is linear between the liquidation threshold an
 
 Borrowers still post collateral. Suppliers still earn from borrower interest, minus whatever share governance takes. Solvency still depends on oracle prices, which V4 makes spoke-specific. Interest is still lazy: indexes or share prices move when the reserve is touched, not on every block. A health factor below 1 is still the documented liquidation boundary.
 
-V4 also did not, on the evidence of the 2026 updates, switch V3 off. The April update describes a guarded launch with caps. The September update describes deposits reported above $1 billion, about $310 million of loans, more networks, and risk stewards authorized by AIP 523 to move routine parameters inside bounds. Caps and stewards are operational controls around the new architecture. They are not part of the invariant.
+V4 also did not, on the evidence of the 2026 updates, switch V3 off. The April update describes a guarded launch with caps. The September update describes deposits reported above $1 billion, about $310 million of loans, V4 on Avalanche, Base, and Arc as well as Ethereum, and risk stewards activated through AIP 523 to move routine parameters inside bounds. Caps and stewards are operational controls around the new architecture. They are not part of the invariant.
 
 ## Migration, stated narrowly
 

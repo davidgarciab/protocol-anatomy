@@ -4,7 +4,7 @@ description: "Which protocol changes are parameter updates, which are proxy upgr
 summary: "Governance on these protocols sets risk parameters, and sometimes replaces contract code at a stable address. Aave V3 pools and Sky’s USDS token are upgradeable. Aave V4’s hub and Uniswap’s core pools are documented as not upgradeable. Lido’s Dual Governance exists because an exit can be slower than a vote."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 9
 group: "engineering"
 tags:
@@ -33,7 +33,7 @@ sources:
     kind: "docs"
     publisher: "Aave"
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "USDS"

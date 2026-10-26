@@ -4,7 +4,7 @@ description: "How one Ethereum transaction can call a router, a pool, and a lend
 summary: "Composability means one transaction can move through several protocols before it commits. Uniswap routers chain pools. Flash accounting and flash swaps lend inventory for the duration of a call. The atomicity stops at anything that waits: an oracle report, a withdrawal queue, or a governance timelock."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 14
 group: "engineering"
 tags:
@@ -26,11 +26,11 @@ related:
   - proxies
 sources:
   - title: "Understanding swaps"
-    url: "https://docs.uniswap.org/concepts/protocol/swaps"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/traders/swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Using flash swaps"
-    url: "https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps"
+    url: "https://developers.uniswap.org/docs/protocols/v2/guides/flash-swaps"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Uniswap v4 architecture"

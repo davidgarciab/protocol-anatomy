@@ -4,7 +4,7 @@ description: "How Curve’s StableSwap pools, CryptoSwap pools, Stableswap-NG fa
 summary: "Curve did not ship a single V1-to-V4 exchange. It shipped an invariant for pegged assets, a later invariant for volatile assets, an FXSwap pool for externally priced markets, a factory of immutable pool instances, and a separate stablecoin whose liquidation is an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 4
 protocol: "curve"
 versionContext: "Stableswap-NG, CryptoSwap, and FXSwap are current AMM families. crvUSD controller blueprints are versioned, and a market keeps the blueprint it was deployed with."

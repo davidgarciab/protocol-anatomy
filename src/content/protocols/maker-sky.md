@@ -5,7 +5,10 @@ description: "How Maker vaults account for collateral and DAI debt, and how Sky�
 summary: "Maker’s Vat is a ledger of collateral and stablecoin debt. A vault locks collateral, draws DAI, and pays a stability fee that accrues by raising a per-collateral rate. Sky keeps a one-for-one path between DAI and USDS and adds a savings token, sUSDS, without replacing the vault ledger with an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Moved the Vat, Jug, and rates citations to the Sky developer portal after the Maker docs host began redirecting. Corrected the statement that the stability-fee rate only increases, who is incentivized to call drip, the liquidation flow through Dog and Clipper, and the LitePSM description."
 faq:
   - question: "How does Maker track the debt of a vault?"
     answer: "The Vat stores normalized debt `art` per vault and an accumulated stability-fee multiplier `rate` per collateral type. Current debt is `art * rate`, not `art` alone. One update to `rate` reprices every vault of that collateral type."
@@ -53,22 +56,26 @@ versions:
     status: "active"
     note: "Sky’s ERC-20 upgrade path, the ERC-4626 savings wrapper, and stUSDS as a separate risk-capital deposit. DAI is not described as sunset."
 sources:
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
-  - title: "Rates module"
-    url: "https://docs.makerdao.com/smart-contract-modules/rates-module"
+    publisher: "Sky"
+  - title: "Rates overview"
+    url: "https://developers.skyeco.com/protocol/rates/ovreview/"
     kind: "docs"
-    publisher: "MakerDAO"
-  - title: "Jug detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/rates-module/jug-detailed-documentation"
+    publisher: "Sky"
+  - title: "Jug (rates module)"
+    url: "https://developers.skyeco.com/protocol/rates/jug/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "vat.sol"
     url: "https://github.com/makerdao/dss/blob/master/src/vat.sol"
     kind: "code"
     publisher: "MakerDAO"
+  - title: "Collateral liquidation"
+    url: "https://developers.skyeco.com/protocol/vaults/collateral-liquidation/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "dog.sol"
     url: "https://github.com/makerdao/dss/blob/master/src/dog.sol"
     kind: "code"
@@ -83,6 +90,10 @@ sources:
     publisher: "Sky"
   - title: "stUSDS"
     url: "https://developers.skyeco.com/protocol/tokens/stusds/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "LitePSM"
+    url: "https://developers.skyeco.com/protocol/liquidity/litepsm/"
     kind: "docs"
     publisher: "Sky"
   - title: "Protocol token routes"
@@ -105,7 +116,7 @@ This page follows the ledger. The [transition guide](/guides/maker-to-sky) separ
 
 ## The ledger
 
-The Vat is the accounting contract. The [Vat documentation](https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation) defines two structures that matter for almost every other call:
+The Vat is the accounting contract. The [Vat documentation](https://developers.skyeco.com/protocol/core/vat/) defines two structures that matter for almost every other call:
 
 | Field | Where it lives | What it means |
 | --- | --- | --- |
@@ -117,7 +128,7 @@ The Vat is the accounting contract. The [Vat documentation](https://docs.makerda
 | `dust` | Ilk | Minimum debt for a vault that is not fully repaid |
 | `Art` | Ilk | Sum of normalized debt for the collateral type |
 
-Current debt on a vault is `art * rate`, not `art` alone. `rate` starts at 1e27 and only increases as fees accrue. That is why the stored debt is called [normalized](/glossary/normalized-debt/). One update to `rate` reprices every vault of that collateral type.
+Current debt on a vault is `art * rate`, not `art` alone. `rate` starts at 1e27 when the collateral type is initialized and moves only when `Vat.fold` is called. The rates overview says it perpetually increases unless the fee becomes negative. That is why the stored debt is called [normalized](/glossary/normalized-debt/). One update to `rate` reprices every vault of that collateral type.
 
 `gem` is the Vat’s internal collateral balance. `dai` is the internal stablecoin balance, in rad (1e45), not the ERC-20 in a user’s wallet. The ERC-20 DAI and USDS tokens are minted by join adapters when internal `dai` is converted out, and burned when it is converted back. The USDS repository describes `UsdsJoin` as the adapter that mints USDS against `vat.dai`, analogous to `DaiJoin`.
 
@@ -135,7 +146,7 @@ A user locks collateral, then draws stablecoin. Both adjustments meet in `frob`.
 
 `spot` is not a raw oracle price. It is the price after the liquidation ratio has been applied, so the comparison above is the collateralization rule. The oracle and the spotter that writes `spot` are outside the Vat. If they are wrong, the Vat will still enforce whatever `spot` it was given.
 
-The rates module explains why someone must call `Jug.drip(ilk)` for fees to move. The Jug stores a per-second duty for the collateral type plus a global base. `drip` computes the multiplier for the elapsed time and calls `Vat.fold`, which adds the change onto `Ilk.rate` and credits the system surplus. Until `drip` is called, `rate` is stale. A vault opened and closed between drips does not pay the fee that would have accrued in that gap. The Jug docs treat that as a property of lazy accrual, and they note that keepers and governance have reasons to call it.
+The rates module explains why someone must call `Jug.drip(ilk)` for fees to move. The Jug stores a per-second duty for the collateral type plus a global base. `drip` computes the multiplier for the elapsed time and calls `Vat.fold`, which adds the change onto `Ilk.rate` and credits the system surplus. Until `drip` is called, `rate` is stale. A vault opened and closed between drips does not pay the fee that would have accrued in that gap. The Jug docs treat that as a property of lazy accrual. Anyone can call `drip`. The docs say keepers and SKY holders have an incentive to call it regularly, the first to trigger liquidation auctions and the second so that surplus accumulates. The rates overview adds that governance can reduce drift by calling `drip` immediately before a fee change.
 
 The [stability fee](/glossary/stability-fee/) is therefore not a utilization curve. Governance sets it. It does not automatically rise because more DAI has been drawn, except insofar as governance reacts. That is the main contrast with [Aave](/protocols/aave).
 
@@ -143,7 +154,7 @@ The [stability fee](/glossary/stability-fee/) is therefore not a utilization cur
 
 A vault is unsafe when `art * rate` exceeds `ink * spot`. `grab` is the Vat function that confiscates it: collateral (`ink`) and normalized debt (`art`) are taken off the urn, and the debt is recorded as `sin`, the system’s unbacked debt. The Vat documentation is explicit that `grab` is how vaults are liquidated at the ledger layer.
 
-Selling the seized collateral is a different module. `src/dog.sol` sits next to `vat.sol` in the `dss` repository. This page does not restate auction parameters from secondary write-ups. The economic point is enough: liquidation is not a fixed close-factor inside the Vat. The ledger moves the position to the protocol, and a separate auction contract sells collateral for stablecoin so the unbacked debt can be cancelled. If the auction does not cover the debt, `sin` remains until surplus or governance absorbs it.
+Selling the seized collateral is a different module. A keeper calls `Dog.bark` on an unsafe vault. The [collateral liquidation documentation](https://developers.skyeco.com/protocol/vaults/collateral-liquidation/) says `bark` confiscates the vault, sends its collateral to that collateral type’s `Clipper`, adds the debt to the Vow’s bad-debt accumulator, and starts a Dutch auction whose starting price is read from the Oracle Security Module. The auction aims to raise `tab`, the debt plus the liquidation penalty `chop`, and it does not sell more collateral than that needs. Liquidation is not a fixed close factor inside the Vat. The docs say `bark` takes all of the debt by default, but `Dog` also keeps a global `Hole` and a per-collateral `hole` on the stablecoin that active auctions may need to raise. When a new auction would exceed them, `dog.sol` performs a partial liquidation, and it will not leave a dusty remainder in the vault. If the auction does not cover the debt, `sin` remains until surplus or governance absorbs it.
 
 ## USDS, the converter, and savings
 
@@ -151,7 +162,7 @@ Sky’s token docs describe USDS as an ERC-20 with permit support, upgradeable t
 
 The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary/sky-savings-rate/). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
 
-The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts: a fixed one-to-one swap against an external stablecoin, subject to the module’s liquidity, not a Curve invariant. That is the [peg stability module](/glossary/peg-stability-module/) idea. It can hold the market price near one dollar only while it has inventory and while governance leaves it open. It does not make a vault safer.
+The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts. The [LitePSM page](https://developers.skyeco.com/protocol/liquidity/litepsm/) describes swaps with no slippage against a pool of pre-minted DAI or USDS, so availability is limited by that pool, and it says fees have not been activated and could change. That is a Curve-free version of the [peg stability module](/glossary/peg-stability-module/) idea: it can hold the market price near one dollar only while its pool has inventory. It does not make a vault safer.
 
 [stUSDS](/glossary/stusds/) is another ERC-4626 deposit of USDS, and it is not sUSDS. Sky’s token page calls it a risk-capital token: supplying USDS funds SKY-backed borrowing and pays an stUSDS rate. The page documents `deposit` and `mint` plus permit. It does not document a one-for-one path with DAI, and it does not document the Sky Savings Rate. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price this deposit.
 

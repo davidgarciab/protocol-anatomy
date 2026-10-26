@@ -4,7 +4,10 @@ description: "Where Aave, Maker, Curve, and Lido take an input the chain cannot 
 summary: "Lending solvency, Maker’s spot price, some Curve coin rates, and Lido’s share rate all depend on data that is not the protocol’s own invariant. The contract will enforce the wrong number faithfully. Oracle design is the choice of who may write that number and how stale it may be."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Updated the Lido accounting report description to the core v4.0.0 fields."
 order: 10
 group: "engineering"
 tags:
@@ -32,20 +35,20 @@ sources:
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
     kind: "docs"
     publisher: "Aave"
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "Integrating Stableswap-NG"
     url: "https://docs.curve.finance/developer/integration/stableswap-ng"
     kind: "docs"
     publisher: "Curve"
-  - title: "AccountingOracle.sol at core v3.0.2"
-    url: "https://github.com/lidofinance/core/blob/v3.0.2/contracts/0.8.9/oracle/AccountingOracle.sol"
+  - title: "AccountingOracle.sol at core v4.0.0"
+    url: "https://github.com/lidofinance/core/blob/v4.0.0/contracts/0.8.9/oracle/AccountingOracle.sol"
     kind: "code"
     publisher: "Lido"
   - title: "Understanding swaps"
-    url: "https://docs.uniswap.org/concepts/protocol/swaps"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/traders/swaps"
     kind: "docs"
     publisher: "Uniswap"
 ---
@@ -60,7 +63,7 @@ Maker’s `spot` is the price the Vat trusts, already scaled by the liquidation 
 
 Curve NG asset type 1 is an external rate, used for wrapped staking tokens. Asset type 3 calls `convertToAssets` on an ERC-4626. Those calls are rate oracles with a different interface. If `convertToAssets` can be manipulated inside a transaction, the pool’s invariant will trade at the manipulated rate. Asset type 2, rebasing, is not an oracle. The balance changes in the token itself. The pool has to measure balances rather than remember them. stETH is the usual example, which is why Lido’s wrapper exists for protocols that cannot tolerate a rebase.
 
-Lido’s accounting oracle is the bridge from consensus-layer ether to the share rate. The report at core `v3.0.2` carries balances, a simulated share rate, withdrawal batches, and a bunker-mode flag. A wrong report rebases every stETH holder. There is no pool invariant that can disagree with it. The sanity checker is a bound on the report, not a view of the beacon chain.
+Lido’s accounting oracle is the bridge from consensus-layer ether to the share rate. The report at core `v4.0.0` carries validator and pending-deposit balances, a simulated share rate, withdrawal batches, and a bunker-mode flag. A wrong report rebases every stETH holder. There is no pool invariant that can disagree with it. The sanity checker is a bound on the report, not a view of the beacon chain.
 
 ## Spot prices from AMMs
 

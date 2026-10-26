@@ -4,7 +4,7 @@ description: "How a liquidity provider’s claim is tracked in Uniswap v2, Unisw
 summary: "A liquidity pool holds the reserves a swap trades against. The LP share is the claim on those reserves and on fees. Uniswap v2 uses a fungible token, v3 and v4 use position NFTs from different contracts, and Curve NG uses the pool contract itself."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
 order: 2
 group: "markets"
 tags:
@@ -23,11 +23,11 @@ related:
   - concentrated-liquidity
 sources:
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Concentrated liquidity"
-    url: "https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/liquidity-providers/concentrated-liquidity"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Integrating Stableswap-NG"

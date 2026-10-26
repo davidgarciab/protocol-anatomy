@@ -4,7 +4,10 @@ description: "Which Maker accounting Sky still uses, and which names changed wit
 summary: "Sky did not replace the Vat with a new stablecoin design. DAI remains the internal stablecoin debt. USDS is a one-for-one ERC-20 path onto that debt. sUSDS is a savings vault. MKR converts to SKY at a fixed 24,000-to-1 rate. The vault safety check is still art times rate against ink times spot."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Replaced the Maker documentation links, which now redirect to the Sky portal, with their new Sky pages, and corrected the LitePSM constraints."
 order: 3
 protocol: "maker-sky"
 versionContext: "Maker core contracts in the dss repository remain the collateral ledger. Sky’s 2026 integrator docs describe the USDS, sUSDS, and SKY routes around that ledger."
@@ -36,14 +39,14 @@ versions:
     status: "active"
     note: "Sky’s token layer: one-for-one with DAI, an ERC-4626 savings rate, a separate stUSDS deposit, and a fixed MKR conversion."
 sources:
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
-  - title: "Rates module"
-    url: "https://docs.makerdao.com/smart-contract-modules/rates-module"
+    publisher: "Sky"
+  - title: "Rates overview"
+    url: "https://developers.skyeco.com/protocol/rates/ovreview/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "vat.sol"
     url: "https://github.com/makerdao/dss/blob/master/src/vat.sol"
     kind: "code"
@@ -58,6 +61,10 @@ sources:
     publisher: "Sky"
   - title: "stUSDS"
     url: "https://developers.skyeco.com/protocol/tokens/stusds/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "LitePSM"
+    url: "https://developers.skyeco.com/protocol/liquidity/litepsm/"
     kind: "docs"
     publisher: "Sky"
   - title: "Protocol token routes"
@@ -93,7 +100,7 @@ The [protocol token routes](https://developers.skyeco.com/quick-start/protocol-t
 | DAI ↔ USDS | 1:1, both directions | No fee, and the USDS page says a fee cannot be added later on this converter |
 | MKR ↔ SKY | 1 MKR = 24,000 SKY | Fixed conversion, not a market price |
 | USDS ↔ sUSDS | ERC-4626 share price | Not 1:1 with sDAI, because the two savings tokens have accrued different rates |
-| DAI or USDS ↔ USDC | Peg-module swap | Inventory and debt-ceiling limits of LitePSM or the USDS wrapper, not a curve |
+| DAI or USDS ↔ USDC | Peg-module swap | Limited by the pool of pre-minted DAI or USDS behind LitePSM and its USDS wrapper. Fees are inactive today and could change. Not a curve |
 
 DAI is still in the table. The docs do not tell holders that DAI is frozen or that it must be converted. An integration can keep using DAI, USDS, or both, and should not assume balances are interchangeable without the converter. They are the same face value only after that conversion, not the same ERC-20 address.
 
@@ -107,7 +114,7 @@ sUSDS is a vault in the ERC-4626 sense. A Maker vault is not. Depositing USDS in
 
 Sky’s public writing describes allocators, a broader balance sheet, and a savings product funded by protocol revenue. The mechanism pages support the savings token and the converters. They do not, on the sources read for this article, provide a single on-chain object called “the Sky collateral portfolio” that replaced the ilk list. Collateral types remain ilks in the Vat until governance removes them. A new allocator is a governance and integration fact. It should be read from current governance and the chainlog Sky publishes, not from a static article.
 
-Historical Maker docs now sit on a documentation host that Sky also uses. A page titled as Maker documentation can redirect toward Sky navigation, as happened with some module URLs checked for this publication. Prefer the `dss` source and the pages that still define `ink` and `art` when the marketing site and the module docs disagree about scope. The [methodology](/methodology) records that rule.
+The old Maker documentation host no longer serves its module pages. When this publication’s sources were re-read on 26 October 2026, every `docs.makerdao.com` module URL redirected to the Sky developer portal’s front page. The same material now lives there under `/protocol/`: the Vat at `/protocol/core/vat/`, the Jug and rates overview under `/protocol/rates/`, and liquidation under `/protocol/vaults/collateral-liquidation/`. The articles cite those pages. The `dss` source remains the check when the documentation and the contracts disagree about scope. The [methodology](/methodology) records that rule.
 
 ## Integration consequences
 

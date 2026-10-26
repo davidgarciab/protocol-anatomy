@@ -4,7 +4,10 @@ description: "How Protocol Anatomy chooses sources, dates version claims, and co
 summary: "Articles are written from protocol documentation, papers, source files, and governance posts. A last-verified date means those sources were read for that page. It does not mean an audit. Figures quoted from a governance update stay attributed to that update."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-13"
+lastVerified: "2026-10-26"
+changes:
+  - date: "2026-10-26"
+    summary: "Re-verified every page against its sources on 26 October 2026. The Maker documentation pages and the Uniswap docs host had moved, and the citations now point to the new locations."
 order: 1
 tags:
   - methodology
@@ -15,13 +18,13 @@ sources:
     kind: "docs"
     publisher: "Aave"
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
-  - title: "Vat detailed documentation"
-    url: "https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation"
+  - title: "Vat (core accounting)"
+    url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
-    publisher: "MakerDAO"
+    publisher: "Sky"
   - title: "Understanding StableSwap"
     url: "https://docs.curve.finance/protocol/pool/understanding-stableswap"
     kind: "docs"
@@ -88,7 +91,7 @@ If the excerpt and the docs disagree, the page says so. Master branches move. A 
 
 ## What last verified means
 
-`lastVerified` is the date the sources listed on that page were read for the claims on that page. For the first edition, that date is 13 October 2026. It is not an audit date, not a bug-bounty date, and not a claim that every parameter was read from chain that day.
+`lastVerified` is the date the sources listed on that page were read for the claims on that page. The first edition was read on 13 October 2026, and every page was re-read against its sources on 26 October 2026. It is not an audit date, not a bug-bounty date, and not a claim that every parameter was read from chain that day.
 
 Numbers that move are handled in one of two ways. They are omitted, which is the default for loan-to-value, caps, and TVL. Or they are attributed, which is how the September 2026 Aave Labs update is quoted: as that post’s report, not as a live balance this site refreshes.
 

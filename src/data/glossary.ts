@@ -97,7 +97,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'dutch-auction',
     term: 'Dutch auction',
     definition:
-      'A sale that starts at a high price and falls until a buyer accepts it. Aave V4 uses the phrase for a liquidation bonus that increases as health factor falls. Maker’s collateral auctions are a separate implementation in the dss liquidation contracts.',
+      'A sale that starts at a high price and falls until a buyer accepts it. Aave V4 uses the phrase for a liquidation bonus that increases as health factor falls. Maker’s Clipper collateral auctions are also Dutch auctions, a separate implementation in the dss liquidation contracts.',
     related: [{ href: '/concepts/collateral-and-liquidation', label: 'Collateral and liquidation' }],
   },
   {
@@ -254,7 +254,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'peg-stability-module',
     term: 'Peg stability module',
     definition:
-      'A Maker facility that swaps DAI with an approved external stablecoin at a fixed rate, within a debt ceiling. Sky’s current token-route documentation points integrators to LitePSM for DAI–USDC and a USDS–USDC wrapper. It is not a vault and it does not price the swap on a curve.',
+      'A Maker facility that swaps DAI with an approved external stablecoin with no slippage, against a limited pool. Sky’s current token-route documentation points integrators to LitePSM for DAI–USDC and a USDS–USDC wrapper. It is not a vault and it does not price the swap on a curve.',
     related: [{ href: '/protocols/maker-sky', label: 'MakerDAO / Sky' }],
   },
   {
@@ -333,7 +333,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'staking-vault',
     term: 'Staking vault',
     definition:
-      'An isolated Lido V3 position: one owner, one node operator, and withdrawal credentials pointed at the vault. The owner can mint stETH against the vault’s reported value up to a reserve ratio the DAO sets. It is not a share of the pooled Lido Core stake.',
+      'An isolated Lido V3 position: an owner, one node operator fixed at initialization, and withdrawal credentials pointed at the vault. Ownership can be transferred in two steps. The owner can mint stETH against the vault’s reported value up to a reserve ratio the DAO sets. It is not a share of the pooled Lido Core stake.',
     related: [
       { href: '/protocols/lido', label: 'Lido' },
       { href: '/concepts/liquid-staking', label: 'Liquid staking' },

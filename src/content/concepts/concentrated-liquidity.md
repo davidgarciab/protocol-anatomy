@@ -5,7 +5,7 @@ description: "How a Uniswap v3 or v4 position holds token0, token1, or both as p
 summary: "Concentrated liquidity is constant-product inventory that is only active between two prices. Below the range the position is token0. Above it, token1. Inside, both. Leaving the range stops fees. It is not a liquidation. v4 uses the same amount formulas and the opposite sign on the settled delta."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-14"
+lastVerified: "2026-10-26"
 changes:
   - date: "2026-10-14"
     summary: "Added which tokens a position holds below, inside, and above its range, with excerpts from the v3 and v4 `SqrtPriceMath` and `LiquidityAmounts` libraries."
@@ -34,7 +34,7 @@ related:
   - automated-market-makers
 sources:
   - title: "Concentrated liquidity"
-    url: "https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/liquidity-providers/concentrated-liquidity"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Uniswap v3 Core whitepaper"
@@ -46,7 +46,7 @@ sources:
     kind: "code"
     publisher: "Uniswap"
   - title: "How Uniswap works"
-    url: "https://docs.uniswap.org/contracts/v2/concepts/protocol-overview/how-uniswap-works"
+    url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
     publisher: "Uniswap"
   - title: "Uniswap v4 architecture"
