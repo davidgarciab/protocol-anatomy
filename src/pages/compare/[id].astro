@@ -1,0 +1,32 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { readingMinutes } from '../../lib/reading';
+import { comparisonLinks } from '../../lib/relate';
+
+export async function getStaticPaths() {
+  const protocols = await getCollection('protocols');
+  const guides = await getCollection('guides');
+  const concepts = await getCollection('concepts');
+  const comparisons = await getCollection('comparisons');
+  const library = { protocols, guides, concepts, comparisons };
+  return comparisons.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry, library },
+  }));
+}
+
+const { entry, library } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<ArticleLayout
+  entry={entry}
+  headings={headings}
+  kicker="Comparison"
+  readingMinutes={readingMinutes(entry.body)}
+  crumbs={[{ href: '/compare/', label: 'Compare' }, { label: entry.data.title }]}
+  related={comparisonLinks(entry, library)}
+>
+  <Content />
+</ArticleLayout>

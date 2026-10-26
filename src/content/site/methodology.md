@@ -32,7 +32,17 @@ sources:
     publisher: "Lido"
 ---
 
-Protocol Anatomy explains how a few widely used protocols account for assets. The pages are for anyone who wants the mechanism, the version boundary, and the source, whether or not they read contracts. The research uses open sources only: public documentation, deployed code, and governance records. They are not price commentary, and they are not a substitute for the protocol’s own docs when you are about to send a transaction.
+Protocol Anatomy explains how a few widely used protocols account for assets. The pages are for anyone who wants the mechanism, the version boundary, and the source, whether or not they read contracts. The research uses open sources only: public documentation, deployed code, and governance records. The pages are not price commentary, and they are not a substitute for the protocol’s own docs when you are about to send a transaction.
+
+## Reading a claim here
+
+A claim on a protocol, version or concept page is meant to be checkable in three steps.
+
+1. Find the claim’s source in the page’s Sources list. Sources are grouped by kind: contract code and specifications first, then documentation and papers, then governance records.
+2. Open it. A code citation names a file and, where it matters, a tag or commit. A documentation citation names the page. The page says which version it describes.
+3. Compare the date. “Last verified” is when the sources on that page were read, and a version claim is only as current as that date.
+
+The [comparison pages](/compare/) and the [questions page](/questions/) restate what the articles they link to establish. They carry the same sources, and their “last verified” date is the date of the latest underlying article they draw on, not a new read of the sources. When a comparison and an article disagree, the article and its cited sources win, and the comparison is the page to correct.
 
 ## What gets cited
 

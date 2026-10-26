@@ -9,6 +9,7 @@ lastVerified: "2026-10-13"
 faq:
   - question: "How does the stETH balance grow?"
     answer: "Internally Lido mints shares, and the visible balance is `shares * totalPooledEther / totalShares`. Rewards change the pooled-ether total, so every share becomes worth more stETH without a transfer. Penalties do the opposite. That balance change is a rebase."
+    featured: true
   - question: "What is wstETH and why does it exist?"
     answer: "Rebasing breaks integrations that store a balance and expect it to stay still. wstETH is the wrapper: one wstETH is one share locked in the wrapper. Its balance does not change when the oracle reports, while `stEthPerToken` does."
   - question: "Does selling or transferring stETH unstake it?"

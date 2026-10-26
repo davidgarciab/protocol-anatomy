@@ -5,10 +5,13 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, pagePath } from '../lib/site';
 import { groupLabel } from '../lib/relate';
+import { featuredQuestions } from '../lib/questions';
 
 const protocols = (await getCollection('protocols')).sort((a, b) => a.data.order - b.data.order);
 const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
 const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
+const questions = await featuredQuestions();
 const featuredConcepts = concepts.slice(0, 6);
 
 const homeTitle = `${SITE.name}: how Aave, Uniswap, Maker, Curve and Lido work`;
@@ -37,6 +40,24 @@ const jsonLd = {
         <a href="/protocols/">Browse the protocols</a>
         <a href="/methodology/">How the research is checked</a>
       </div>
+    </section>
+
+    <section class="section" aria-labelledby="questions-heading">
+      <h2 id="questions-heading">Questions this site answers</h2>
+      <ul class="contents-index question-index">
+        {
+          questions.map((item) => (
+            <li>
+              <a href={item.href}>
+                <span class="num">?</span>
+                <span>{item.question}</span>
+                <span class="cat">{item.page}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p><a href="/questions/">All questions</a></p>
     </section>
 
     <section class="section" aria-labelledby="learn-heading">
@@ -97,6 +118,25 @@ const jsonLd = {
           ))
         }
       </ul>
+    </section>
+
+    <section class="section" aria-labelledby="compare-heading">
+      <h2 id="compare-heading">Compare protocols</h2>
+      <p class="section-intro">The same question asked of different designs.</p>
+      <ul class="contents-index">
+        {
+          comparisons.map((entry) => (
+            <li>
+              <a href={pagePath(`/compare/${entry.id}`)}>
+                <span class="num">⇄</span>
+                <span>{entry.data.title}</span>
+              </a>
+              <p>{entry.data.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p><a href="/compare/">All comparisons</a></p>
     </section>
 
     <section class="section" aria-labelledby="concepts-heading">

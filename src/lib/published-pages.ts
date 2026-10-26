@@ -11,10 +11,11 @@ export interface PublishedPage {
 
 /** Every article with its site path, for the change log and the feed. */
 export async function publishedPages(): Promise<PublishedPage[]> {
-  const [protocols, guides, concepts, site] = await Promise.all([
+  const [protocols, guides, concepts, comparisons, site] = await Promise.all([
     getCollection('protocols'),
     getCollection('guides'),
     getCollection('concepts'),
+    getCollection('comparisons'),
     getCollection('site'),
   ]);
   const page = (path: string, entry: { data: PublishedPage['data'] & { title: string; description: string } }) => ({
@@ -27,6 +28,7 @@ export async function publishedPages(): Promise<PublishedPage[]> {
     ...protocols.map((entry) => page(`/protocols/${entry.id}`, entry)),
     ...guides.map((entry) => page(`/guides/${entry.id}`, entry)),
     ...concepts.map((entry) => page(`/concepts/${entry.id}`, entry)),
+    ...comparisons.map((entry) => page(`/compare/${entry.id}`, entry)),
     ...site.map((entry) => page(`/${entry.id}`, entry)),
   ];
 }

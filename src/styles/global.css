@@ -314,6 +314,11 @@ h1 {
   font-size: 0.92rem;
 }
 
+.question-index a {
+  grid-template-columns: 2.2rem minmax(0, 1fr) minmax(6rem, auto);
+  font-size: 1.2rem;
+}
+
 .contents-index p {
   grid-column: 1 / -1;
   margin: 0.15rem 0 0;
@@ -695,8 +700,14 @@ th {
   border-top: 1px solid var(--line);
 }
 
-.references ol {
+.references ol,
+.references ul {
   padding-left: 1.2rem;
+}
+
+.source-kind {
+  margin: 1.2rem 0 0.2rem;
+  font-size: 1rem;
 }
 
 .references li {
@@ -1030,4 +1041,8 @@ th {
 
 .path-nav .path-title {
   font-weight: 600;
+}
+
+.toc-inline ul {
+  list-style: none;
 }

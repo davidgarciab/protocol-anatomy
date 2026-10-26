@@ -12,6 +12,7 @@ import {
 import { readingMinutes } from '../src/lib/reading';
 import { changeLog, lastModified } from '../src/lib/changes';
 import { canonicalUrl } from '../src/lib/site';
+import { faqAnchor } from '../src/lib/anchors';
 
 const catalog: Catalog = {
   protocols: new Set(['aave']),
@@ -73,6 +74,33 @@ describe('content rules', () => {
     expect(errors.some((error) => error.includes('/protocols/missing'))).toBe(true);
     expect(errors.some((error) => error.includes('health-factor'))).toBe(false);
   });
+
+  it('requires a comparison to name two known protocols', () => {
+    const comparison = (protocols: string[]) =>
+      validateDocument(
+        {
+          collection: 'comparisons',
+          id: 'example',
+          data: {
+            title: 'Example comparison title',
+            description: 'A long enough description for the example comparison used in the unit test.',
+            summary: 'A summary that is certainly longer than eighty characters so the required field check can pass cleanly.',
+            status: 'published',
+            published: '2026-10-26',
+            lastVerified: '2026-10-26',
+            tags: ['test'],
+            sources: [{ title: 'Docs', url: 'https://example.com/docs', kind: 'docs', publisher: 'Example' }],
+            protocols,
+            concepts: ['lending-utilization'],
+            glossary: ['health-factor'],
+          },
+          body: 'word '.repeat(400),
+        },
+        catalog,
+      );
+    expect(comparison(['aave'])).toContain('comparisons/example: a comparison needs at least two protocols');
+    expect(comparison(['aave', 'nothing']).some((error) => error.includes('unknown protocol "nothing"'))).toBe(true);
+  });
 });
 
 describe('search and reading helpers', () => {
@@ -133,5 +161,11 @@ describe('change log', () => {
   it('gives same-day changes to one page distinct ids', () => {
     const log = changeLog([{ title: 'A', url: '/a/', description: 'About A', data: { published: '2026-10-13', changes: [change, change] } }]);
     expect(new Set(log.map((entry) => entry.id)).size).toBe(3);
+  });
+});
+
+describe('question anchors', () => {
+  it('slugs a question the way a heading would be', () => {
+    expect(faqAnchor('How does Aave pay interest to suppliers?')).toBe('how-does-aave-pay-interest-to-suppliers');
   });
 });

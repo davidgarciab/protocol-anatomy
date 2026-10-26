@@ -3,12 +3,13 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { pagePath, sourceKindLabel, type Source } from '../lib/site';
+import { SOURCE_KINDS, pagePath, sourceKindLabel, type Source } from '../lib/site';
 
 const collections = [
   ...(await getCollection('protocols')).map((entry) => ({ entry, href: pagePath(`/protocols/${entry.id}`) })),
   ...(await getCollection('guides')).map((entry) => ({ entry, href: pagePath(`/guides/${entry.id}`) })),
   ...(await getCollection('concepts')).map((entry) => ({ entry, href: pagePath(`/concepts/${entry.id}`) })),
+  ...(await getCollection('comparisons')).map((entry) => ({ entry, href: pagePath(`/compare/${entry.id}`) })),
   ...(await getCollection('site')).map((entry) => ({ entry, href: pagePath(`/${entry.id}`) })),
 ];
 
@@ -22,6 +23,10 @@ for (const { entry, href } of collections) {
   }
 }
 const sources = [...byUrl.values()].sort((a, b) => a.source.title.localeCompare(b.source.title));
+const kinds = SOURCE_KINDS.map((kind) => ({
+  kind,
+  entries: sources.filter(({ source }) => source.kind === kind),
+})).filter((group) => group.entries.length > 0);
 const description = 'Primary and secondary sources cited by the protocol, version, and concept guides.';
 ---
 
@@ -32,29 +37,37 @@ const description = 'Primary and secondary sources cited by the protocol, versio
       <p class="kicker">Reference</p>
       <h1>Sources</h1>
       <p class="lede">
-        Every article ends with the sources used for that page. This index is the same set, grouped by URL. A listed source supports the article that cites it. It is not a general endorsement of the publisher.
+        Every article ends with the sources used for that page. This index is the same set, grouped by kind of evidence and then by URL. A listed source supports the article that cites it. It is not a general endorsement of the publisher.
       </p>
     </header>
-    <ol class="references">
-      {
-        sources.map(({ source, pages }) => (
-          <li>
-            <a href={source.url}>{source.title}</a>
-            <div class="kind">
-              {sourceKindLabel(source.kind)} · {source.publisher}
-            </div>
-            <div>
-              {pages.map((page, index) => (
-                <>
-                  {index > 0 && ' · '}
-                  <a href={page.href}>{page.title}</a>
-                </>
-              ))}
-            </div>
-          </li>
-        ))
-      }
-    </ol>
+    <nav aria-label="Jump to a kind of source">
+      <ul class="meta-list">
+        {kinds.map((group) => <li><a href={`#kind-${group.kind}`}>{sourceKindLabel(group.kind)} ({group.entries.length})</a></li>)}
+      </ul>
+    </nav>
+    {
+      kinds.map((group) => (
+        <section class="directory-block" aria-labelledby={`kind-${group.kind}`}>
+          <h2 id={`kind-${group.kind}`}>{sourceKindLabel(group.kind)}</h2>
+          <ol class="references">
+            {group.entries.map(({ source, pages }) => (
+              <li>
+                <a href={source.url}>{source.title}</a>
+                <div class="kind">{source.publisher}</div>
+                <div>
+                  {pages.map((page, index) => (
+                    <>
+                      {index > 0 && ' · '}
+                      <a href={page.href}>{page.title}</a>
+                    </>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
   </main>
   <Footer slot="footer" />
 </BaseLayout>

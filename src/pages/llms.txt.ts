@@ -7,6 +7,7 @@ const SECTIONS = [
   { prefix: '/protocols/', heading: 'Protocols' },
   { prefix: '/guides/', heading: 'Version guides' },
   { prefix: '/concepts/', heading: 'Concepts' },
+  { prefix: '/compare/', heading: 'Cross-protocol comparisons' },
   { prefix: '/methodology', heading: 'About the publication' },
 ];
 
@@ -33,6 +34,7 @@ export const GET: APIRoute = async () => {
     '## Optional',
     '',
     `- [Full text of every article](${abs('/llms-full.txt')}): all pages as one plain-text file`,
+    `- [Questions](${abs('/questions/')}): every question the articles answer, with short sourced answers`,
     `- [Glossary](${abs('/glossary/')}): ${glossary.length} short definitions`,
     `- [Source index](${abs('/sources/')}): every primary source cited`,
     `- [What changed](${abs('/changes/')}): dated corrections and additions`,

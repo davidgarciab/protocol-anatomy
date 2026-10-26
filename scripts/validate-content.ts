@@ -18,7 +18,7 @@ import {
 const root = join(import.meta.dirname, '..');
 const contentRoot = join(root, 'src/content');
 
-const collections = ['protocols', 'guides', 'concepts', 'site'] as const;
+const collections = ['protocols', 'guides', 'concepts', 'comparisons', 'site'] as const;
 
 function normalizeYaml(value: unknown): unknown {
   if (value instanceof Date) return value.toISOString().slice(0, 10);
@@ -65,6 +65,7 @@ function headingsFor(markdown: string): Set<string> {
 
 function pathFor(doc: CheckedDocument): string {
   if (doc.collection === 'site') return `/${doc.id}`;
+  if (doc.collection === 'comparisons') return `/compare/${doc.id}`;
   return `/${doc.collection}/${doc.id}`;
 }
 
@@ -77,7 +78,7 @@ const catalog: Catalog = {
   concepts: new Set(docs.filter((doc) => doc.collection === 'concepts').map((doc) => doc.id)),
   glossary: new Set(glossary.map((entry) => entry.id)),
   diagrams: diagramNames,
-  paths: new Set(['/', '/protocols', '/guides', '/concepts', '/glossary', '/methodology', '/sources', '/search', '/about', '/changes', '/privacy', '/rss.xml']),
+  paths: new Set(['/', '/protocols', '/guides', '/concepts', '/compare', '/questions', '/glossary', '/methodology', '/sources', '/search', '/about', '/changes', '/privacy', '/rss.xml']),
   headings: new Map([['/glossary', new Set(glossary.map((entry) => entry.id))]]),
 };
 for (const entry of glossary) catalog.paths.add(`/glossary/${entry.id}`);

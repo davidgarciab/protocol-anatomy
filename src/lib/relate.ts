@@ -7,6 +7,7 @@ export interface Library {
   protocols: CollectionEntry<'protocols'>[];
   guides: CollectionEntry<'guides'>[];
   concepts: CollectionEntry<'concepts'>[];
+  comparisons?: CollectionEntry<'comparisons'>[];
 }
 
 function must<T extends { id: string }>(items: T[], id: string, label: string): T {
@@ -20,6 +21,27 @@ export function protocolLinks(entry: CollectionEntry<'protocols'>, library: Libr
     ...entry.data.guides.map((id) => {
       const guide = must(library.guides, id, 'guide');
       return { href: pagePath(`/guides/${guide.id}`), title: guide.data.title, kind: 'Guide' };
+    }),
+    ...entry.data.concepts.map((id) => {
+      const concept = must(library.concepts, id, 'concept');
+      return { href: pagePath(`/concepts/${concept.id}`), title: concept.data.title, kind: 'Concept' };
+    }),
+    ...(library.comparisons ?? [])
+      .filter((comparison) => comparison.data.protocols.includes(entry.id))
+      .map((comparison) => ({ href: pagePath(`/compare/${comparison.id}`), title: comparison.data.title, kind: 'Comparison' })),
+    ...entry.data.glossary.map((id) => {
+      const term = glossary.find((item) => item.id === id);
+      if (!term) throw new Error(`Unknown glossary id "${id}"`);
+      return { href: pagePath(`/glossary/${term.id}`), title: term.term, kind: 'Glossary' };
+    }),
+  ];
+}
+
+export function comparisonLinks(entry: CollectionEntry<'comparisons'>, library: Library): RelatedLink[] {
+  return [
+    ...entry.data.protocols.map((id) => {
+      const protocol = must(library.protocols, id, 'protocol');
+      return { href: pagePath(`/protocols/${protocol.id}`), title: protocol.data.title, kind: 'Protocol' };
     }),
     ...entry.data.concepts.map((id) => {
       const concept = must(library.concepts, id, 'concept');

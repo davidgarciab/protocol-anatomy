@@ -9,6 +9,7 @@ export async function getStaticPaths() {
   const protocols = await getCollection('protocols');
   const guides = await getCollection('guides');
   const concepts = await getCollection('concepts');
+  const comparisons = await getCollection('comparisons');
   const site = await getCollection('site');
   const card = (path: string, props: OgCard) => ({ params: { path }, props });
 
@@ -30,6 +31,9 @@ export async function getStaticPaths() {
         title: entry.data.title,
         description: entry.data.description,
       }),
+    ),
+    ...comparisons.map((entry) =>
+      card(`compare/${entry.id}`, { kicker: 'Comparison', title: entry.data.title, description: entry.data.description }),
     ),
     ...site.map((entry) =>
       card(entry.id, { kicker: 'About this publication', title: entry.data.title, description: entry.data.description }),

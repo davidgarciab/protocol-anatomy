@@ -40,7 +40,7 @@ export interface Catalog {
 }
 
 export interface CheckedDocument {
-  collection: 'protocols' | 'guides' | 'concepts' | 'site';
+  collection: 'protocols' | 'guides' | 'concepts' | 'comparisons' | 'site';
   id: string;
   data: Record<string, unknown>;
   body: string;
@@ -195,6 +195,13 @@ export function validateDocument(doc: CheckedDocument, catalog: Catalog): string
     checkIdList(errors, prefix, data.protocols, catalog.protocols, 'protocol');
     checkIdList(errors, prefix, data.glossary, catalog.glossary, 'glossary');
     checkIdList(errors, prefix, data.related, catalog.concepts, 'concept');
+  }
+
+  if (doc.collection === 'comparisons') {
+    checkIdList(errors, prefix, data.protocols, catalog.protocols, 'protocol');
+    if ((asStringArray(data.protocols) ?? []).length < 2) errors.push(`${prefix}: a comparison needs at least two protocols`);
+    checkIdList(errors, prefix, data.concepts, catalog.concepts, 'concept');
+    checkIdList(errors, prefix, data.glossary, catalog.glossary, 'glossary');
   }
 
   const minBody = doc.collection === 'site' ? 800 : 1500;

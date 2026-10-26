@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { pagePath } from '../../lib/site';
+
+const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
+const protocols = new Map((await getCollection('protocols')).map((entry) => [entry.id, entry.data.title]));
+const description = 'Side-by-side comparisons of lending, vault minting, AMM pricing, balance accounting and liquidation across Aave, Uniswap, Maker, Curve and Lido.';
+---
+
+<BaseLayout title="Compare DeFi protocols: lending, AMMs, stablecoins, staking" description={description}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Reference</p>
+      <h1>Compare</h1>
+      <p class="lede">
+        The same question asked of different protocols: where the debt lives, how a swap is priced, how a balance grows, how a position is closed. Each page sets the mechanisms side by side and links to the articles with the sources.
+      </p>
+    </header>
+    <ul class="contents-index">
+      {
+        comparisons.map((entry) => (
+          <li>
+            <a href={pagePath(`/compare/${entry.id}`)}>
+              <span class="num">⇄</span>
+              <span>{entry.data.title}</span>
+              <span class="cat">{entry.data.protocols.map((id) => protocols.get(id) ?? id).join(' · ')}</span>
+            </a>
+            <p>{entry.data.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

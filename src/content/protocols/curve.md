@@ -9,6 +9,7 @@ lastVerified: "2026-10-13"
 faq:
   - question: "Why does Curve StableSwap give low slippage near the peg?"
     answer: "Its invariant sits between a constant sum, which has no slippage, and a constant product, which always has a price. With balances near equal and a large amplification coefficient `A`, the curve behaves like a constant sum, so a trade barely moves the price. When one coin dominates, the product term dominates and the price moves sharply."
+    featured: true
   - question: "What does a Curve liquidity provider hold?"
     answer: "In Stableswap-NG the pool contract and the LP token are the same contract. The LP token is a share of the pool’s liquidity, accounted against the invariant `D`, not a voucher for the exact basket deposited. After an imbalance, a balanced withdrawal returns the current mix."
   - question: "Is crvUSD a Curve pool?"

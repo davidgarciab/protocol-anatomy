@@ -8,6 +8,7 @@ lastVerified: "2026-10-14"
 faq:
   - question: "Why can a flash loan be offered without collateral?"
     answer: "Because the pool sends tokens, or records a debt, and the same call has to make the pool whole. If it does not, the transaction reverts and the send never happened. Uniswap v2, v3, v4, and Aave V3 all use that atomicity, with different functions, fees, and end states."
+    featured: true
   - question: "How do the flash fees differ between Uniswap v3 and Aave V3?"
     answer: "Uniswap v3 charges the pool’s own fee tier, rounded up, so a 3000 tier is 0.30 percent. Aave’s flash premium is initialized at deployment to 0.05 percent and can be changed by a governance vote, so the live value is `FLASHLOAN_PREMIUM_TOTAL`, not the initialization number."
   - question: "Can an Aave flash loan leave debt behind?"

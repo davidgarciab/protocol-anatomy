@@ -12,6 +12,7 @@ changes:
 faq:
   - question: "Which tokens does a Uniswap v3 or v4 position hold at the current price?"
     answer: "It depends on three branches. At or below the lower price the position is entirely token0. Strictly inside the range it holds both tokens. At or above the upper price it is entirely token1."
+    featured: true
   - question: "Is leaving the price range a liquidation?"
     answer: "No. Fee accrual stops and the position is entirely one token, but nothing in the amount functions seizes the position or charges a penalty. If the price returns, the position becomes active again without a new deposit."
   - question: "How do v3 and v4 differ in the sign of the liquidity amounts?"

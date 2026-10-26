@@ -8,6 +8,7 @@ export async function buildSearchEntries(): Promise<SearchEntry[]> {
   const protocols = await getCollection('protocols');
   const guides = await getCollection('guides');
   const concepts = await getCollection('concepts');
+  const comparisons = await getCollection('comparisons');
 
   return [
     ...protocols.map((entry) => ({
@@ -30,6 +31,13 @@ export async function buildSearchEntries(): Promise<SearchEntry[]> {
       title: entry.data.title,
       url: pagePath(`/concepts/${entry.id}`),
       kind: 'Concept',
+      summary: entry.data.summary,
+      text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
+    })),
+    ...comparisons.map((entry) => ({
+      title: entry.data.title,
+      url: pagePath(`/compare/${entry.id}`),
+      kind: 'Comparison',
       summary: entry.data.summary,
       text: stripMarkdown(`${entry.data.title} ${entry.data.summary} ${entry.data.tags.join(' ')} ${entry.body ?? ''}`),
     })),

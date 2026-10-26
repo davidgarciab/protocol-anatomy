@@ -29,7 +29,12 @@ const shared = {
   seoTitle: z.string().min(10).max(60).optional(),
   /** Questions a reader or search engine would ask, answered from this article's own text. */
   faq: z
-    .array(z.object({ question: z.string().min(15).endsWith('?'), answer: z.string().min(80) }))
+    .array(z.object({
+        question: z.string().min(15).endsWith('?'),
+        answer: z.string().min(80),
+        /** Shown in the home page's question list. */
+        featured: z.boolean().default(false),
+      }))
     .default([]),
   summary: z.string().min(80),
   status: z.literal('published'),
@@ -80,6 +85,17 @@ const concepts = defineCollection({
   }),
 });
 
+const comparisons = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/comparisons' }),
+  schema: z.object({
+    ...shared,
+    /** The protocols whose mechanisms the page sets side by side. */
+    protocols: z.array(z.string()).min(2),
+    concepts: z.array(z.string()),
+    glossary: z.array(z.string()),
+  }),
+});
+
 const site = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/site' }),
   schema: z.object({
@@ -87,4 +103,4 @@ const site = defineCollection({
   }),
 });
 
-export const collections = { protocols, guides, concepts, site };
+export const collections = { protocols, guides, concepts, comparisons, site };

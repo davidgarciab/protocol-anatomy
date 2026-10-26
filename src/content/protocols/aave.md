@@ -9,10 +9,12 @@ lastVerified: "2026-10-13"
 faq:
   - question: "How does Aave pay interest to suppliers without sending tokens to each lender?"
     answer: "The reserve keeps a liquidity index. aToken balances are scaled, and the underlying amount is the scaled balance times the normalized income. Touching the reserve accrues the index forward using the time since the last update and the current rate, so a quiet block does not write every account."
+    featured: true
   - question: "How does Aave set the variable borrow rate?"
     answer: "V3 uses a two-slope utilization model per reserve. Below an optimal utilization the rate rises with the first slope. Above it the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. The optimal utilization and the slopes are per reserve, not one Aave-wide constant."
   - question: "When can an Aave V3 position be liquidated?"
     answer: "When its health factor falls below 1, `liquidationCall` can repay debt and seize collateral. The V4 overview says V3’s default close factor is 50 percent, and 100 percent when the health factor is under 0.95 or the position is below a value threshold. The liquidator receives a bonus set on the collateral reserve."
+    featured: true
   - question: "What changes in Aave V4 liquidation?"
     answer: "Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls, and the overview sets the dust threshold at 1,000 USD of value."
 order: 1

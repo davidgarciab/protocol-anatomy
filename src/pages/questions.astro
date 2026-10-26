@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import InlineCode from '../components/InlineCode.astro';
+import { SITE, canonicalUrl } from '../lib/site';
+import { questionGroups } from '../lib/questions';
+
+const groups = await questionGroups();
+const total = groups.reduce((sum, group) => sum + group.items.length, 0);
+const description = `${total} questions about how Aave, Uniswap, MakerDAO/Sky, Curve and Lido work, each answered from the cited documentation and linked to its article.`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  url: canonicalUrl('/questions/'),
+  name: `Questions answered by ${SITE.name}`,
+  description,
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: groups.flatMap((group) => group.items).map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.question,
+    })),
+  },
+};
+---
+
+<BaseLayout title="DeFi protocol questions answered: Aave, Uniswap, Maker, Curve, Lido" description={description} jsonLd={jsonLd}>
+  <Header slot="header" />
+  <main id="main" class="page">
+    <header class="article-header">
+      <p class="kicker">Reference</p>
+      <h1>Questions</h1>
+      <p class="lede">
+        The questions readers ask about how these protocols behave, each answered briefly from the cited sources. Every answer links to the article that explains it in full, with its sources and last-verified date.
+      </p>
+    </header>
+    <nav class="toc-inline" aria-label="Jump to a protocol or concept">
+      <ul class="meta-list">
+        {groups.map((group) => <li><a href={`#${group.id}`}>{group.title}</a></li>)}
+      </ul>
+    </nav>
+    {
+      groups.map((group) => (
+        <section class="directory-block faq" aria-labelledby={group.id}>
+          <h2 id={group.id}>{group.title}</h2>
+          {group.items.map((item) => (
+            <div class="faq-item">
+              <h3>
+                <a href={`${group.href}#${item.anchor}`}>{item.question}</a>
+              </h3>
+              <p>
+                <InlineCode text={item.answer} />
+              </p>
+            </div>
+          ))}
+          <p class="muted">
+            <a href={group.href}>Read the full {group.kind.toLowerCase()} article: {group.title}</a>
+          </p>
+        </section>
+      ))
+    }
+  </main>
+  <Footer slot="footer" />
+</BaseLayout>

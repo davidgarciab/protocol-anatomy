@@ -5,16 +5,18 @@ import { pagePath, SITE } from '../lib/site';
 
 /** The full article text as one plain-text file, for language-model ingestion. */
 export const GET: APIRoute = async () => {
-  const [protocols, guides, concepts] = await Promise.all([
+  const [protocols, guides, concepts, comparisons] = await Promise.all([
     getCollection('protocols'),
     getCollection('guides'),
     getCollection('concepts'),
+    getCollection('comparisons'),
   ]);
   const byOrder = <T extends { data: { order: number } }>(list: T[]) => [...list].sort((a, b) => a.data.order - b.data.order);
   const docs = [
     ...byOrder(protocols).map((entry) => ({ entry, path: `/protocols/${entry.id}` })),
     ...byOrder(guides).map((entry) => ({ entry, path: `/guides/${entry.id}` })),
     ...byOrder(concepts).map((entry) => ({ entry, path: `/concepts/${entry.id}` })),
+    ...byOrder(comparisons).map((entry) => ({ entry, path: `/compare/${entry.id}` })),
   ];
   const parts = [`# ${SITE.name}: full text`, '', `> ${SITE.description}`, ''];
   for (const { entry, path } of docs) {

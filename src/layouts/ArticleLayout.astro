@@ -13,6 +13,7 @@ import PathNav from '../components/PathNav.astro';
 import { glossary } from '../data/glossary';
 import { CONTENT_LICENSE_URL, SITE, authorJsonLd, canonicalUrl, organizationJsonLd, type Source } from '../lib/site';
 import { lastModified } from '../lib/changes';
+import { faqAnchor } from '../lib/anchors';
 import InlineCode from '../components/InlineCode.astro';
 import Calculators from '../components/Calculators.astro';
 
@@ -25,6 +26,7 @@ type AnyEntry =
   | CollectionEntry<'protocols'>
   | CollectionEntry<'guides'>
   | CollectionEntry<'concepts'>
+  | CollectionEntry<'comparisons'>
   | CollectionEntry<'site'>;
 
 interface Props {
@@ -56,7 +58,9 @@ const aboutNames: string[] =
       ? [protocolTitles.get(entry.data.protocol) ?? entry.data.protocol]
       : entry.collection === 'concepts'
         ? entry.data.protocols.map((id) => protocolTitles.get(id) ?? id)
-        : [];
+        : entry.collection === 'comparisons'
+          ? entry.data.protocols.map((id) => protocolTitles.get(id) ?? id)
+          : [];
 const mentions = glossary
   .filter((term) => 'glossary' in data && data.glossary.includes(term.id))
   .map((term) => ({ '@type': 'DefinedTerm', name: term.term, url: canonicalUrl(`/glossary/${term.id}`) }));
@@ -192,7 +196,7 @@ const jsonLd = {
               <section class="faq" aria-labelledby="common-questions">
                 <h2 id="common-questions">Common questions</h2>
                 {faq.map((item) => (
-                  <div class="faq-item">
+                  <div class="faq-item" id={faqAnchor(item.question)}>
                     <h3>{item.question}</h3>
                     <p>
                       <InlineCode text={item.answer} />

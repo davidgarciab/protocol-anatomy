@@ -9,10 +9,12 @@ lastVerified: "2026-10-13"
 faq:
   - question: "How does Maker track the debt of a vault?"
     answer: "The Vat stores normalized debt `art` per vault and an accumulated stability-fee multiplier `rate` per collateral type. Current debt is `art * rate`, not `art` alone. One update to `rate` reprices every vault of that collateral type."
+    featured: true
   - question: "When is a Maker vault liquidated?"
     answer: "A vault is unsafe when `art * rate` exceeds `ink * spot`. The Vat function `grab` confiscates it, taking collateral and normalized debt off the vault and recording the debt as unbacked `sin`. Selling the collateral is a separate auction module, not a fixed close factor inside the Vat."
   - question: "Is the Maker stability fee a utilization rate like Aave’s?"
     answer: "No. Governance sets it, and it does not rise automatically because more DAI has been drawn. It reaches vaults when someone calls `Jug.drip`, which adds the elapsed-time change onto the collateral type’s `rate`. Until `drip` is called, `rate` is stale."
+    featured: true
   - question: "What is the difference between sUSDS and stUSDS?"
     answer: "sUSDS is an ERC-4626 deposit of USDS into the Sky Savings Rate. stUSDS is another ERC-4626 deposit of USDS, described by Sky as a risk-capital token that funds SKY-backed borrowing. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price stUSDS."
 order: 3
