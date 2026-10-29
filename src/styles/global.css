@@ -817,6 +817,17 @@ th {
   font-size: 0.95em;
 }
 
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.gh-icon {
+  flex: none;
+  vertical-align: -0.125em;
+}
+
 .footer-nav {
   display: flex;
   flex-wrap: wrap;

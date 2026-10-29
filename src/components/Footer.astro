@@ -1,5 +1,6 @@
 ---
 import { SITE } from '../lib/site';
+import GitHubIcon from './GitHubIcon.astro';
 
 const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
 ---
@@ -30,8 +31,8 @@ const analytics = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
   </p>
   <p>
     Written and built by <a href="/about/">{SITE.author}</a>. Open source on
-    <a href={SITE.repoUrl}>GitHub</a>. Found a mistake or want to add a protocol?
-    <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>Contributions are welcome</a>.
+    <a href={SITE.repoUrl} class="gh-link"><GitHubIcon />GitHub</a>. Found a mistake or want to add a protocol?
+    <a href={`${SITE.repoUrl}/blob/main/CONTRIBUTING.md`}>Fork the repo and open a pull request</a>.
     Code is <a href={`${SITE.repoUrl}/blob/main/LICENSE`}>MIT</a>; articles are
     <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
   </p>

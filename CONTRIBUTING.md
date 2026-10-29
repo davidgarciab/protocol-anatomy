@@ -7,11 +7,19 @@ Site: <https://protocols.davidgarciab.com> · Maintainer: [@davidgarciab](https:
 ## Ways to help
 
 - **Report a wrong or stale claim.** Open a [correction issue](../../issues/new?template=correction.yml) with the page, the sentence, and a primary source. This is the highest-value contribution.
-- **Fix it yourself.** Every article has a "Suggest an edit on GitHub" link at the bottom. Small fixes can be made entirely in the GitHub web editor.
+- **Fix it yourself.** Fork the repository, change the article on a branch, and open a pull request. See [Propose a change](#propose-a-change-fork-and-pull-request). The `main` branch is protected, so direct edits are not possible.
 - **Propose a topic.** Open a [topic proposal](../../issues/new?template=topic.yml) for a new protocol, version guide, concept, or glossary term before writing a long article.
 - **Improve the tooling.** Validation, accessibility, search, and diagrams are all fair game.
 
 Not in scope: price commentary, investment advice, token promotion, audits, or live risk parameters and balances. See the [methodology](https://protocols.davidgarciab.com/methodology/) for the editorial standard.
+
+## Propose a change: fork and pull request
+
+1. **Fork** the repository on GitHub and clone your fork.
+2. **Create a branch** from `main`, for example `fix/aave-v3-eligibility`.
+3. **Make one focused change** (the file path is shown at the bottom of each article), then run the checks below.
+4. **Commit and push** the branch to your fork.
+5. **Open a pull request** against `main` of this repository, filling in the template with the source that supports the change.
 
 ## Set up
 
