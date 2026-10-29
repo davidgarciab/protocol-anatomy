@@ -5,8 +5,10 @@ description: "How Maker vaults account for collateral and DAI debt, and how Sky�
 summary: "Maker’s Vat is a ledger of collateral and stablecoin debt. A vault locks collateral, draws DAI, and pays a stability fee that accrues by raising a per-collateral rate. Sky keeps a one-for-one path between DAI and USDS and adds a savings token, sUSDS, without replacing the vault ledger with an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Added Sky Agents and allocator vaults, the SKY backstop, and the status of emergency shutdown, which the Sky documentation now lists as deprecated and archived."
   - date: "2026-10-26"
     summary: "Moved the Vat, Jug, and rates citations to the Sky developer portal after the Maker docs host began redirecting. Corrected the statement that the stability-fee rate only increases, who is incentivized to call drip, the liquidation flow through Dog and Clipper, and the LitePSM description."
 faq:
@@ -56,6 +58,18 @@ versions:
     status: "active"
     note: "Sky’s ERC-20 upgrade path, the ERC-4626 savings wrapper, and stUSDS as a separate risk-capital deposit. DAI is not described as sunset."
 sources:
+  - title: "Sky Protocol: capital allocation and the Sky Savings Rate"
+    url: "https://insights.skyeco.com/sky-documentation"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "Emergency Shutdown Module (archive)"
+    url: "https://developers.skyeco.com/archive/shutdown/emergency-shutdown/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "Shutdown module End (archive)"
+    url: "https://developers.skyeco.com/archive/shutdown/shutdown/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "Vat (core accounting)"
     url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
@@ -165,6 +179,20 @@ The [token routes](https://developers.skyeco.com/quick-start/protocol-token-rout
 The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts. The [LitePSM page](https://developers.skyeco.com/protocol/liquidity/litepsm/) describes swaps with no slippage against a pool of pre-minted DAI or USDS, so availability is limited by that pool, and it says fees have not been activated and could change. That is a Curve-free version of the [peg stability module](/glossary/peg-stability-module/) idea: it can hold the market price near one dollar only while its pool has inventory. It does not make a vault safer.
 
 [stUSDS](/glossary/stusds/) is another ERC-4626 deposit of USDS, and it is not sUSDS. Sky’s token page calls it a risk-capital token: supplying USDS funds SKY-backed borrowing and pays an stUSDS rate. The page documents `deposit` and `mint` plus permit. It does not document a one-for-one path with DAI, and it does not document the Sky Savings Rate. An integration that prices every Sky ERC-4626 share as sUSDS will mis-price this deposit.
+
+## Agents, allocation and the SKY backstop
+
+Maker began as a system in which every unit of DAI was backed by a vault. Sky describes a wider structure. Its documentation presents **Sky Agents** as independent capital allocators that are not subsidiaries of the protocol. They access USDS liquidity under risk parameters that governance sets, and the best-performing agents are described as gaining access to better collateralization rates. Allocator vaults, which the documentation calls Sky Agent vaults, hold the largest share of protocol collateral, and the capital deployed through Spark, Grove, Obex and other governance-approved agents sits there. The [Spark page](/protocols/spark) follows one such agent in detail: it borrows USDS, runs a lending market and a rate-limited liquidity layer, and returns the yield.
+
+This changes what a USDS holder is exposed to. The [Sky Savings Rate](/glossary/sky-savings-rate/) behind sUSDS is, per the same documentation, funded by protocol revenue, including fees from collateralized loans and returns from capital deployed across the agent network, and it is set by a governance vote, not by utilization. The documentation also states that sUSDS holders are not exposed to a specific agent's performance. That sentence describes the intended separation. The loss layers that stand behind it, which Spark's documentation lists, are the agent's own junior capital first, then the layers above it.
+
+The last layer is a token. Sky describes SKY as the protocol's ultimate backstop: if the system is undercollateralized after the other layers are exhausted, it can mint and sell SKY to recapitalize. The same page says this has never been triggered. SKY stakers also vote on protocol parameters, and surplus can flow back to them through buybacks and distributions. Sky's page says 22 percent of monthly net protocol revenue goes to a Core Council buffer.
+
+## Emergency shutdown is now an archive page
+
+Older explanations of Maker lean on **emergency shutdown**: a mechanism in which MKR holders pool tokens into an Emergency Shutdown Module, and once a threshold is reached anyone can trigger `End.cage()`. The `End` module then freezes user entry points, fixes each collateral type's final price, lets vault owners claim their excess collateral first, and lets DAI holders redeem a fixed basket of collateral after packing their DAI. If vaults are undercollateralized, DAI holders take a haircut.
+
+Sky's current documentation places both the Emergency Shutdown Module and the `End` module in its archive and labels each deprecated, kept as a reference. It gives no replacement. A reader should therefore not assume that the old redemption-at-par guarantee is a current mechanism. Where the protocol's last-resort path now lies is a governance question, not something these pages settle.
 
 ## What “decentralized” does not remove
 

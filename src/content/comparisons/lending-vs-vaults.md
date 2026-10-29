@@ -5,7 +5,10 @@ description: "Aave lends out other suppliers' deposits at a utilization-based ra
 summary: "Aave and Maker both take collateral and issue debt, but the debt comes from different places. Aave borrowers draw tokens that suppliers deposited, and the rate follows utilization. Maker borrowers mint a stablecoin that did not exist before, and governance sets the fee. The collateral check, the accrual index, and the failure mode follow from that."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added a pointer to the pooled and isolated lending comparison."
 faq:
   - question: "Is a Maker vault the same thing as an Aave loan?"
     answer: "No. An Aave borrower draws tokens that other suppliers deposited into a shared pool. A Maker vault owner mints a stablecoin against locked collateral, and the stablecoin is recorded as a liability of that vault. Nobody lends the DAI or USDS out of a pool, so there is no supplier on the other side of the loan."
@@ -102,3 +105,5 @@ In both designs the residual loss is bad debt. If Aave collateral is worth less 
 ## What they share
 
 Both depend on oracle prices that the lending rule cannot check. In Maker, `spot` is a price with the liquidation ratio already applied, written by infrastructure outside the Vat. In Aave, a wrong price makes the health factor wrong. Both also leave parameters to governance: collateral lists, caps or ceilings, and risk settings. The [stablecoin mechanisms](/concepts/stablecoin-mechanisms) article puts the minted-debt model next to the other ways a token reaches a dollar.
+
+For a third design, isolated markets that fix their parameters at creation, and for SparkLend, which forks Aave’s pool, see [pooled and isolated lending compared](/compare/pooled-vs-isolated-lending).

@@ -10,11 +10,21 @@ const required = [
   'protocols/maker-sky/index.html',
   'protocols/curve/index.html',
   'protocols/lido/index.html',
+  'protocols/morpho/index.html',
+  'protocols/eigenlayer/index.html',
+  'protocols/ethena/index.html',
+  'protocols/spark/index.html',
+  'protocols/pendle/index.html',
   'guides/aave-versions/index.html',
   'guides/uniswap-versions/index.html',
   'guides/maker-to-sky/index.html',
   'guides/curve-generations/index.html',
   'guides/lido-exits/index.html',
+  'guides/morpho-versions/index.html',
+  'guides/eigenlayer-slashing/index.html',
+  'guides/ethena-mint-and-exit/index.html',
+  'guides/spark-savings-and-liquidity/index.html',
+  'guides/pendle-maturity-and-collateral/index.html',
   'concepts/index.html',
   'concepts/constant-product/index.html',
   'glossary/index.html',
@@ -56,7 +66,7 @@ if (existsSync(join(dist, 'index.html'))) {
   if (/canonical" href="http:\/\/localhost/.test(home)) errors.push('Homepage canonical points at localhost');
 }
 
-for (const protocol of ['aave', 'uniswap', 'maker-sky', 'curve', 'lido']) {
+for (const protocol of ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle']) {
   const file = `protocols/${protocol}/index.html`;
   if (!existsSync(join(dist, file))) continue;
   const html = read(file);

@@ -4,8 +4,10 @@ description: "Where Aave, Maker, Curve, and Lido take an input the chain cannot 
 summary: "Lending solvency, Maker’s spot price, some Curve coin rates, and Lido’s share rate all depend on data that is not the protocol’s own invariant. The contract will enforce the wrong number faithfully. Oracle design is the choice of who may write that number and how stale it may be."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Added how isolated markets, SparkLend and Pendle principal tokens choose and combine price sources."
   - date: "2026-10-26"
     summary: "Updated the Lido accounting report description to the core v4.0.0 fields."
 order: 10
@@ -18,6 +20,9 @@ protocols:
   - maker-sky
   - curve
   - lido
+  - morpho
+  - spark
+  - pendle
 glossary:
   - oracle
   - health-factor
@@ -68,6 +73,10 @@ Lido’s accounting oracle is the bridge from consensus-layer ether to the share
 ## Spot prices from AMMs
 
 Uniswap does not need an oracle to settle a swap. The reserves are the price. Other protocols sometimes read that price. A swap moves it. The swap guide’s description of price impact is exactly the attack: push the reserves, borrow against the new price, push the reserves back. Time-weighted averages and medians exist because spot is a bad liquidation input. This site does not bless a particular oracle network. It says the dependency is there, and the [liquidation](/concepts/collateral-and-liquidation) rule is downstream of it.
+
+## How newer designs choose their sources
+
+An isolated market makes the oracle one of its five fixed parameters. [Morpho](/protocols/morpho) publishes an oracle that composes Chainlink-interface feeds and a vault’s exchange rate, and a market creator who gets a decimal or a feed wrong creates a market that prices incorrectly forever. [SparkLend](/protocols/spark) takes the median of three sources, RedStone, Chainlink and Chronicle, and adds a killswitch that halts new borrowing when a pegged asset’s market price drifts from its underlying. [Pendle](/protocols/pendle) offers a TWAP oracle for principal tokens and a deterministic linear discount that rises to par at expiry. The first follows the market and can be moved by a thin pool. The second cannot be moved and also does not notice an impaired underlying. The [maturity and collateral guide](/guides/pendle-maturity-and-collateral) walks through that choice.
 
 ## Dependencies that are not price feeds
 

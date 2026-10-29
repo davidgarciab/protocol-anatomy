@@ -5,8 +5,10 @@ description: "How Uniswap prices swaps, tracks liquidity-provider claims, and se
 summary: "Uniswap is an automated market maker. A swap moves the reserves of a pool and the pool’s invariant sets the price. v2 spreads fungible liquidity across every price. v3 and v4 concentrate it between ticks. v4 keeps that pricing and changes the contracts around it: one PoolManager, flash settlement, and optional hooks."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Replaced the vague protocol-fee note with the UNIfication fee switch, the TokenJar and Firepit, and the v4 fee activation, and added how UniswapX orders are filled."
   - date: "2026-10-26"
     summary: "Moved the cited documentation to its new developers.uniswap.org pages, sourced the v3 position NFT claim to the v3 liquidity-management guide, and sourced the twelve-chain v4 launch list to the Uniswap Foundation."
 faq:
@@ -53,6 +55,22 @@ versions:
     status: "active"
     note: "Singleton PoolManager, flash accounting, and optional hooks. Launched 31 January 2025. PositionManager mints an ERC-721. ERC-6909 claims are a separate settlement balance."
 sources:
+  - title: "UNIfication"
+    url: "https://blog.uniswap.org/unification"
+    kind: "governance"
+    publisher: "Uniswap Labs"
+  - title: "Protocol fee expansion temp check"
+    url: "https://gov.uniswap.org/t/temp-check-protocol-fee-expansion-eight-more-chains-and-remaining-mainnet-v3-pools/26035"
+    kind: "governance"
+    publisher: "Uniswap Governance"
+  - title: "Activate v4 Protocol Fees (Part 1/2)"
+    url: "https://vote.uniswapfoundation.org/proposals/100"
+    kind: "governance"
+    publisher: "Uniswap Agora"
+  - title: "UniswapX overview"
+    url: "https://developers.uniswap.org/docs/liquidity/uniswapx/overview"
+    kind: "docs"
+    publisher: "Uniswap"
   - title: "How Uniswap works"
     url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
@@ -177,9 +195,23 @@ ERC-6909 is a different object on `PoolManager`. The ERC-6909 page says a caller
 
 ## What stays outside the pool
 
-Routing, the interface, and UniswapX are not the invariant. The launch post says the Uniswap Labs interface can route across UniswapX, v2, v3, and v4. A user-level swap can therefore touch several pool types, and an intent-based filler, in one trade. The pool that executes still checks its own accounting. The router’s split is a separate choice.
+Routing and the interface are not the invariant. The launch post says the Uniswap Labs interface can route across UniswapX, v2, v3, and v4. A user-level swap can therefore touch several pool types, and an intent-based filler, in one trade. The pool that executes still checks its own accounting. The router’s split is a separate choice.
 
-Protocol fees, when governance has turned them on, take a cut of LP fees. The overview says governance can enable them within predefined limits. Whether a given pool currently pays a protocol fee is a configuration question.
+## Protocol fees and the TokenJar
+
+For most of Uniswap's history the protocol fee was a switch that governance could turn on and had not. That changed with the UNIfication proposal, published by Uniswap Labs on 10 November 2025 and passed by governance in December 2025.
+
+As proposed, fees roll out in stages. On v2 the LP fee drops from 0.30 percent to 0.25 percent and the 0.05 percent difference becomes a protocol fee. On v3 the protocol fee starts at one quarter of the LP fee for the 0.01 percent and 0.05 percent pools and one sixth for the 0.30 percent and 1 percent pools. Fees from each source go through an adapter into an immutable contract called the **TokenJar**. The only way to withdraw from it is another contract, the **Firepit**, and it requires UNI to be burned. The proposal also burned 100 million UNI from the treasury as a retroactive adjustment, set Uniswap Labs' interface, wallet and API fees to zero, and approved a 20 million UNI annual growth budget.
+
+Rollout then continued through separate votes. A February 2026 temp check described fees as running on v2 and a curated set of v3 pools on Ethereum mainnet and proposed extending them to eight more chains and to all v3 pools through a tier-based adapter. A proposal to activate v4 fees, Part 1 of 2, was executed on 27 July 2026 on the governance dashboard. It sets a fee adapter as the protocol fee controller on each chain's pool manager, with fees applied to three pool families: pools with a static fee and no hooks, pools launched after a continuous clearing auction, and aggregator hook pools. Its stated examples map a 5 basis point LP fee to a 1.25 basis point protocol fee and a 25 basis point LP fee to 4. The first vote covered Ethereum, Arbitrum, Base, BNB Chain, Polygon, Optimism and Robinhood Chain, and left five further chains for a later proposal. The dashboard lists an expansion to Arc as executed on 5 October 2026.
+
+Two consequences for a reader. The pool's fee is no longer one number: an LP earns the pool fee minus the protocol share, and the share differs by version, tier and chain. And "does this pool pay a protocol fee?" is a question about the adapter and the chain, so read it from the pool or the governance record, not from a page like this one.
+
+## UniswapX and the router
+
+UniswapX is not a pool. The swapper signs an order, which authorizes a token transfer through Permit2 as long as the amounts received match a price that decays over time, and **fillers** compete to execute it. Because the filler pays the gas, the order is gasless for the swapper. On Ethereum the order first goes through a quote round, the best quoter gets a short exclusive window of about 24 seconds, and if that filler backs out the order falls into an open Dutch auction that anyone can fill. The realized price depends on when the first successful filler settles. A filler can route through Uniswap pools or any other liquidity.
+
+The consequence for analysis is that a swap through the Uniswap interface can be settled by a pool, by several pools, or by a filler's own inventory, and the on-chain pool never sees the order when a filler uses other liquidity. A pool's volume is therefore not all of Uniswap's trading.
 
 ## Failure modes that are actually about the design
 

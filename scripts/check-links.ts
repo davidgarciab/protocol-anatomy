@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { redirectedHome } from '../src/lib/links';
 
 const root = join(import.meta.dirname, '..');
 const content = join(root, 'src/content');
@@ -37,8 +38,11 @@ const workers = Array.from({ length: 4 }, async () => {
         signal: controller.signal,
         headers: { 'user-agent': 'ProtocolAnatomyLinkCheck/1.0' },
       });
-      const kind =
-        response.status === 404 || response.status === 410
+      const landed = new URL(response.url || url);
+      const sentHome = response.ok && redirectedHome(url, landed.href);
+      const kind = sentHome
+        ? 'broken'
+        : response.status === 404 || response.status === 410
           ? 'broken'
           : response.status === 401 || response.status === 403
             ? 'restricted'
@@ -47,7 +51,7 @@ const workers = Array.from({ length: 4 }, async () => {
               : response.ok
                 ? 'ok'
                 : `http-${response.status}`;
-      results.push({ url, status: `${kind} ${response.status}` });
+      results.push({ url, status: sentHome ? `broken redirected to ${landed.origin}/` : `${kind} ${response.status}` });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'network error';
       results.push({ url, status: `temporary ${message}` });

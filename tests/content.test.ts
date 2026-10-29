@@ -13,6 +13,7 @@ import { readingMinutes } from '../src/lib/reading';
 import { changeLog, lastModified } from '../src/lib/changes';
 import { canonicalUrl } from '../src/lib/site';
 import { faqAnchor } from '../src/lib/anchors';
+import { redirectedHome } from '../src/lib/links';
 
 const catalog: Catalog = {
   protocols: new Set(['aave']),
@@ -167,5 +168,13 @@ describe('change log', () => {
 describe('question anchors', () => {
   it('slugs a question the way a heading would be', () => {
     expect(faqAnchor('How does Aave pay interest to suppliers?')).toBe('how-does-aave-pay-interest-to-suppliers');
+  });
+});
+
+describe('link redirects', () => {
+  it('treats a deep link that lands on the home page as broken', () => {
+    expect(redirectedHome('https://docs.example.com/protocol/vat/', 'https://docs.example.com/')).toBe(true);
+    expect(redirectedHome('https://docs.example.com/protocol/vat/', 'https://docs.example.com/protocol/core/vat/')).toBe(false);
+    expect(redirectedHome('https://docs.example.com/', 'https://docs.example.com/')).toBe(false);
   });
 });

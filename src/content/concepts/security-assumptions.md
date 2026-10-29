@@ -5,7 +5,10 @@ description: "The assumptions these protocols still require, grouped so a design
 summary: "Each protocol enforces an invariant and leaves a set of assumptions outside it: prices, upgrades, operators, governance parameters, and the behavior of other contracts in the same transaction. Naming those assumptions is part of reading the design. It is not a finding that the design has failed."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added toolchain risk (the 2023 Vyper compiler bug), stacked restaking risk, and the curator and oracle assumptions of isolated markets."
 order: 15
 group: "engineering"
 tags:
@@ -17,6 +20,11 @@ protocols:
   - maker-sky
   - curve
   - lido
+  - morpho
+  - eigenlayer
+  - ethena
+  - spark
+  - pendle
 glossary:
   - oracle
   - proxy
@@ -83,6 +91,18 @@ Maker assumes each collateral’s issuer and each oracle. The Vat will accept an
 Curve StableSwap assumes the peg. The whitepaper’s construction is leverage on that assumption. CryptoSwap assumes its price scale tracks a market the pool can survive. crvUSD assumes LLAMMA bands and the collateral list. Those are three different bets that share a brand.
 
 Lido assumes Ethereum consensus, the oracle committee, and the operator set. The liquid token does not reduce those to nothing. It packages them into a share. Dual Governance, as Lido describes it from July 2025, assumes that a large enough stETH escrow can delay the DAO. It assumes the delay is long enough for the exit queue. It does not assume operators stop being operators.
+
+## Assumptions added by newer designs
+
+**The compiler.** A contract can be correct as written and wrong as compiled. In July 2023 several Curve pools were exploited because Vyper versions 0.2.15, 0.2.16 and 0.3.0 mishandled the reentrancy lock, as the [Curve page](/protocols/curve) describes. An immutable contract cannot be patched, so the compiler version is part of what an audit covers.
+
+**Stacked risk.** Restaking adds a service’s slashing rules on top of Ethereum validator risk and, for a liquid staking token, the issuer’s risk. See [restaking and slashing](/concepts/restaking-and-slashing) for how EigenLayer limits and does not remove it.
+
+**The market creator and the curator.** An isolated lending market fixes its oracle at creation, and a vault depends on a curator’s choices and a timelock the depositor has to watch. See [isolated markets and curation](/concepts/isolated-markets-and-curation).
+
+**The allocator’s limits.** Spark’s Liquidity Layer is bounded by a whitelist and rate limits that governance sets. If those are right, a compromised key moves a bounded amount. If they are wrong, they are the weakness. See [Spark](/protocols/spark).
+
+**Off-chain operations.** Ethena’s hedge depends on custodians, exchanges and a minting backend. The contracts are small, and much of the system is outside them. See [Ethena](/protocols/ethena).
 
 ## How to use the list
 

@@ -5,7 +5,10 @@ description: "Constant product, concentrated ranges, StableSwap and CryptoSwap c
 summary: "Uniswap v2 spreads liquidity over every price with a constant-product rule. Uniswap v3 and v4 let providers choose a range. Curve StableSwap blends constant sum with constant product for assets that should trade near one price, and CryptoSwap re-centers liquidity for assets that move. Each curve is a different assumption about where trades will happen."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added Pendle’s yield-range AMM, which tightens toward maturity, as a fifth shape."
 faq:
   - question: "Why does Curve give lower slippage than Uniswap v2 for stablecoins?"
     answer: "A constant-product pool spreads liquidity from price zero to infinity, and two dollar tokens do not need that. StableSwap's invariant sits between a constant sum, which has no slippage, and a constant product, which always has a price. Near equal balances and a high amplification coefficient it behaves like a constant sum, so a trade barely moves the price."
@@ -15,6 +18,7 @@ order: 2
 protocols:
   - uniswap
   - curve
+  - pendle
 concepts:
   - automated-market-makers
   - constant-product
@@ -99,6 +103,10 @@ That is the same trade Uniswap’s ranges make from the other side. A tight Unis
 ## CryptoSwap: a center that moves
 
 CryptoSwap replaces the constant amplification with a dynamic `K` built from a StableSwap-like invariant. Liquidity concentrates around a `price_scale` that the pool updates, and a trade away from it pays more slippage. The docs say a rebalance runs only after the internal price clears an adjustment step and the cost stays under half of the trading fees earned. With too little fee income the center can sit away from the market, which the same page documents as a failure mode.
+
+## Pendle: a curve over a rate, not a price
+
+[Pendle](/protocols/pendle) adapts an AMM design from Notional Finance for a pool of a principal token and a wrapped yield-bearing token. Liquidity is concentrated in a configured *yield range*, an implied-APY band, instead of a price band. The curve also changes with time: it shifts so the principal token’s price moves toward its underlying value as maturity approaches, which Pendle’s docs say mitigates the time-dependent part of impermanent loss and removes it at maturity. If the implied yield leaves the configured range, liquidity is too thin to push further. Yield tokens trade through flash swaps in the same pool. The shape suits an asset that must converge to a known value on a known date. A constant-product or StableSwap curve has no notion of a deadline. See [yield tokenization](/concepts/yield-tokenization).
 
 ## What a liquidity provider holds
 

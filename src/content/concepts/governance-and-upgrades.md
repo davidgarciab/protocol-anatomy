@@ -4,7 +4,10 @@ description: "Which protocol changes are parameter updates, which are proxy upgr
 summary: "Governance on these protocols sets risk parameters, and sometimes replaces contract code at a stable address. Aave V3 pools and Sky’s USDS token are upgradeable. Aave V4’s hub and Uniswap’s core pools are documented as not upgradeable. Lido’s Dual Governance exists because an exit can be slower than a vote."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added Aave V3 governance, Uniswap’s fee switch rollout, Sky’s deprecated emergency shutdown and the delays EigenLayer builds into its slashing."
 order: 9
 group: "engineering"
 tags:
@@ -16,6 +19,7 @@ protocols:
   - maker-sky
   - lido
   - curve
+  - eigenlayer
 glossary:
   - proxy
   - hub
@@ -67,6 +71,10 @@ Uniswap’s overview says the core contracts are not upgradeable, and that gover
 A timelock delays execution so opponents can exit or organize. Lido’s case is the sharp one. Validator exits are slow. A short timelock would let a DAO action land before stETH holders could redeem. [Dual Governance](/guides/lido-exits) escrows stETH to extend that delay, and at a higher threshold to block execution until the escrow has exited. Lido dates the Ethereum deployment to 4 July 2025. The mechanism is a check by the people who hold the pooled asset, not a second copy of the LDO vote.
 
 Aave’s V4 dynamic risk configuration is a quieter version of the same worry. Changing a collateral factor in V3 hit everyone. V4 can leave old positions on the old key until they take a risk-increasing action. That is governance design inside the accounting, not a forum process.
+
+## Examples of how it is built
+
+Aave V3 splits changes into a short executor, with a three-day vote and one-day timelock, and a long executor, with a ten-day vote and seven-day timelock, and keeps emergency guardians that can cancel a proposal or pause markets. Uniswap’s fee switch passed in December 2025 and has been extended by later votes, such as the v4 activation executed on 27 July 2026. Sky archived its emergency shutdown module, which once let MKR holders freeze the system, and lists it as deprecated. EigenLayer builds delays into the contracts themselves: a 14-day withdrawal and deallocation, a 17.5-day wait to change a slasher, and in release 1.13.0 a seven-day wait before slashed shares can be cleared. See [Aave](/protocols/aave), [Uniswap](/protocols/uniswap), [Maker and Sky](/protocols/maker-sky) and [EigenLayer](/protocols/eigenlayer).
 
 ## What to verify before trusting an address
 

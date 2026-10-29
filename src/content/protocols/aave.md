@@ -5,8 +5,10 @@ description: "How Aave accounts for supply, variable debt, interest, and liquida
 summary: "Aave is a pooled lending protocol. Suppliers deposit assets into shared liquidity, borrowers post collateral, and interest follows utilization. V3 records that state in one Pool. V4 splits shared liquidity from user-facing markets and prices collateral risk on top of the utilization rate."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Added GHO and its facilitator, steward and stability-module controls, Umbrella staking and its deficit offset, and the V3 governance process, which the page had left out."
   - date: "2026-10-26"
     summary: "Added the September 2026 update’s V4 networks (Ethereum, Avalanche, Base, Arc), the three-hub, ten-spoke launch layout, and the Base equities hub. Re-verified the V3 and V4 mechanics against the current docs and code."
 faq:
@@ -45,6 +47,8 @@ glossary:
   - utilization
   - hub
   - risk-premium
+  - gho
+  - umbrella
 versions:
   - name: "V2"
     status: "historical"
@@ -56,6 +60,18 @@ versions:
     status: "active"
     note: "Hub-and-spoke deployment. Ethereum activation was 30 March 2026. The September 2026 update lists V4 on Avalanche, Base, and Arc as well, under caps."
 sources:
+  - title: "Aave GHO"
+    url: "https://aave.com/docs/primitives/gho"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave Umbrella"
+    url: "https://aave.com/docs/aave-v3/umbrella"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave governance"
+    url: "https://aave.com/docs/primitives/governance"
+    kind: "governance"
+    publisher: "Aave"
   - title: "Aave V4 overview"
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
     kind: "docs"
@@ -184,9 +200,27 @@ Two further V4 behaviors are governance decisions, not automatic features of eve
 
 The April 2026 development update says the Ethereum deployment went live on 30 March 2026 with conservative caps and without an incentives program. The activation proposal describes a launch with three hubs and ten spokes. The September 2026 update, published on 1 October, reports V4 deposits above $1 billion for the first time and about $310 million of active loans. It says V4 expanded to two new networks, Arc and Base, alongside Ethereum and Avalanche, and that risk stewards were activated on Ethereum, Avalanche, and Base through AIP 523. It also describes a Base hub listing seven tokenized equities as collateral, with USDC as the only borrowable asset. Those figures are the update’s figures. They are not a live balance this site queries.
 
+## GHO: a stablecoin minted by the market
+
+Aave also issues its own stablecoin, GHO. It is not lent out of supplier liquidity. The Aave docs describe an ERC-20 minted on demand through the `borrow` function of the V3 Ethereum market, against eligible collateral and up to its collateral-factor limit. Because it is minted, not lent, GHO is not limited by the liquidity suppliers have deposited. What limits it is the **facilitator** bucket: a facilitator is a contract that governance has approved to mint and burn GHO, and each one has a `bucketCapacity` that the minted level cannot exceed.
+
+The borrow rate on GHO is not read from utilization. The docs say GHO Stewards, a multisig acting within governance-approved bounds, adjust it. If the trailing 30-day average price stays outside 0.995 to 1.005, they can move the rate by no more than 500 basis points per two-day period, up to a 25 percent ceiling, and they can raise the borrow cap by a bounded amount. A separate **GHO Stability Module** lets users swap between GHO and an approved asset, with a fee that goes to the DAO treasury and an exposure cap set by governance.
+
+For comparison with other collateralized dollars see [Maker and Sky](/protocols/maker-sky) and the [stablecoin mechanisms](/concepts/stablecoin-mechanisms) page. The structural difference is that GHO borrowers use a market the protocol already runs, while a Maker vault is a separate debt ledger.
+
+## Umbrella: who absorbs a shortfall
+
+When liquidation leaves a [bad debt](/glossary/bad-debt/), someone has to take it. Aave's first answer was the Safety Module, where staked AAVE could be slashed. Its successor is **Umbrella**, which the docs describe as an on-chain system that automates coverage of bad debt on V3 pools without a governance vote for each deficit.
+
+Users stake aTokens, such as aUSDC, aUSDT or aWETH, or GHO, into a stake token that is specific to one asset on one network. Staking risk applies only to the matching asset: a deficit in the USDT reserve can slash USDT stakers, not WETH stakers. Slashing is automatic when a pool's deficit exceeds a configured **deficit offset**, a first-loss amount the Aave DAO covers before stakers are touched. The docs give 100,000 USDT as the example for USDT. Stakers keep the underlying aToken yield and also receive incentives. Withdrawal needs a cooldown of 20 days, set by governance, followed by a two-day window to unstake, and funds stay slashable during the cooldown. Legacy stkAAVE positions remain active during the transition, and slashing on them is to be disabled once Umbrella reaches sufficient scale.
+
+The point for a reader is that a deficit in Aave V3 is not simply socialized across all suppliers any more. There is an ordered path: the DAO's offset, then stakers who accepted the risk for a reward, then whatever remains. Whether a given reserve has staking set up, and how large it is compared with its borrows, is a separate fact to check.
+
 ## Governance, upgrades, and trust
 
 V3 market logic sits behind addresses the `PoolAddressesProvider` can change. An upgrade can alter user-facing behavior at the same pool address. V4’s hub is documented as immutable, which removes one upgrade path for the shared accounting, but spokes are upgradeable and the governor still sets caps, premiums, oracles, and emergency state. Immutability of the hub is not the absence of administration.
+
+V3 governance has its own machinery. AAVE, stkAAVE and aAAVE holders vote with balances on Ethereum, and votes are cast on a voting machine on Polygon or Avalanche, with balances proven by storage proofs, so voters do not move funds. Passed proposals execute through a permissionless payloads controller on each network after a timelock. Two executors exist: a short one for day-to-day parameter changes with a three-day vote and a one-day timelock, and a long one for governance-level changes with a ten-day vote and a seven-day timelock. A five-of-nine Governance Emergency Guardian can cancel malicious proposals, and a four-of-seven Protocol Emergency Guardian can pause markets. The docs also describe an off-chain stage first, a Snapshot vote with a 320,000 AAVE threshold to advance. These are the figures in the docs at the time of reading, and governance can change them.
 
 Solvency in both versions depends on oracle prices. A spoke in V4 uses its own oracle configuration, so two spokes can price the same asset differently. The interest model assumes that liquidators and suppliers respond to rates. If they do not, utilization can sit on the steep slope or a deficit can remain after liquidation.
 

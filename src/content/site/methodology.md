@@ -4,8 +4,10 @@ description: "How Protocol Anatomy chooses sources, dates version claims, and co
 summary: "Articles are written from protocol documentation, papers, source files, and governance posts. A last-verified date means those sources were read for that page. It does not mean an audit. Figures quoted from a governance update stay attributed to that update."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Recorded the addition of five protocols and that pages gaining new sections were re-read for those sections only. Link checking now treats a deep link that redirects to a home page as broken."
   - date: "2026-10-26"
     summary: "Re-verified every page against its sources on 26 October 2026. The Maker documentation pages and the Uniswap docs host had moved, and the citations now point to the new locations."
 order: 1
@@ -91,7 +93,7 @@ If the excerpt and the docs disagree, the page says so. Master branches move. A 
 
 ## What last verified means
 
-`lastVerified` is the date the sources listed on that page were read for the claims on that page. The first edition was read on 13 October 2026, and every page was re-read against its sources on 26 October 2026. It is not an audit date, not a bug-bounty date, and not a claim that every parameter was read from chain that day.
+`lastVerified` is the date the sources listed on that page were read for the claims on that page. The first edition was read on 13 October 2026, and every page was re-read against its sources on 26 October 2026. On 29 October 2026 five protocols were added, and the pages that gained sections that day were re-read for those sections only, so their date reflects the new material and not a second full re-read. It is not an audit date, not a bug-bounty date, and not a claim that every parameter was read from chain that day.
 
 Numbers that move are handled in one of two ways. They are omitted, which is the default for loan-to-value, caps, and TVL. Or they are attributed, which is how the September 2026 Aave Labs update is quoted: as that post’s report, not as a live balance this site refreshes.
 

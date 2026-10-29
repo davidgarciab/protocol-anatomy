@@ -283,5 +283,67 @@
       "src/content/concepts/collateral-and-liquidation.md"
     ],
     "why": "The worked liquidation quotes the close-factor thresholds, the dust rule, and the bonus and protocol-fee split from this file. The calculator applies the same close-factor rule."
+  },
+  {
+    "id": "morpho-blue-core",
+    "kind": "github-file",
+    "repo": "morpho-org/morpho-blue",
+    "path": "src/Morpho.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/morpho.md",
+      "src/content/concepts/isolated-markets-and-curation.md",
+      "src/content/comparisons/pooled-vs-isolated-lending.md"
+    ],
+    "why": "The liquidation incentive formula, bad-debt write-off, fee cap and health check are read from this file. A change to liquidate or the health check would change several worked examples."
+  },
+  {
+    "id": "eigenlayer-contracts-release",
+    "kind": "github-release",
+    "repo": "Layr-Labs/eigenlayer-contracts",
+    "articles": [
+      "src/content/protocols/eigenlayer.md",
+      "src/content/guides/eigenlayer-slashing.md",
+      "src/content/concepts/restaking-and-slashing.md",
+      "src/content/comparisons/staking-vs-restaking.md"
+    ],
+    "why": "Delays, the slasher address, slash resolution and rewards behavior change by release. Read the notes before treating the delay table as current."
+  },
+  {
+    "id": "eigenlayer-allocation-manager",
+    "kind": "github-file",
+    "repo": "Layr-Labs/eigenlayer-contracts",
+    "path": "docs/core/AllocationManager.md",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/eigenlayer.md",
+      "src/content/concepts/restaking-and-slashing.md",
+      "src/content/guides/eigenlayer-slashing.md"
+    ],
+    "why": "The allocation and deallocation delays and the slashing description are quoted from this document."
+  },
+  {
+    "id": "ethena-staked-usde",
+    "kind": "github-file",
+    "repo": "ethena-labs/bbp-public-assets",
+    "path": "contracts/contracts/StakedUSDeV2.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/ethena.md",
+      "src/content/guides/ethena-mint-and-exit.md"
+    ],
+    "why": "The cooldown cap and the cooldown mechanism of sUSDe are described from this file. The repository is Ethena's bug bounty copy and may lag the deployed contract."
+  },
+  {
+    "id": "pendle-market-v7",
+    "kind": "github-file",
+    "repo": "pendle-finance/pendle-core-v2-public",
+    "path": "contracts/core/Market/PendleMarketV7.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/pendle.md",
+      "src/content/concepts/yield-tokenization.md"
+    ],
+    "why": "The market parameters and swap functions described in the Pendle pages are read from this contract."
   }
 ]

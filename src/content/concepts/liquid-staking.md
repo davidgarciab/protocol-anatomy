@@ -5,8 +5,10 @@ description: "How a liquid staking token represents pooled validator deposits, a
 summary: "Liquid staking gives the depositor a transferable claim while validators earn rewards. Lido’s claim is a share of pooled ether. stETH rebases. wstETH does not. Getting ETH back is a queue finalized by an oracle, and the operators running validators are a separate trust assumption."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Pointed to restaking and added the role of staking modules and operator bonds."
   - date: "2026-10-14"
     summary: "Added a worked example of one share count held as stETH and as wstETH across a reward and a penalty."
   - date: "2026-10-26"
@@ -25,6 +27,7 @@ tags:
   - lido
 protocols:
   - lido
+  - eigenlayer
 glossary:
   - steth
   - wsteth
@@ -80,6 +83,10 @@ A worked example, with an illustrative ratio of 1.20 pooled ether per share. A h
 ## The exit
 
 A transfer finds a buyer. A withdrawal asks the protocol for ETH. Lido’s queue mints an NFT, waits for the accounting report to finalize the request, and pays ETH on claim. The wait includes Ethereum’s own exit limits. Before protocol withdrawals existed, the only exit was the market, and stETH could trade below the share value. That discount is not available as a historical curiosity only. Any time the queue is long or paused, the market price and the share rate can diverge again. A lending protocol that prices stETH at the share rate and ignores the queue is assuming an exit the seller may not have.
+
+## What sits on top and beneath
+
+Beneath the pool, a router decides which operator modules receive deposits, and a module’s rules set how much an operator has at stake. Lido’s Community Staking Module, for example, requires a bond held as stETH that covers penalties caused by the operator, so part of the first loss returns to the operator. See the [Lido page](/protocols/lido). On top of the pool, the liquid token can be restaked. That adds a service’s slashing conditions to the same capital, and the delays add up. See [restaking and slashing](/concepts/restaking-and-slashing) and [staking and restaking compared](/compare/staking-vs-restaking).
 
 ## What liquid staking is not
 

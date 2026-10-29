@@ -5,7 +5,10 @@ description: "How Curve prices pegged assets with StableSwap, volatile assets wi
 summary: "Curve runs separate AMMs for pegged assets, volatile assets, and markets priced elsewhere. StableSwap flattens the price near a peg. CryptoSwap concentrates liquidity around a moving scale. FXSwap recenters that kind of curve with a refuel budget. Stableswap-NG is the pegged-pool factory."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added veCRV, gauges and the boost formula, and the July 2023 Vyper compiler incident that affected several Curve pools."
 faq:
   - question: "Why does Curve StableSwap give low slippage near the peg?"
     answer: "Its invariant sits between a constant sum, which has no slippage, and a constant product, which always has a price. With balances near equal and a large amplification coefficient `A`, the curve behaves like a constant sum, so a trade barely moves the price. When one coin dominates, the product term dominates and the price moves sharply."
@@ -52,6 +55,18 @@ versions:
     status: "active"
     note: "A lending-and-mint system beside the AMMs. Controller blueprints are versioned, and existing markets keep the blueprint they were deployed with."
 sources:
+  - title: "What is veCRV?"
+    url: "https://docs.curve.finance/user/vecrv/what-is-vecrv"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "Boosting CRV rewards"
+    url: "https://docs.curve.finance/user/vecrv/boosting"
+    kind: "docs"
+    publisher: "Curve"
+  - title: "Vyper incident post-mortem"
+    url: "https://hackmd.io/@vyperlang/HJUgNMhs2"
+    kind: "security"
+    publisher: "Vyper"
   - title: "Understanding StableSwap"
     url: "https://docs.curve.finance/protocol/pool/understanding-stableswap"
     kind: "docs"
@@ -163,6 +178,22 @@ The [crvUSD overview](https://docs.curve.finance/developer/crvusd/overview/) des
 The same page versions the controller and AMM blueprints. V3 is described as the current blueprint on the controller factory. Existing markets keep the blueprint they were deployed with; setting a new implementation does not rewrite them. The overview lists markets on V1, V2, and V3. LlamaLend is a related lending deployment and is not the same contract family as a Stableswap-NG pool.
 
 Savings crvUSD (`scrvUSD`) is described there as a yield-bearing wrapper that takes a portion of borrower interest. It is another tokenized claim, not the StableSwap LP token.
+
+## CRV, veCRV and gauges
+
+The pool invariants above say nothing about who gets paid to provide liquidity. Curve's incentive layer is separate and has its own vocabulary.
+
+Holders lock CRV for between one week and four years and receive **veCRV**, computed as CRV locked times years remaining divided by four. Locking one CRV for four years gives one veCRV, and for one year gives 0.25. The balance decays linearly toward the unlock date and is not transferable. Each address has one active lock, which can be topped up or extended. The Curve docs give veCRV three uses: a share of protocol fees, a boost on CRV rewards, and voting power in the DAO, including the **gauge weight votes** that direct CRV emissions between pools.
+
+A **gauge** is the contract where a pool's LP tokens are staked to earn CRV. A pool becomes eligible for emissions when a DAO vote adds its gauge to the gauge controller, and gauge weights decide how much CRV each receives. The boost is the way veCRV reaches liquidity providers. The docs give it as `B = min(2.5, 1 + 1.5 × (your veCRV / total veCRV) / (your deposit / gauge total))`, between 1x and 2.5x. A provider with a small deposit in a large gauge and a large share of veCRV gets close to the maximum. A provider with none gets 1x. The page adds that the boost updates when a deposit, a withdrawal or a claim touches the gauge.
+
+Three reading notes. The invariant and the emissions are independent: gauge weights change a pool's CRV income, not its prices. A reported pool yield often includes boosted CRV, so a provider without veCRV should expect the low end of a range. And lock-based influence is concentrated by design, since four-year locks cost liquidity. The same mechanism appears in other protocols' governance, and [Pendle's move from vePENDLE to sPENDLE](/protocols/pendle) is a case of a protocol dropping it.
+
+## When the compiler was the bug: July 2023
+
+In late July 2023 several Curve pools were exploited, and the cause was not in the invariant or in the pool's own logic. The Vyper project's post-mortem says the flaw was in compiler versions 0.2.15, 0.2.16 and 0.3.0, where a change made to the compiler in 2021 removed a check that kept one storage slot per `@nonreentrant` key. Each decorator got its own slot, so functions that were meant to share a reentrancy lock did not. A contract compiled with an affected version and with a function that made an external call before updating its storage was exposed. The Curve pools hit were affected through that guard, and the fix landed in 0.3.1. The Vyper post-mortem dates the exploit to 30 July 2023, and it notes that protocols using those compilers had not been explicitly notified.
+
+The lesson is about where trust sits. A pool can be correct as written and wrong as compiled. Immutable contracts cannot be patched, so the compiler version is part of the audit surface. [Security assumptions](/concepts/security-assumptions) lists toolchain risk with the others. A reader auditing a Curve pool or any Vyper contract should check which compiler version produced the bytecode.
 
 ## Trust that remains
 

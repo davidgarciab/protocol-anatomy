@@ -415,7 +415,259 @@ export const glossary: GlossaryEntry[] = [
       'Wrapped stETH. The wrapper locks stETH and mints a balance equal to the underlying shares, so the balance does not rebase. Its value in stETH rises when the share rate rises. Lido’s integration guide recommends it for contracts that assume a static ERC-20 balance.',
     related: [{ href: '/protocols/lido', label: 'Lido' }],
   },
+  {
+    id: 'lltv',
+    term: 'LLTV',
+    definition:
+      'Liquidation loan-to-value, one of the five immutable parameters of a Morpho market. The maximum borrow is the LLTV times the collateral value, and a position can be liquidated once its debt exceeds that. Governance approves the allowed values, so a market creator picks from a short list.',
+    related: [
+      { href: '/protocols/morpho', label: 'Morpho' },
+      { href: '/concepts/collateral-and-liquidation', label: 'Collateral and liquidation' },
+    ],
+  },
+  {
+    id: 'isolated-market',
+    term: 'Isolated market',
+    definition:
+      'A lending market with one collateral asset and one loan asset, its own oracle, interest rate model and liquidation threshold. A loss in one market cannot reach another. In Morpho a market is identified by the hash of its five parameters and cannot be changed after creation.',
+    related: [
+      { href: '/protocols/morpho', label: 'Morpho' },
+      { href: '/concepts/isolated-markets-and-curation', label: 'Isolated markets and curation' },
+    ],
+  },
+  {
+    id: 'curator',
+    term: 'Curator',
+    definition:
+      'The role that decides which markets a vault may lend into and how much. In Morpho Vault V2 the curator sets adapters, caps and fees, and most of those actions wait behind a timelock that depositors can see. The curator does not custody deposits.',
+    related: [
+      { href: '/protocols/morpho', label: 'Morpho' },
+      { href: '/concepts/isolated-markets-and-curation', label: 'Isolated markets and curation' },
+    ],
+  },
+  {
+    id: 'allocator',
+    term: 'Allocator',
+    definition:
+      'The execution role in a Morpho vault. It moves deposits between markets the curator has already allowed, within the caps. Spark’s Liquidity Layer uses the same split: a relayer can move capital only between venues that governance has approved with a rate limit.',
+    related: [
+      { href: '/protocols/morpho', label: 'Morpho' },
+      { href: '/protocols/spark', label: 'Spark' },
+    ],
+  },
+  {
+    id: 'midnight',
+    term: 'Midnight',
+    definition:
+      'Morpho’s fixed-rate, fixed-term lending protocol. A market has one loan token, one maturity and a fixed set of accepted collateral. Lenders hold credit units and borrowers owe debt units, each worth one loan token at maturity, and the rate comes from the price at which units trade, not from a utilization curve.',
+    related: [
+      { href: '/protocols/morpho', label: 'Morpho' },
+      { href: '/guides/morpho-versions', label: 'Morpho versions' },
+    ],
+  },
+  {
+    id: 'restaking',
+    term: 'Restaking',
+    definition:
+      'Reusing already staked assets, ETH staked on the beacon chain or a liquid staking token, to back additional services. EigenLayer is the main implementation. The extra income comes with extra conditions under which the same stake can be slashed.',
+    related: [
+      { href: '/protocols/eigenlayer', label: 'EigenLayer' },
+      { href: '/concepts/restaking-and-slashing', label: 'Restaking and slashing' },
+    ],
+  },
+  {
+    id: 'avs',
+    term: 'AVS',
+    definition:
+      'Actively validated service. An external network or service, such as a data availability layer, that rents EigenLayer stake and defines its own rules for when an operator is paid or penalized. An AVS acts through operator sets and can slash only the stake allocated to its own sets.',
+    related: [
+      { href: '/protocols/eigenlayer', label: 'EigenLayer' },
+      { href: '/guides/eigenlayer-slashing', label: 'EigenLayer slashing' },
+    ],
+  },
+  {
+    id: 'operator-set',
+    term: 'Operator set',
+    definition:
+      'A group of operators, created by one AVS, with a list of strategies whose stake counts and a slasher address. An operator opts in by registering and by allocating a share of its stake to the set. The AVS and a set id together identify the set.',
+    related: [
+      { href: '/protocols/eigenlayer', label: 'EigenLayer' },
+      { href: '/guides/eigenlayer-slashing', label: 'EigenLayer slashing' },
+    ],
+  },
+  {
+    id: 'unique-stake',
+    term: 'Unique stake',
+    definition:
+      'The part of an operator’s delegated stake that it allocates to exactly one operator set. Only that set’s slasher can slash it, so a fault in one AVS does not reduce the stake promised to another. Allocations take effect after a delay and stay slashable for the deallocation delay.',
+    related: [
+      { href: '/protocols/eigenlayer', label: 'EigenLayer' },
+      { href: '/concepts/restaking-and-slashing', label: 'Restaking and slashing' },
+    ],
+  },
+  {
+    id: 'slashing',
+    term: 'Slashing',
+    definition:
+      'A penalty that destroys or reassigns part of a staker’s or operator’s stake after a provable fault. On Ethereum it is a protocol rule for validators. In EigenLayer it is defined by each AVS and executed through the AllocationManager, and the slashed shares are burned or sent to a redistribution recipient.',
+    related: [
+      { href: '/protocols/eigenlayer', label: 'EigenLayer' },
+      { href: '/concepts/restaking-and-slashing', label: 'Restaking and slashing' },
+    ],
+  },
+  {
+    id: 'usde',
+    term: 'USDe',
+    definition:
+      'Ethena’s synthetic dollar. It is backed by a portfolio of crypto and other assets whose price risk is hedged with short futures positions, plus stable assets that need no hedge. It is not a fiat-reserve stablecoin and it is not backed by overcollateralized debt like DAI or USDS.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/concepts/delta-neutral-dollars', label: 'Delta-neutral dollars' },
+    ],
+  },
+  {
+    id: 'susde',
+    term: 'sUSDe',
+    definition:
+      'The staked form of USDe, an ERC-4626 vault. Its USDe value rises as reward payments are added to the staking contract and vest over eight hours. Unstaking passes through a cooldown, a parameter that the contract caps at 90 days.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/guides/ethena-mint-and-exit', label: 'Ethena mint and exit' },
+    ],
+  },
+  {
+    id: 'delta-neutral',
+    term: 'Delta-neutral',
+    definition:
+      'A position whose value does not change when the price of the underlying asset moves, because a long holding is offset by a short of the same notional size. Ethena pairs spot assets with short perpetual or dated futures to hold a dollar value, and earns or pays the difference in funding.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/concepts/delta-neutral-dollars', label: 'Delta-neutral dollars' },
+    ],
+  },
+  {
+    id: 'funding-rate',
+    term: 'Funding rate',
+    definition:
+      'The periodic payment between long and short holders of a perpetual futures contract that keeps its price near the spot price. When longs outnumber shorts the rate is positive and shorts are paid. A short hedge earns that payment, and pays it when the rate turns negative.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/concepts/delta-neutral-dollars', label: 'Delta-neutral dollars' },
+    ],
+  },
+  {
+    id: 'off-exchange-settlement',
+    term: 'Off-exchange settlement',
+    definition:
+      'Ethena’s custody arrangement. Backing assets stay with a regulated custodian, which delegates a notional value to an exchange as margin without transferring the assets. Profit and loss settle between exchange and custodian on frequent cycles, so an exchange failure does not put the assets in its estate.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/guides/ethena-mint-and-exit', label: 'Ethena mint and exit' },
+    ],
+  },
+  {
+    id: 'reserve-fund',
+    term: 'Reserve fund',
+    definition:
+      'A pool of assets that Ethena holds to absorb periods in which the cost of its hedges exceeds the income from its backing. Its size is shown on a dashboard. The documentation states that the share of revenue now sent to it is 0 percent, so readers should check the current balance rather than assume a buffer.',
+    related: [
+      { href: '/protocols/ethena', label: 'Ethena' },
+      { href: '/concepts/delta-neutral-dollars', label: 'Delta-neutral dollars' },
+    ],
+  },
+  {
+    id: 'spark-liquidity-layer',
+    term: 'Spark Liquidity Layer',
+    definition:
+      'Spark’s on-chain capital allocator. Automation wallets can move stablecoins only between venues that governance has approved, within a rate limit set per venue. It supplies SparkLend, Spark Savings vaults, Morpho vaults, Curve and Uniswap pools, and other venues.',
+    related: [
+      { href: '/protocols/spark', label: 'Spark' },
+      { href: '/guides/spark-savings-and-liquidity', label: 'Spark savings and liquidity' },
+    ],
+  },
+  {
+    id: 'rate-limit',
+    term: 'Rate limit',
+    definition:
+      'A cap that refills over time and bounds how much value a role can move. In the Spark Liquidity Layer a limit has a maximum amount and a slope in tokens per second, and the available amount is the smaller of the refilled balance and the maximum. A venue with no limit configured cannot be used at all.',
+    related: [
+      { href: '/protocols/spark', label: 'Spark' },
+      { href: '/guides/spark-savings-and-liquidity', label: 'Spark savings and liquidity' },
+    ],
+  },
+  {
+    id: 'standardized-yield',
+    term: 'Standardized yield (SY)',
+    definition:
+      'Pendle’s wrapper for a yield-bearing token. It gives staked, lent and vault tokens a common interface so that they can be split into principal and yield. It has no maturity and holds the underlying asset and the rewards and points it earns.',
+    related: [
+      { href: '/protocols/pendle', label: 'Pendle' },
+      { href: '/concepts/yield-tokenization', label: 'Yield tokenization' },
+    ],
+  },
+  {
+    id: 'principal-token',
+    term: 'Principal token (PT)',
+    definition:
+      'Pendle’s claim on the principal of a yield-bearing asset, redeemable one-for-one for its accounting asset at maturity. It trades at a discount before maturity, and the rise toward par is the fixed yield. It earns no variable yield or points.',
+    related: [
+      { href: '/protocols/pendle', label: 'Pendle' },
+      { href: '/concepts/yield-tokenization', label: 'Yield tokenization' },
+    ],
+  },
+  {
+    id: 'yield-token',
+    term: 'Yield token (YT)',
+    definition:
+      'Pendle’s claim on all yield, rewards and points of an asset until maturity. It costs a fraction of the asset, so it gives leveraged exposure to yield, and its value decays toward zero at maturity.',
+    related: [
+      { href: '/protocols/pendle', label: 'Pendle' },
+      { href: '/concepts/yield-tokenization', label: 'Yield tokenization' },
+    ],
+  },
+  {
+    id: 'implied-apy',
+    term: 'Implied APY',
+    definition:
+      'The annualized yield implied by the market price of a Pendle principal token. A yield token pays off if the underlying APY, averaged over the holding period, exceeds the implied APY at which it was bought.',
+    related: [
+      { href: '/protocols/pendle', label: 'Pendle' },
+      { href: '/concepts/yield-tokenization', label: 'Yield tokenization' },
+    ],
+  },
+  {
+    id: 'spendle',
+    term: 'sPENDLE',
+    definition:
+      'Pendle’s staking token. PENDLE stakes into it one-for-one, unstaking takes 14 days or can be immediate for a 5 percent fee, and it replaced vePENDLE for governance and for sharing protocol revenue.',
+    related: [
+      { href: '/protocols/pendle', label: 'Pendle' },
+      { href: '/guides/pendle-maturity-and-collateral', label: 'Pendle maturity and collateral' },
+    ],
+  },
+  {
+    id: 'gho',
+    term: 'GHO',
+    definition:
+      'Aave’s stablecoin. It is minted through the borrow function of the V3 Ethereum market against collateral, within a bucket capacity that governance sets for each approved facilitator, so it is not limited by supplier liquidity. Its borrow rate is adjusted by stewards inside governance-set bounds.',
+    related: [
+      { href: '/protocols/aave', label: 'Aave' },
+      { href: '/concepts/stablecoin-mechanisms', label: 'Stablecoin mechanisms' },
+    ],
+  },
+  {
+    id: 'umbrella',
+    term: 'Umbrella',
+    definition:
+      'Aave’s on-chain mechanism for covering bad debt. Users stake aTokens or GHO into a per-asset stake token, the DAO covers a first-loss deficit offset, and stakers are slashed automatically if a deficit exceeds it. Unstaking takes a 20-day cooldown and a two-day window. It is replacing the Safety Module.',
+    related: [
+      { href: '/protocols/aave', label: 'Aave' },
+      { href: '/glossary/bad-debt', label: 'Bad debt' },
+    ],
+  },
 ];
+
+glossary.sort((a, b) => a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }));
 
 const ids = new Set<string>();
 for (const entry of glossary) {

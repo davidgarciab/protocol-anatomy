@@ -5,8 +5,10 @@ description: "How Lido turns staked ether into stETH shares, reports validator b
 summary: "Lido is a liquid staking protocol for ether. A deposit mints shares in a pool of validators. stETH rebases so balances track the pool. wstETH wraps those shares into a static balance. Exiting is a queued withdrawal finalized by an accounting report, not a transfer of the liquid token."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
 changes:
+  - date: "2026-10-29"
+    summary: "Added the StakingRouter module and fee structure, Curated Module v2 and the Community Staking Module with their operator bonds and reward shares."
   - date: "2026-10-26"
     summary: "Recorded Lido V3 going live on 30 January 2026 and the Staking Router v3 upgrade of 27 July 2026, which changed the oracle report fields. Corrected the stVaults descriptions of ownership, the LazyOracle, and bad-debt handling, and added the withdrawal request limits."
 faq:
@@ -56,6 +58,22 @@ versions:
     status: "active"
     note: "Isolated staking vaults beside Lido Core, announced live on Ethereum mainnet on 30 January 2026. A connected vault can mint stETH against its reported value, up to a DAO-set reserve ratio."
 sources:
+  - title: "StakingRouter"
+    url: "https://github.com/lidofinance/docs/blob/main/docs/contracts/staking-router.md"
+    kind: "docs"
+    publisher: "Lido"
+  - title: "Staking modules: node operators"
+    url: "https://github.com/lidofinance/docs/blob/main/docs/staking-modules/node-operators.md"
+    kind: "docs"
+    publisher: "Lido"
+  - title: "CSM context and background"
+    url: "https://github.com/lidofinance/docs/blob/main/run-on-lido/csm/context-and-background.md"
+    kind: "docs"
+    publisher: "Lido"
+  - title: "Curated Module v2 node operator types"
+    url: "https://github.com/lidofinance/docs/blob/main/run-on-lido/cm-v2/node-operator-types.md"
+    kind: "docs"
+    publisher: "Lido"
   - title: "Lido tokens integration guide"
     url: "https://github.com/lidofinance/docs/blob/main/docs/guides/lido-tokens-integration-guide.md"
     kind: "docs"
@@ -135,6 +153,20 @@ Submitted ETH is not instantly one validator. Ethereum requires 32 ETH to activa
 Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary/node-operator/) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
 
 This is the main trust boundary of the pooled token. The token is liquid. The stake is operated by other parties, under Ethereum’s rules, with a governance process deciding the operator set.
+
+## Staking modules: who is admitted and at what price
+
+Core does not hold a list of operators. A **StakingRouter** registers *staking modules*, each of which manages a subset of validators, and it allocates deposits among them. Modules are added through a DAO vote, and each carries two fees, a module fee that goes to its node operators and a treasury fee. The router's documentation gives a 5 percent module fee and a 5 percent treasury fee as an example, and says the sum of the two must be equal across every registered module, so the protocol's total fee on rewards does not depend on how many modules exist. Fees are split in proportion to each module's validator balance, which the accounting oracle reports.
+
+Two modules matter for a reader.
+
+**Curated Module v2** replaces the original permissioned list. Phase 1 is live on Ethereum mainnet, and the docs plan phase 2 for the first quarter of 2027. Operators are created through a gate that checks a Merkle proof, then a Curated Module Committee assigns them to an operator group and a stake weight. Without that assignment an operator receives no deposits. The docs list six operator types with different bonds and reward shares, for example Professional Trusted Operators with a bond of 11 ETH for the first key, 0.1 ETH for each of the next 17 and 0.7 ETH afterward, and a reward share of 3.5 percent, while public-good, decentralization and extra-effort operators receive 4 percent. New professional operators start on a trial profile with a lower share and half the allocation weight. This module uses 0x02 withdrawal credentials.
+
+**The Community Staking Module (CSM)** is permissionless. Anyone can create an operator, upload keys and post a bond in one transaction. The docs describe two modules sharing one interface: one for 0x01 validators capped at 32 ETH and one for 0x02 validators of up to 2,048 ETH. The first offers three profiles. A default operator posts 2.4 ETH for the first key and 1.3 ETH for each further key, and receives 3.5 percent of rewards, with 6.5 percent going to the DAO. A verified independent staker profile posts 1.5 ETH for the first key and receives 6 percent on its first 16 keys. A verified distributed-validator cluster profile posts 1.5 ETH and then 0.5 ETH per key. The 0x02 module has one profile, posts 32 ETH for the first key and 30 ETH for later keys, and receives 2 percent. The docs say the 0x02 module launched with a stake-share limit of 0.01 percent that a committee raises in steps, so new keys can wait for the next increase before getting deposits.
+
+The bond is the interesting design. It is held as stETH, posted before keys are uploaded, and covers penalties and losses caused by the operator, such as slashing or missed duties, and it can be claimed or reused after a validator exits and losses are covered. The required amount follows a curve indexed by the operator's key count, not by the balance each validator holds. In the pooled design a slashing is socialized across holders, as described above. A bond puts part of the first loss back on the operator.
+
+The figures are from the Lido docs at the time of reading and are governance parameters, so they can change by DAO vote. What stays true is the structure: operators are admitted by a module's rules, the router decides how much each module gets, and the bond sets how much an operator has at stake.
 
 ## Staking vaults
 

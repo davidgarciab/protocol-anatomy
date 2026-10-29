@@ -5,7 +5,10 @@ description: "How DAI and USDS are minted against collateral, and why a Curve st
 summary: "A collateralized stablecoin is debt. Maker mints it against a vault and charges a stability fee. Sky’s USDS is a one-for-one token on that same debt. A Curve StableSwap pool only trades stablecoins. crvUSD is a third design that liquidates through an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added the delta-neutral and allocator-backed designs (Ethena, Spark) and Aave’s GHO to the list of mechanisms."
 order: 8
 group: "monetary"
 tags:
@@ -14,6 +17,8 @@ tags:
 protocols:
   - maker-sky
   - curve
+  - ethena
+  - spark
 glossary:
   - dai
   - usds
@@ -72,6 +77,14 @@ That is why a Curve pool can be deep and still not be a guarantee. Amplification
 ## crvUSD
 
 crvUSD is Curve’s minted stablecoin, documented separately from StableSwap. Borrowers post collateral. LLAMMA sells that collateral into the stablecoin as the price falls, which is a liquidation design, not a peg pool. Savings crvUSD takes a portion of borrower interest. A dashboard that labels every Curve contract “the stablecoin pool” will mix LP tokens, controller debt, and scrvUSD shares.
+
+## Hedged backing
+
+A third family holds assets that move and offsets them with a derivative. Ethena’s USDe pairs spot collateral with short futures of the same size, so the pair holds a dollar value, and it earns the funding rate that shorts receive. Its peg rests on the hedge, on custody and on approved parties minting and redeeming, not on a liquidation buffer. The [delta-neutral dollars](/concepts/delta-neutral-dollars) page works through the numbers and the [comparison](/compare/collateralized-vs-synthetic-dollars) sets it beside Sky.
+
+## Dollars minted by a market
+
+Aave’s GHO is minted through the borrow function of a market that already exists, within a bucket capacity governance sets for each facilitator, and its rate is steered by stewards, not by utilization. Spark packages Sky’s reserves into savings vaults and a lending market, and a rate-limited allocator moves the money. In both, the stablecoin is one product of a larger system, so its risk is the system’s. See [Aave](/protocols/aave) and [Spark](/protocols/spark).
 
 ## What stability still depends on
 

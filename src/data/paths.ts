@@ -10,7 +10,7 @@ export const learningPaths: LearningPath[] = [
   {
     id: 'lending',
     title: 'How on-chain lending works',
-    summary: 'From a utilization-priced pool to Aave’s V3 Pool and V4 hub.',
+    summary: 'From a utilization-priced pool to Aave’s V3 Pool and V4 hub, then isolated markets with Morpho and a capital allocator with Spark.',
     steps: [
       'concepts/lending-utilization',
       'concepts/interest-rate-models',
@@ -18,6 +18,11 @@ export const learningPaths: LearningPath[] = [
       'concepts/on-chain-accounting',
       'protocols/aave',
       'guides/aave-versions',
+      'concepts/isolated-markets-and-curation',
+      'protocols/morpho',
+      'guides/morpho-versions',
+      'protocols/spark',
+      'guides/spark-savings-and-liquidity',
     ],
   },
   {
@@ -29,6 +34,7 @@ export const learningPaths: LearningPath[] = [
       'concepts/constant-product',
       'concepts/liquidity-pools',
       'concepts/concentrated-liquidity',
+      'concepts/impermanent-loss-and-lvr',
       'protocols/uniswap',
       'guides/uniswap-versions',
       'protocols/curve',
@@ -38,19 +44,39 @@ export const learningPaths: LearningPath[] = [
   {
     id: 'stablecoins',
     title: 'How collateralized stablecoins work',
-    summary: 'Vaults, debt and liquidation in Maker, and what changed with Sky.',
+    summary: 'Vaults, debt and liquidation in Maker, what changed with Sky, and the synthetic dollar built on funding rates.',
     steps: [
       'concepts/stablecoin-mechanisms',
       'concepts/collateral-and-liquidation',
       'protocols/maker-sky',
       'guides/maker-to-sky',
+      'concepts/delta-neutral-dollars',
+      'protocols/ethena',
+      'guides/ethena-mint-and-exit',
     ],
   },
   {
     id: 'staking',
-    title: 'How liquid staking works',
-    summary: 'Shares, rebases and the withdrawal queue, using Lido.',
-    steps: ['concepts/liquid-staking', 'protocols/lido', 'guides/lido-exits'],
+    title: 'How staking and restaking work',
+    summary: 'Shares, rebases and the withdrawal queue with Lido, then restaking, operator sets and slashing with EigenLayer.',
+    steps: [
+      'concepts/liquid-staking',
+      'protocols/lido',
+      'guides/lido-exits',
+      'concepts/restaking-and-slashing',
+      'protocols/eigenlayer',
+      'guides/eigenlayer-slashing',
+    ],
+  },
+  {
+    id: 'yield',
+    title: 'How yield is split and traded',
+    summary: 'Principal and yield tokens, fixed rates, and what it takes to use a maturing token as collateral.',
+    steps: [
+      'concepts/yield-tokenization',
+      'protocols/pendle',
+      'guides/pendle-maturity-and-collateral',
+    ],
   },
   {
     id: 'risk',

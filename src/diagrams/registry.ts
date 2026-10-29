@@ -255,6 +255,115 @@ export const diagrams: Record<string, string> = {
     ),
     'One collateral asset and one debt asset priced at 1 USD. The threshold is an input, not a live Aave parameter. The repay limit follows the V3.3 LiquidationLogic rule quoted above. With JavaScript off, the values shown are the worked example above.',
   ),
+  'morpho-structure': figure(
+    'One contract, isolated markets, curated vaults',
+    'Morpho, simplified',
+    `<div class="arch" role="group" aria-label="Depositors use vaults, vaults allocate to isolated markets inside one immutable contract">
+      <p class="arch-label">Depositors hold vault shares, or supply to a market directly</p>
+      <div class="arch-row">
+        <div class="arch-box"><strong>Vault</strong><span>Curator sets caps and timelocks, allocator moves funds, sentinel only reduces risk</span></div>
+      </div>
+      <p class="arch-arrow" aria-hidden="true">allocate within caps</p>
+      <div class="arch-row">
+        <div class="arch-box"><strong>Market A</strong><span>Collateral X, loan asset, oracle, rate model, LLTV</span></div>
+        <div class="arch-box"><strong>Market B</strong><span>A different collateral, oracle or LLTV. Its losses stay here</span></div>
+      </div>
+      <div class="arch-box arch-core"><strong>Morpho Blue</strong><span>One immutable contract. Market id is the hash of the five parameters</span></div>
+    </div>`,
+    'Simplified. A vault can also allocate through adapters to other venues, and Midnight is a separate contract set. A market cannot be edited after it is created.',
+  ),
+  'restaking-flow': figure(
+    'From stake to a slash',
+    'EigenLayer, simplified',
+    flow([
+      {
+        label: 'Deposit',
+        detail: 'A staker points validators at an EigenPod or deposits a token into a strategy and receives deposit shares.',
+      },
+      {
+        label: 'Delegate',
+        detail: 'The staker delegates to an operator. The operator’s weight is the sum of its delegators’ shares.',
+      },
+      {
+        label: 'Allocate',
+        detail: 'The operator registers for an operator set and allocates a proportion of its stake to it, after a delay. That allocation is unique stake.',
+      },
+      {
+        label: 'Slash',
+        detail: 'The set’s slasher calls the AllocationManager with a fraction. The operator’s allocation and maximum magnitude fall, and every delegator’s slashing factor falls with it.',
+      },
+      {
+        label: 'Clear and exit',
+        detail: 'Slashed shares are burned or redistributed after a delay. Withdrawals queue for about 14 days on mainnet.',
+      },
+    ]),
+    'Delays are the mainnet values in the contract documentation at the time of reading. Whether a fault occurred is decided by the service, not by the core contracts.',
+  ),
+  'delta-neutral-flow': figure(
+    'How a USDe mint is hedged',
+    'Ethena, simplified',
+    flow([
+      {
+        label: 'Signed order',
+        detail: 'An approved counterparty signs an order against an off-chain price. Ethena’s backend checks it and submits it.',
+      },
+      {
+        label: 'Backing to custody',
+        detail: 'The incoming assets go to a registered custodian. USDe is minted.',
+      },
+      {
+        label: 'Hedge',
+        detail: 'A short futures position of about the same notional is opened. The custodian delegates margin value to the exchange without transferring the assets.',
+      },
+      {
+        label: 'Settle',
+        detail: 'Profit and loss settle between exchange and custodian, generally daily. Funding paid or received changes the protocol’s revenue.',
+      },
+      {
+        label: 'Stake',
+        detail: 'Holders can stake USDe as sUSDe. Rewards vest over eight hours and unstaking passes through a cooldown.',
+      },
+    ]),
+    'Simplified to the crypto basis trade. The documentation describes a wider backing portfolio, and stable assets in it need no hedge.',
+  ),
+  'spark-allocation': figure(
+    'How Spark moves liquidity',
+    'Spark Liquidity Layer, simplified',
+    `<div class="arch" role="group" aria-label="Governance sets rate limits, a relayer moves stablecoins only between approved venues">
+      <p class="arch-label">Sky governance and Spark governance set venues and rate limits</p>
+      <div class="arch-box arch-core"><strong>ALM controller and rate limits</strong><span>A venue with no configured limit cannot be used. Limits refill linearly up to a ceiling</span></div>
+      <p class="arch-arrow" aria-hidden="true">relayer moves funds, freezer can revoke it</p>
+      <div class="arch-row">
+        <div class="arch-box"><strong>SparkLend</strong><span>Liquidity topped up or withdrawn by utilization</span></div>
+        <div class="arch-box"><strong>Savings vaults</strong><span>Idle buffer refilled, liquidity intents filled</span></div>
+        <div class="arch-box"><strong>Other venues</strong><span>Vaults, pools, PSM, bridges, OTC, RWAs</span></div>
+      </div>
+    </div>`,
+    'Simplified from the Spark documentation. The list of integrations, the networks and the numeric limits are set by governance and change.',
+  ),
+  'yield-split': figure(
+    'Splitting a yield-bearing token',
+    'Pendle, simplified',
+    flow([
+      {
+        label: 'Wrap',
+        detail: 'A yield-bearing token becomes SY, which has no maturity and holds the token and its rewards.',
+      },
+      {
+        label: 'Split',
+        detail: 'SY deposited in the yield contract mints equal PT and YT, scaled by the SY index.',
+      },
+      {
+        label: 'Trade',
+        detail: 'PT trades against SY in a pool whose curve tightens toward maturity. YT trades through flash swaps in the same pool.',
+      },
+      {
+        label: 'Mature',
+        detail: 'PT redeems one-for-one for the accounting asset. YT is worth zero. Unredeemed matured positions stop earning for the holder.',
+      },
+    ]),
+    'The accounting asset is the unit PT redeems in, which is not always the token itself. A PT price below par before maturity is the fixed rate.',
+  ),
 };
 
 export const diagramNames = new Set(Object.keys(diagrams));

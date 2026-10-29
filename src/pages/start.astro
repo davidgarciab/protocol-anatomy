@@ -16,7 +16,7 @@ const byKey = new Map<string, { title: string; summary: string }>([
   ...concepts.map((entry) => [`concepts/${entry.id}`, entry.data] as const),
 ]);
 const description =
-  'Reading orders through the protocol articles: lending, exchanges, collateralized stablecoins, liquid staking, and engineering risk.';
+  'Reading orders through the protocol articles: lending, exchanges, collateralized and synthetic stablecoins, staking and restaking, yield trading, and engineering risk.';
 ---
 
 <BaseLayout title="Start here: DeFi protocol learning paths" description={description}>

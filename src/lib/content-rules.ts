@@ -1,12 +1,17 @@
 import { SOURCE_KINDS, VERSION_STATUSES, type SourceKind, type VersionStatus } from './site';
 
-export const REQUIRED_PROTOCOLS = ['aave', 'uniswap', 'maker-sky', 'curve', 'lido'] as const;
+export const REQUIRED_PROTOCOLS = ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle'] as const;
 export const REQUIRED_GUIDES = [
   'aave-versions',
   'uniswap-versions',
   'maker-to-sky',
   'curve-generations',
   'lido-exits',
+  'morpho-versions',
+  'eigenlayer-slashing',
+  'ethena-mint-and-exit',
+  'spark-savings-and-liquidity',
+  'pendle-maturity-and-collateral',
 ] as const;
 export const REQUIRED_CONCEPTS = [
   'automated-market-makers',
@@ -25,6 +30,10 @@ export const REQUIRED_CONCEPTS = [
   'composability',
   'flash-liquidity',
   'security-assumptions',
+  'isolated-markets-and-curation',
+  'restaking-and-slashing',
+  'delta-neutral-dollars',
+  'yield-tokenization',
 ] as const;
 
 const PLACEHOLDER = /\b(TODO|TBD|PLACEHOLDER)\b|lorem ipsum|coming soon/i;

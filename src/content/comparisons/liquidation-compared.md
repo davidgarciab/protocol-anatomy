@@ -5,7 +5,10 @@ description: "Health factors, vault ratios and LLAMMA bands compared: when a pos
 summary: "Aave closes part of a debt when a health factor falls below 1 and pays the liquidator a bonus. Maker confiscates the whole vault in the Vat and sells the collateral through a separate auction. crvUSD converts collateral gradually as the price moves through bands. The residue in each design is bad debt."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added Morpho Blue, which has no close factor and a bonus derived from the LLTV, and SparkLend’s variable close factor."
 faq:
   - question: "Does Maker have a close factor like Aave?"
     answer: "No. The Vat's safety check has no close factor. grab removes the vault's collateral and debt from the urn and records the debt as unbacked debt, sin. A separate auction contract sells the collateral for stablecoin so that debt can be cancelled."
@@ -16,6 +19,8 @@ protocols:
   - aave
   - maker-sky
   - curve
+  - morpho
+  - spark
 concepts:
   - collateral-and-liquidation
   - oracles-and-dependencies
@@ -95,6 +100,12 @@ Maker stores no health factor. One comparison per vault decides safety, and `spo
 ## crvUSD: a position that converts as it falls
 
 Curve’s LLAMMA explainer describes bands that convert collateral toward the stablecoin as the price falls, through arbitrageurs trading against the AMM, and back toward the collateral if the price recovers. A loan that stays in its range until its health reaches zero is fully liquidated. Nothing waits for one ratio and then closes everything. The borrower can end up partially in the stablecoin without a liquidator’s transaction at a single tick. Calling that “the same as Aave” because both involve collateral is how integrations mis-simulate losses.
+
+## Morpho Blue and SparkLend: two more points on the map
+
+[Morpho Blue](/protocols/morpho) has no close factor. A liquidator passes either the collateral to seize or the debt shares to repay, and may repay any amount up to the whole debt. The bonus is not a per-asset setting. It is `min(1.15, 1 / (1 − 0.3 × (1 − LLTV)))`, which is about 1.044 at an 86 percent LLTV and about 1.017 at 94.5 percent. A higher LLTV leaves a smaller margin to pay a liquidator. If a liquidation empties a borrower’s collateral while debt remains, the contract writes the remainder off against that market’s suppliers in the same call.
+
+[SparkLend](/protocols/spark) keeps the Aave V3 shape, with a variable close factor of up to 50 percent of the debt while the health factor is between 0.95 and 1 and up to 100 percent at or below 0.95. It adds a killswitch oracle that halts new borrowing against pegged collateral when its market price drifts from its underlying, which acts before a liquidation is needed. The [pooled and isolated lending comparison](/compare/pooled-vs-isolated-lending) sets the three lenders side by side.
 
 ## What every design shares
 

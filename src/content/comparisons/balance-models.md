@@ -5,7 +5,10 @@ description: "How aTokens, Maker debt, stETH, wstETH and sUSDS turn a stored num
 summary: "Aave, Maker, Lido and Sky all avoid writing every balance on every block. They store a small number per account and one global multiplier. What differs is which number a holder sees. aTokens and stETH show the product, so the balance changes. wstETH and sUSDS show the stored share, so the balance stays and the exchange rate moves."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-26"
+lastVerified: "2026-10-29"
+changes:
+  - date: "2026-10-29"
+    summary: "Added sUSDe’s vested rewards and cooldown, Morpho’s share accounting and EigenLayer’s slashing-factor scaling."
 faq:
   - question: "What is the difference between stETH and wstETH balances?"
     answer: "stETH shows shares priced in ether, so the balance changes when the oracle report changes the pooled ether. wstETH is the same share count with a fixed balance, so the balance does not change and stEthPerToken does. Both holders earn the same reward. Only where the number changes differs."
@@ -16,6 +19,9 @@ protocols:
   - aave
   - maker-sky
   - lido
+  - morpho
+  - eigenlayer
+  - ethena
 concepts:
   - on-chain-accounting
   - liquid-staking
@@ -94,6 +100,14 @@ sUSDS follows the share pattern through [ERC-4626](/glossary/erc-4626/). Share-t
 ## Maker is the same pattern pointed at debt
 
 A Maker urn stores `art`, not the DAI owed. `Jug.drip` changes `rate` once, and every vault of that collateral type is updated without a storage write. A dashboard that sums `art` across vaults is summing normalized debt, not the stablecoin supply. That figure also depends on surplus and unbacked debt in the Vat.
+
+## Three more variations
+
+**sUSDe** is an ERC-4626 share like sUSDS, with two additions. Reward payments vest linearly over eight hours, and the vault’s asset count excludes the unvested part, so the share price rises smoothly instead of jumping. Unstaking can pass through a cooldown in which the shares are burned immediately and the USDe waits in a silo contract. A reader who snapshots `convertToAssets` right after a payment will see a different number from one who reads it eight hours later. See [Ethena](/protocols/ethena).
+
+**Morpho** stores supply shares and borrow shares per market, with asset totals that interest raises while share counts stay still. The health check rounds borrowed assets up, in the protocol’s favor. See [Morpho](/protocols/morpho).
+
+**EigenLayer** keeps deposit shares and scales them when they are used. The amount a staker can withdraw is the deposit shares times a slashing factor, which is the operator’s current maximum magnitude, and for native ETH also a beacon chain factor. A slash does not change the staker’s share count. It changes the factor. An integration that reads deposit shares as a balance will overstate what is withdrawable. See [EigenLayer](/protocols/eigenlayer).
 
 ## Which one to integrate
 
