@@ -5,7 +5,7 @@ description: "How Pendle splits yield-bearing assets into principal and yield to
 summary: "Pendle wraps a yield-bearing token as SY, splits it into a principal token and a yield token that expire on a date, and trades both against SY in a single AMM that tightens as maturity approaches. A PT is a fixed rate, a YT is a leveraged variable rate. sPENDLE now receives protocol revenue."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
 faq:
   - question: "How does Pendle give a fixed yield?"
     answer: "You buy a principal token below its face value and hold it to maturity, when it redeems one-for-one for the accounting asset. The discount you paid, annualized, is the fixed rate, and it does not depend on what the underlying asset pays in the meantime. The risk you keep is that the underlying asset or its redemption fails."

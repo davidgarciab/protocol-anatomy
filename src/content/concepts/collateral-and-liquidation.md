@@ -20,6 +20,9 @@ protocols:
   - aave
   - maker-sky
   - curve
+  - compound
+  - euler
+  - hyperliquid
 glossary:
   - health-factor
   - liquidation-threshold

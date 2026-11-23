@@ -6,14 +6,14 @@ import Footer from '../../components/Footer.astro';
 
 const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 const protocols = await getCollection('protocols');
-const description = 'Comparisons of deployed protocol versions and the architectural changes between them.';
+const description = 'What changed between deployed versions of DeFi protocols, such as Aave V3 and V4, Uniswap v2 to v4, Compound v2 and III and Balancer V2 and V3, and what to check on each.';
 
 function protocolTitle(id: string): string {
   return protocols.find((protocol) => protocol.id === id)?.data.title ?? id;
 }
 ---
 
-<BaseLayout title="DeFi protocol version guides: Aave, Uniswap, Curve" description={description}>
+<BaseLayout title="DeFi protocol version guides: V2 vs V3, Saturn, Comet" description={description}>
   <Header slot="header" />
   <main id="main" class="page">
     <header class="article-header">

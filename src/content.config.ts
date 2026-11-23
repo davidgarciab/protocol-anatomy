@@ -65,7 +65,7 @@ const guides = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
   schema: z.object({
     ...shared,
-    protocol: z.enum(['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle']),
+    protocol: z.enum(['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle', 'compound', 'balancer', 'chainlink', 'hyperliquid', 'rocket-pool', 'euler', 'aerodrome', 'safe']),
     versionContext: z.string().min(20),
     concepts: z.array(z.string()),
     glossary: z.array(z.string()),

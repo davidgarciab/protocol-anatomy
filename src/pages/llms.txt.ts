@@ -22,6 +22,8 @@ export const GET: APIRoute = async () => {
     '',
     `Written by ${SITE.authorFullName} (${abs('/about/')}). Content is licensed as described at ${SITE.repoUrl}/blob/main/CONTENT_LICENSE.md. Cite the page URL and its "Last verified" date.`,
     '',
+    `Every article is also available as Markdown: take the page URL, remove the trailing slash and add .md, for example ${abs('/protocols/aave.md')}.`,
+    '',
   ];
   for (const section of SECTIONS) {
     const entries = pages.filter((page) => page.url.startsWith(section.prefix));

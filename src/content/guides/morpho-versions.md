@@ -5,7 +5,10 @@ description: "How Morpho's names map to contracts: Blue markets, V1 and V2 vault
 summary: "'Morpho V2' is not a replacement for Blue. Blue is the variable-rate core and stays. Vaults V2 is a newer vault design that can allocate across protocols. Midnight is a separate fixed-rate, fixed-term protocol. This guide separates the three so an integrator or lender knows which contract a name points to."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
+changes:
+  - date: "2026-11-23"
+    summary: "Removed a sentence that relied on a press report, and pointed readers to each vault page for whether it allocates to Midnight."
 faq:
   - question: "Did Morpho V2 replace Morpho Blue?"
     answer: "No. Morpho's own announcement says Midnight, the fixed-rate part of V2, is designed to complement, not replace, Morpho Blue. Blue remains the variable-rate lending core, and Vaults V2 can allocate to Blue markets, to Midnight and to other protocols."
@@ -116,7 +119,7 @@ Morpho describes the offer mechanism as signed offers published by makers. Borro
 
 Liquidation differs from Blue. Before maturity a position can be partially liquidated when debt exceeds its limit. After maturity, unpaid debt can be partly or fully liquidated, and losses that liquidation does not cover can be socialized to lenders through a market loss factor. Lenders are exposed to the market's full accepted collateral set.
 
-The same announcement says Vaults V2 can allocate to Blue, to Midnight and to later releases, and that a lender can earn variable yield on Blue while waiting for a Midnight offer to match. A press report at the time of reading said vaults could not yet allocate to Midnight pending DAO action. That is current state, not design, so confirm it in the documentation.
+The same announcement says Vaults V2 can allocate to Blue, to Midnight and to later releases, and that a lender can earn variable yield on Blue while waiting for a Midnight offer to match. Whether a particular vault has been set up to allocate to Midnight is current state, not design, so confirm it on the vault's own page.
 
 ## What to check before relying on a name
 

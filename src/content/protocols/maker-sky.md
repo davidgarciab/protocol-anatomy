@@ -5,8 +5,10 @@ description: "How Maker vaults account for collateral and DAI debt, and how Skyâ
 summary: "Makerâ€™s Vat is a ledger of collateral and stablecoin debt. A vault locks collateral, draws DAI, and pays a stability fee that accrues by raising a per-collateral rate. Sky keeps a one-for-one path between DAI and USDS and adds a savings token, sUSDS, without replacing the vault ledger with an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
 changes:
+  - date: "2026-11-23"
+    summary: "Added the MKR to SKY migration status, the SKY supply cap and the delayed-upgrade penalty from the Sky documentation."
   - date: "2026-10-29"
     summary: "Added Sky Agents and allocator vaults, the SKY backstop, and the status of emergency shutdown, which the Sky documentation now lists as deprecated and archived."
   - date: "2026-10-26"
@@ -186,7 +188,7 @@ Maker began as a system in which every unit of DAI was backed by a vault. Sky de
 
 This changes what a USDS holder is exposed to. The [Sky Savings Rate](/glossary/sky-savings-rate/) behind sUSDS is, per the same documentation, funded by protocol revenue, including fees from collateralized loans and returns from capital deployed across the agent network, and it is set by a governance vote, not by utilization. The documentation also states that sUSDS holders are not exposed to a specific agent's performance. That sentence describes the intended separation. The loss layers that stand behind it, which Spark's documentation lists, are the agent's own junior capital first, then the layers above it.
 
-The last layer is a token. Sky describes SKY as the protocol's ultimate backstop: if the system is undercollateralized after the other layers are exhausted, it can mint and sell SKY to recapitalize. The same page says this has never been triggered. SKY stakers also vote on protocol parameters, and surplus can flow back to them through buybacks and distributions. Sky's page says 22 percent of monthly net protocol revenue goes to a Core Council buffer.
+The last layer is a token. Sky describes SKY as the protocol's ultimate backstop: if the system is undercollateralized after the other layers are exhausted, it can mint and sell SKY to recapitalize. The same page says this has never been triggered. SKY stakers also vote on protocol parameters, and surplus can flow back to them through buybacks and distributions. Sky's page says 22 percent of monthly net protocol revenue goes to a Core Council buffer. The same page records the MKR to SKY migration: governance approved a fixed 1 to 24,000 conversion in August 2024 and capped total SKY supply at 23,462,665,147 in November 2024, with no programmatic emissions. It says about 90.5 percent of MKR had migrated, and that unconverted MKR faces a delayed-upgrade penalty that began in September 2025 at 1 percent fewer SKY per MKR and grows by 1 percent every three months. The page lists both the supply cap and the recapitalization mint without saying how the two fit together, so treat the mint as a last-resort governance action, not a scheduled issuance.
 
 ## Emergency shutdown is now an archive page
 

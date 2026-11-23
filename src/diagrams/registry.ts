@@ -364,6 +364,190 @@ export const diagrams: Record<string, string> = {
     ]),
     'The accounting asset is the unit PT redeems in, which is not always the token itself. A PT price below par before maturity is the fixed rate.',
   ),
+  'comet-liquidation': figure(
+    'Absorb, then sell',
+    'Compound III, simplified',
+    flow([
+      {
+        label: 'Underwater',
+        detail: 'Debt exceeds what the collateral supports under the liquidation collateral factors.',
+      },
+      {
+        label: 'Absorb',
+        detail: 'Anyone calls absorb. The protocol takes all of the account\u2019s collateral, credits its value minus a penalty in the base asset, and reserves repay the debt.',
+      },
+      {
+        label: 'Reserves fall',
+        detail: 'The protocol now holds collateral and has spent base-asset reserves. A shortfall beyond the credited value is absorbed by reserves.',
+      },
+      {
+        label: 'Buy collateral',
+        detail: 'While reserves are below the governance target, anyone can pay base asset for the collateral at a discount, which refills reserves.',
+      },
+    ]),
+    'Simplified from the Compound III documentation and Comet source. The absorber earns no collateral. The discount comes from the store-front price factor and the asset\u2019s liquidation factor.',
+  ),
+  'balancer-vault-flow': figure(
+    'One operation through the Vault',
+    'Balancer V3, simplified',
+    flow([
+      {
+        label: 'Unlock',
+        detail: 'A router calls the Vault, which unlocks and calls the router back.',
+      },
+      {
+        label: 'Operate',
+        detail: 'Inside the callback the router can swap, add or remove liquidity. The Vault asks each pool for its math and records debts and credits per token.',
+      },
+      {
+        label: 'Settle',
+        detail: 'The router pays what is owed and takes what it is owed. Intermediate tokens in a multi-hop swap net out and never move.',
+      },
+      {
+        label: 'Check',
+        detail: 'The Vault requires every delta to be zero before it locks again. Otherwise the whole transaction reverts.',
+      },
+    ]),
+    'Simplified from the Balancer V3 documentation. Hooks, if a pool registers them, run at fixed points inside the operation.',
+  ),
+  'oracle-update-flow': figure(
+    'How a feed answer reaches a contract',
+    'Chainlink Data Feeds, simplified',
+    flow([
+      {
+        label: 'Observe',
+        detail: 'Independent nodes read their data sources and watch the onchain value.',
+      },
+      {
+        label: 'Agree',
+        detail: 'A deviation threshold or a heartbeat starts a round. Nodes exchange signed observations over a peer-to-peer network and a quorum signs one report.',
+      },
+      {
+        label: 'Post',
+        detail: 'One node submits the report. The aggregator checks the quorum\u2019s signatures and stores the median as the answer.',
+      },
+      {
+        label: 'Read',
+        detail: 'A consumer calls the proxy. It receives the answer and timestamps, and has to check freshness itself.',
+      },
+    ]),
+    'Simplified from the Chainlink documentation. The deviation threshold, heartbeat and minimum number of oracles are set per feed.',
+  ),
+  'perp-liquidation-ladder': figure(
+    'Who pays when a perpetual position fails',
+    'Hyperliquid, simplified',
+    flow([
+      {
+        label: 'Maintenance margin',
+        detail: 'Account equity falls below maintenance margin, half of initial margin at the asset\u2019s maximum leverage.',
+      },
+      {
+        label: 'Order book',
+        detail: 'Market orders for the position go to the book. Anything left after the maintenance requirement is met stays with the trader.',
+      },
+      {
+        label: 'Liquidator vault',
+        detail: 'Below two thirds of maintenance margin, the vault inside HLP takes the position and the trader does not get the maintenance margin back.',
+      },
+      {
+        label: 'Auto-deleveraging',
+        detail: 'If equity goes negative, profitable traders on the other side are ranked and closed against the position at the previous mark price.',
+      },
+    ]),
+    'Simplified from the Hyperliquid docs. Partial liquidation, cooldowns and margin tiers are left out.',
+  ),
+  'euler-market-links': figure(
+    'How an Euler market is assembled',
+    'Euler V2, simplified',
+    flow([
+      {
+        label: 'Vaults',
+        detail: 'Each EVK vault lends one asset and issues ERC-4626 shares.',
+      },
+      {
+        label: 'Relationships',
+        detail: 'A liability vault chooses which other vaults\u2019 shares it accepts as collateral, with its own oracle route, LTVs and caps.',
+      },
+      {
+        label: 'Connector',
+        detail: 'The EVC authenticates calls, batches operations and records an account\u2019s collateral vaults and its controller.',
+      },
+      {
+        label: 'Check',
+        detail: 'The controller vault\u2019s account check decides whether the account is solvent when the batch completes.',
+      },
+    ]),
+    'Simplified from the Euler docs. Hooks, Earn vaults and governance roles are set per deployment.',
+  ),
+  'rocket-pool-flow': figure(
+    'How a Rocket Pool validator is funded',
+    'Rocket Pool, simplified',
+    flow([
+      {
+        label: 'Stake',
+        detail: 'Stakers deposit ETH and receive rETH, whose exchange rate rises as rewards accumulate.',
+      },
+      {
+        label: 'Bond',
+        detail: 'A node operator posts a bond, 4 ETH per validator after Saturn 1, and the pool supplies the other 28 ETH.',
+      },
+      {
+        label: 'Validate',
+        detail: 'A megapool contract is the withdrawal address for the operator\u2019s validators and receives their rewards.',
+      },
+      {
+        label: 'Report',
+        detail: 'The Oracle DAO reports Beacon Chain balances, and the rETH rate is updated about every 24 hours.',
+      },
+    ]),
+    'Simplified from the Rocket Pool docs. Queues, commission shares and RPL revenue share are left out.',
+  ),
+  'vote-escrow-epoch': figure(
+    'One epoch of vote-escrowed emissions',
+    'Aerodrome, simplified',
+    flow([
+      {
+        label: 'Lock',
+        detail: 'Holders lock AERO for up to four years and receive a veAERO NFT with voting power.',
+      },
+      {
+        label: 'Vote',
+        detail: 'Each epoch, voters split their power among pools. Incentives deposited for a pool go to its voters.',
+      },
+      {
+        label: 'Emit',
+        detail: 'AERO emissions go to pools in proportion to their votes, and only staked liquidity earns them.',
+      },
+      {
+        label: 'Collect',
+        detail: 'After the epoch changes, voters claim the previous epoch\u2019s fees and incentives, plus a rebase.',
+      },
+    ]),
+    'Simplified from the Aerodrome docs, which predate the announced merger into Aero.',
+  ),
+  'safe-execution': figure(
+    'How a Safe executes a transaction',
+    'Safe, simplified',
+    flow([
+      {
+        label: 'Sign',
+        detail: 'Owners sign an EIP-712 hash of the destination, value, data, operation type, gas fields and the Safe\u2019s nonce.',
+      },
+      {
+        label: 'Check',
+        detail: 'execTransaction verifies a threshold of valid owner signatures and increments the nonce.',
+      },
+      {
+        label: 'Guard',
+        detail: 'If a guard is set, it checks the transaction before and after execution and can block it.',
+      },
+      {
+        label: 'Execute',
+        detail: 'The Safe makes a call or a delegatecall. A module can also reach this step without owner signatures.',
+      },
+    ]),
+    'Simplified from the Safe docs and contract. The operation type is part of what owners sign.',
+  ),
 };
 
 export const diagramNames = new Set(Object.keys(diagrams));

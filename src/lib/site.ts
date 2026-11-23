@@ -58,7 +58,8 @@ export interface VersionNote {
 export function authorJsonLd(): Record<string, unknown> {
   return {
     '@type': 'Person',
-    '@id': `${SITE.url}/about/#author`,
+    // The same @id the personal site publishes, so crawlers merge both pages into one author entity.
+    '@id': `${SITE.authorUrl.replace(/\/$/, '')}/#person`,
     name: SITE.authorFullName,
     alternateName: SITE.author,
     url: SITE.authorUrl,

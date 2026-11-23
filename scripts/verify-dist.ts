@@ -15,6 +15,14 @@ const required = [
   'protocols/ethena/index.html',
   'protocols/spark/index.html',
   'protocols/pendle/index.html',
+  'protocols/compound/index.html',
+  'protocols/balancer/index.html',
+  'protocols/chainlink/index.html',
+  'protocols/hyperliquid/index.html',
+  'protocols/rocket-pool/index.html',
+  'protocols/euler/index.html',
+  'protocols/aerodrome/index.html',
+  'protocols/safe/index.html',
   'guides/aave-versions/index.html',
   'guides/uniswap-versions/index.html',
   'guides/maker-to-sky/index.html',
@@ -25,6 +33,14 @@ const required = [
   'guides/ethena-mint-and-exit/index.html',
   'guides/spark-savings-and-liquidity/index.html',
   'guides/pendle-maturity-and-collateral/index.html',
+  'guides/compound-versions/index.html',
+  'guides/balancer-versions/index.html',
+  'guides/chainlink-reading-a-feed/index.html',
+  'guides/hyperliquid-hypercore-and-hip-3/index.html',
+  'guides/rocket-pool-minipools-and-megapools/index.html',
+  'guides/euler-vault-types/index.html',
+  'guides/aerodrome-velodrome-and-aero/index.html',
+  'guides/safe-modules-guards-and-delegatecall/index.html',
   'concepts/index.html',
   'concepts/constant-product/index.html',
   'glossary/index.html',
@@ -66,7 +82,7 @@ if (existsSync(join(dist, 'index.html'))) {
   if (/canonical" href="http:\/\/localhost/.test(home)) errors.push('Homepage canonical points at localhost');
 }
 
-for (const protocol of ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle']) {
+for (const protocol of ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle', 'compound', 'balancer', 'chainlink', 'hyperliquid', 'rocket-pool', 'euler', 'aerodrome', 'safe']) {
   const file = `protocols/${protocol}/index.html`;
   if (!existsSync(join(dist, file))) continue;
   const html = read(file);

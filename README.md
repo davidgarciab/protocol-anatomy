@@ -4,7 +4,7 @@ Protocol Anatomy is a static, independent educational resource for understanding
 
 Tagline: How DeFi protocols work, where the money sits, how they change.
 
-It covers ten protocols: Aave, Uniswap, MakerDAO / Sky, Curve Finance and Lido from the first edition, and Morpho, EigenLayer, Ethena, Spark and Pendle added on 29 October 2026. The canonical site is `https://protocols.davidgarciab.com`.
+It covers eighteen protocols: Aave, Uniswap, MakerDAO / Sky, Curve Finance and Lido from the first edition, Morpho, EigenLayer, Ethena, Spark and Pendle added on 29 October 2026, and Compound, Balancer, Chainlink, Hyperliquid, Rocket Pool, Euler, Aerodrome and Safe added on 23 November 2026. The canonical site is `https://protocols.davidgarciab.com`.
 
 ## Contributing
 

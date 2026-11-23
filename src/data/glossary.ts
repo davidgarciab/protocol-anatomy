@@ -665,6 +665,316 @@ export const glossary: GlossaryEntry[] = [
       { href: '/glossary/bad-debt', label: 'Bad debt' },
     ],
   },
+  {
+    id: 'comet',
+    term: 'Comet',
+    definition:
+      'The contract behind a Compound III market. It holds one borrowable base asset, tracks collateral per asset, stores a signed principal for each account and handles absorption and collateral sales. Most parameters are immutable values, so changing one means deploying a new implementation.',
+    related: [
+      { href: '/protocols/compound', label: 'Compound' },
+      { href: '/guides/compound-versions', label: 'Compound v2 and Compound III' },
+    ],
+  },
+  {
+    id: 'base-asset',
+    term: 'Base asset',
+    definition:
+      'The single asset a Compound III market lends and borrows, such as USDC on the first Ethereum market. Supplying it earns the supply rate, a negative balance pays the borrow rate, and every other supplied asset is collateral that earns nothing.',
+    related: [
+      { href: '/protocols/compound', label: 'Compound' },
+      { href: '/glossary/utilization', label: 'Utilization' },
+    ],
+  },
+  {
+    id: 'absorb',
+    term: 'Absorb',
+    definition:
+      'Compound III’s liquidation call. Anyone can absorb an underwater account: the protocol takes all of its collateral, credits the collateral’s value minus a penalty in the base asset, and lets reserves repay the debt. The collateral is sold afterward through buyCollateral while reserves are below target.',
+    related: [
+      { href: '/protocols/compound', label: 'Compound' },
+      { href: '/concepts/collateral-and-liquidation', label: 'Collateral and liquidation' },
+    ],
+  },
+  {
+    id: 'ctoken',
+    term: 'cToken',
+    definition:
+      'The interest-bearing token of a Compound v2 market. Its exchange rate against the underlying equals cash plus borrows minus reserves, divided by supply, so it rises as interest accrues. Holding it also lets the owner enter the market as collateral.',
+    related: [
+      { href: '/protocols/compound', label: 'Compound' },
+      { href: '/guides/compound-versions', label: 'Compound v2 and Compound III' },
+    ],
+  },
+  {
+    id: 'balancer-vault',
+    term: 'Balancer Vault',
+    definition:
+      'The contract that holds the tokens of every Balancer pool, mints and burns pool tokens, and requires all debts and credits of an operation to settle before it locks again. Pools only supply pricing math, and routers are the contracts users call.',
+    related: [
+      { href: '/protocols/balancer', label: 'Balancer' },
+      { href: '/glossary/transient-accounting', label: 'Transient accounting' },
+    ],
+  },
+  {
+    id: 'transient-accounting',
+    term: 'Transient accounting',
+    definition:
+      'Balancer V3’s way of settling an operation. A router unlocks the Vault, the Vault records the net debt and credit of each token as operations run, and the transaction reverts unless every delta is zero at the end. Intermediate tokens in a multi-hop swap never move.',
+    related: [
+      { href: '/protocols/balancer', label: 'Balancer' },
+      { href: '/glossary/flash-accounting', label: 'Flash accounting' },
+    ],
+  },
+  {
+    id: 'bpt',
+    term: 'Balancer Pool Token (BPT)',
+    definition:
+      'The share of a Balancer pool that a liquidity provider receives. In V3 the Vault controls BPT accounting and can mint and burn it directly, while the token remains a standard ERC-20. Its value moves with the pool’s composition and with fees.',
+    related: [
+      { href: '/protocols/balancer', label: 'Balancer' },
+      { href: '/glossary/lp-share', label: 'LP share' },
+    ],
+  },
+  {
+    id: 'rate-provider',
+    term: 'Rate provider',
+    definition:
+      'A contract that tells a Balancer pool the exchange rate between a yield-bearing or foreign-currency token and the asset it is priced against. The pool prices trades with whatever rate it returns, so a wrong rate gives a wrong price.',
+    related: [
+      { href: '/protocols/balancer', label: 'Balancer' },
+      { href: '/concepts/oracles-and-dependencies', label: 'Oracles and dependencies' },
+    ],
+  },
+  {
+    id: 'data-feed',
+    term: 'Data feed',
+    definition:
+      'A Chainlink feed: an aggregator contract behind a proxy that stores the median of a node network’s signed report. A consumer reads the answer and its timestamps through latestRoundData. The feed does not stop a consumer from using an old answer.',
+    related: [
+      { href: '/protocols/chainlink', label: 'Chainlink' },
+      { href: '/guides/chainlink-reading-a-feed', label: 'Reading a Chainlink feed safely' },
+    ],
+  },
+  {
+    id: 'deviation-threshold',
+    term: 'Deviation threshold',
+    definition:
+      'A per-feed percentage. When nodes see the offchain value differ from the onchain answer by more than this, a new round starts. Between rounds the onchain answer may differ from the market by up to the threshold.',
+    related: [
+      { href: '/protocols/chainlink', label: 'Chainlink' },
+      { href: '/glossary/heartbeat', label: 'Heartbeat' },
+    ],
+  },
+  {
+    id: 'heartbeat',
+    term: 'Heartbeat',
+    definition:
+      'A per-feed interval. If this much time passes since the last update, a new round starts even when the price has not moved. A healthy feed can therefore be as old as its heartbeat, and a consumer’s age limit has to allow for it.',
+    related: [
+      { href: '/protocols/chainlink', label: 'Chainlink' },
+      { href: '/glossary/deviation-threshold', label: 'Deviation threshold' },
+    ],
+  },
+  {
+    id: 'oev',
+    term: 'Oracle extractable value (OEV)',
+    definition:
+      'The part of MEV tied to oracle updates, most often seen when an update makes a lending position liquidatable. Chainlink’s Smart Value Recapture feeds run auctions for the right to act on updates, so that some of this value goes to the integrating protocol.',
+    related: [
+      { href: '/protocols/chainlink', label: 'Chainlink' },
+      { href: '/concepts/oracles-and-dependencies', label: 'Oracles and dependencies' },
+    ],
+  },
+  {
+    id: 'hypercore',
+    term: 'HyperCore',
+    definition:
+      'Hyperliquid’s execution layer for margin accounts and onchain perpetual and spot order books, run by the chain’s validators with one-block finality. The HyperEVM is the separate smart contract layer on the same consensus.',
+    related: [
+      { href: '/protocols/hyperliquid', label: 'Hyperliquid' },
+      { href: '/guides/hyperliquid-hypercore-and-hip-3', label: 'HyperCore, HyperEVM and HIP-3' },
+    ],
+  },
+  {
+    id: 'hlp',
+    term: 'HLP (Hyperliquidity Provider)',
+    definition:
+      'Hyperliquid’s community-owned protocol vault. It market makes, performs backstop liquidations and accrues part of trading fees, and depositors share its profit and loss with a four-day lock-up after the most recent deposit.',
+    related: [
+      { href: '/protocols/hyperliquid', label: 'Hyperliquid' },
+      { href: '/glossary/hypercore', label: 'HyperCore' },
+    ],
+  },
+  {
+    id: 'hip-3',
+    term: 'HIP-3',
+    definition:
+      'Hyperliquid’s proposal for builder-deployed perpetual markets. A deployer that stakes HYPE defines the oracle and contract specification, sets oracle prices and leverage limits, and can be slashed by validator vote for malicious operation.',
+    related: [
+      { href: '/protocols/hyperliquid', label: 'Hyperliquid' },
+      { href: '/guides/hyperliquid-hypercore-and-hip-3', label: 'HyperCore, HyperEVM and HIP-3' },
+    ],
+  },
+  {
+    id: 'auto-deleveraging',
+    term: 'Auto-deleveraging (ADL)',
+    definition:
+      'A last-resort step on a perpetual exchange. When an account’s value goes negative, profitable traders on the opposite side are ranked and their positions closed against it at the previous mark price, so the platform carries no bad debt.',
+    related: [
+      { href: '/protocols/hyperliquid', label: 'Hyperliquid' },
+      { href: '/concepts/collateral-and-liquidation', label: 'Collateral and liquidation' },
+    ],
+  },
+  {
+    id: 'mark-price',
+    term: 'Mark price',
+    definition:
+      'The price a perpetual exchange uses for margin, liquidation and unrealized profit. On Hyperliquid it is the median of an oracle-based estimate, a median of the exchange’s own book values and a weighted median of outside perpetual prices.',
+    related: [
+      { href: '/protocols/hyperliquid', label: 'Hyperliquid' },
+      { href: '/glossary/funding-rate', label: 'Funding rate' },
+    ],
+  },
+  {
+    id: 'reth',
+    term: 'rETH',
+    definition:
+      'Rocket Pool’s liquid staking token. Its balance stays fixed and its exchange rate against ETH rises as Beacon Chain rewards, priority fees and MEV rewards accumulate, with the rate updated about every 24 hours from reported balances.',
+    related: [
+      { href: '/protocols/rocket-pool', label: 'Rocket Pool' },
+      { href: '/concepts/liquid-staking', label: 'Liquid staking' },
+    ],
+  },
+  {
+    id: 'megapool',
+    term: 'Megapool',
+    definition:
+      'In Rocket Pool’s Saturn 1 upgrade, one contract per node operator that serves as the withdrawal address for many validators. It allowed the bond per validator to fall from 8 ETH to 4 ETH and is deployed automatically at the first validator deposit.',
+    related: [
+      { href: '/protocols/rocket-pool', label: 'Rocket Pool' },
+      { href: '/guides/rocket-pool-minipools-and-megapools', label: 'Rocket Pool minipools and megapools' },
+    ],
+  },
+  {
+    id: 'minipool',
+    term: 'Minipool',
+    definition:
+      'Rocket Pool’s earlier validator contract, one per validator and also its withdrawal address. Bonds were 16 ETH and later 8 ETH. Deposits are disabled after Saturn 1 and operators can migrate to megapools.',
+    related: [
+      { href: '/protocols/rocket-pool', label: 'Rocket Pool' },
+      { href: '/glossary/megapool', label: 'Megapool' },
+    ],
+  },
+  {
+    id: 'rpl',
+    term: 'RPL',
+    definition:
+      'Rocket Pool’s staking and governance token. Node operators stake it for RPL inflation rewards, and since Saturn 1 RPL staked on a megapool also earns a share of protocol ETH revenue and carries voting power in the Protocol DAO.',
+    related: [
+      { href: '/protocols/rocket-pool', label: 'Rocket Pool' },
+      { href: '/glossary/megapool', label: 'Megapool' },
+    ],
+  },
+  {
+    id: 'evk-vault',
+    term: 'EVK vault',
+    definition:
+      'An Euler V2 vault built with the Euler Vault Kit. It lends one underlying asset under its own configuration, issues ERC-4626 shares, and can accept other vaults’ shares as collateral when it acts as the controller for an account’s debt.',
+    related: [
+      { href: '/protocols/euler', label: 'Euler' },
+      { href: '/guides/euler-vault-types', label: 'Euler vault types' },
+    ],
+  },
+  {
+    id: 'evc',
+    term: 'Ethereum Vault Connector (EVC)',
+    definition:
+      'Euler’s account-coordination layer. It authenticates calls, supports batching, sub-accounts and operators, and records which vaults an account uses as collateral and controller. Solvency is enforced by the controller vault’s checks.',
+    related: [
+      { href: '/protocols/euler', label: 'Euler' },
+      { href: '/glossary/erc-4626', label: 'ERC-4626' },
+    ],
+  },
+  {
+    id: 'eulerearn',
+    term: 'EulerEarn',
+    definition:
+      'Euler’s ERC-4626 vault that accepts one asset and allocates it across enabled strategies, including Euler lending vaults, under an owner, curator, allocators and a guardian. Withdrawals use a queue, so available liquidity can be below the share value.',
+    related: [
+      { href: '/protocols/euler', label: 'Euler' },
+      { href: '/glossary/curator', label: 'Curator' },
+    ],
+  },
+  {
+    id: 'veaero',
+    term: 'veAERO',
+    definition:
+      'Aerodrome’s vote-escrowed token, an ERC-721 lock of AERO for up to four years. Holders vote each epoch on how emissions are split among pools and earn the fees and incentives of the pools they back, plus a rebase.',
+    related: [
+      { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
+      { href: '/glossary/gauge', label: 'Gauge' },
+    ],
+  },
+  {
+    id: 'gauge',
+    term: 'Gauge',
+    definition:
+      'A contract where liquidity providers stake their pool position to earn token emissions. In vote-escrow exchanges such as Curve and Aerodrome, voters decide how much of each period’s emissions each gauge receives.',
+    related: [
+      { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
+      { href: '/protocols/curve', label: 'Curve' },
+    ],
+  },
+  {
+    id: 'epoch',
+    term: 'Epoch',
+    definition:
+      'A fixed voting and accounting period. Aerodrome’s epoch lasts seven days, starting Thursday at 00:00 UTC, and votes, emissions, fees and incentives are calculated per epoch.',
+    related: [
+      { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
+      { href: '/glossary/veaero', label: 'veAERO' },
+    ],
+  },
+  {
+    id: 'safe-module',
+    term: 'Safe module',
+    definition:
+      'A contract enabled on a Safe that can call execTransactionFromModule and execute transactions without collecting owner signatures. It is used for allowances, automation and recovery, and a malicious module can take over the Safe.',
+    related: [
+      { href: '/protocols/safe', label: 'Safe' },
+      { href: '/guides/safe-modules-guards-and-delegatecall', label: 'Safe modules, guards and delegatecall' },
+    ],
+  },
+  {
+    id: 'safe-guard',
+    term: 'Safe guard',
+    definition:
+      'A contract that a Safe calls before and after every transaction to add restrictions beyond the owner threshold. A broken guard can block execution and lock the Safe.',
+    related: [
+      { href: '/protocols/safe', label: 'Safe' },
+      { href: '/glossary/safe-module', label: 'Safe module' },
+    ],
+  },
+  {
+    id: 'delegatecall',
+    term: 'Delegatecall',
+    definition:
+      'An operation that runs another contract’s code using the caller’s own storage. Safe batching and proxies rely on it, and a delegatecall to a malicious contract can overwrite the caller’s implementation address.',
+    related: [
+      { href: '/protocols/safe', label: 'Safe' },
+      { href: '/glossary/proxy', label: 'Proxy' },
+    ],
+  },
+  {
+    id: 'multisig',
+    term: 'Multisig',
+    definition:
+      'An account that needs a threshold of owner approvals before a transaction executes. In a smart-contract multisig such as Safe the owner list and threshold are stored in the contract, so the threshold says nothing about the signing environment.',
+    related: [
+      { href: '/protocols/safe', label: 'Safe' },
+      { href: '/concepts/security-assumptions', label: 'Security assumptions' },
+    ],
+  },
 ];
 
 glossary.sort((a, b) => a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }));

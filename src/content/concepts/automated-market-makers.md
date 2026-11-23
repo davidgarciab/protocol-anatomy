@@ -14,6 +14,8 @@ tags:
 protocols:
   - uniswap
   - curve
+  - balancer
+  - aerodrome
 glossary:
   - liquidity-pool
   - constant-product

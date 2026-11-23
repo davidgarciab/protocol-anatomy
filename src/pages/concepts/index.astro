@@ -7,7 +7,7 @@ import { groupLabel } from '../../lib/relate';
 
 const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order - b.data.order);
 const groups = ['markets', 'credit', 'monetary', 'engineering'] as const;
-const description = 'Cross-protocol explanations of AMMs, lending, stablecoins, liquid staking, and the engineering around them.';
+const description = 'Plain explanations of the ideas shared across DeFi protocols: AMMs, lending, liquidation, stablecoins, staking, oracles, governance and upgrade risk.';
 ---
 
 <BaseLayout title="DeFi concepts: AMMs, lending, stablecoins, staking" description={description}>
@@ -17,7 +17,7 @@ const description = 'Cross-protocol explanations of AMMs, lending, stablecoins, 
       <p class="kicker">Reference</p>
       <h1>Concepts</h1>
       <p class="lede">
-        These articles name the shared idea, then say where Aave, Uniswap, Maker, Curve, or Lido depart from it.
+        These articles name the shared idea, then say where each protocol departs from it.
       </p>
     </header>
     {

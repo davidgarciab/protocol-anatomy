@@ -14,9 +14,8 @@ const concepts = (await getCollection('concepts')).sort((a, b) => a.data.order -
 const questions = await featuredQuestions();
 const featuredConcepts = concepts.slice(0, 6);
 
-const homeTitle = `${SITE.name}: how Aave, Uniswap, Maker, Curve and Lido work`;
-const homeDescription =
-  'An independent educational resource on how Aave, Uniswap, MakerDAO/Sky, Curve and Lido hold assets, price trades, liquidate collateral and change across versions, sourced to public docs and code.';
+const homeTitle = `${SITE.name}: how DeFi protocols work, Aave to Safe`;
+const homeDescription = `How ${protocols.length} DeFi protocols work, from Aave and Uniswap to Hyperliquid and Safe: where assets sit, how trades are priced, how positions liquidate and how versions differ.`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -79,9 +78,9 @@ const jsonLd = {
     </section>
 
     <section class="section" aria-labelledby="protocols-heading">
-      <h2 id="protocols-heading">Ten protocols</h2>
+      <h2 id="protocols-heading">Eighteen protocols</h2>
       <p class="section-intro">
-        Pooled and isolated lending, two kinds of automated market maker, a collateralized and a synthetic dollar, liquid staking and restaking, a capital allocator, and a yield market. They are not ten copies of one architecture.
+        Pooled and isolated lending, two kinds of automated market maker, a collateralized and a synthetic dollar, liquid staking and restaking, a capital allocator, a yield market, a vault-based exchange, an on-chain perpetuals exchange, a vote-escrow exchange, a modular lending kit, the oracle layer many of them read and the multisig that guards their keys. They are not eighteen copies of one architecture.
       </p>
       <ol class="contents-index">
         {

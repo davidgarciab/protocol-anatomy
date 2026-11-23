@@ -27,7 +27,7 @@ const kinds = SOURCE_KINDS.map((kind) => ({
   kind,
   entries: sources.filter(({ source }) => source.kind === kind),
 })).filter((group) => group.entries.length > 0);
-const description = 'Primary and secondary sources cited by the protocol, version, and concept guides.';
+const description = 'Every source cited by Protocol Anatomy: protocol docs, contract code, governance records and security analyses, grouped by publisher.';
 ---
 
 <BaseLayout title="Sources cited: protocol docs, code and governance" description={description}>

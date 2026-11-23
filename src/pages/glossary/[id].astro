@@ -6,6 +6,7 @@ import Footer from '../../components/Footer.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { glossary } from '../../data/glossary';
 import { glossarySetJsonLd, canonicalUrl, pagePath } from '../../lib/site';
+import { snippet } from '../../lib/seo';
 
 export function getStaticPaths() {
   return glossary.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
@@ -22,8 +23,7 @@ const usedIn = [
   ...guides.filter((item) => item.data.glossary.includes(entry.id)).map((item) => ({ item, base: 'guides', kind: 'Guide' })),
   ...concepts.filter((item) => item.data.glossary.includes(entry.id)).map((item) => ({ item, base: 'concepts', kind: 'Concept' })),
 ];
-const firstSentence = entry.definition.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? entry.definition;
-const description = firstSentence.length <= 175 ? firstSentence : `${entry.definition.slice(0, 172).trimEnd()}…`;
+const description = snippet(`${entry.term}: ${entry.definition}`);
 const url = canonicalUrl(`/glossary/${entry.id}`);
 const jsonLd = {
   '@context': 'https://schema.org',

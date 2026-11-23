@@ -5,7 +5,10 @@ description: "How Ethena's USDe stays near a dollar with hedged backing, who can
 summary: "Ethena issues USDe, a synthetic dollar backed by assets whose price risk is hedged with short futures, plus stable assets. Approved counterparties mint and redeem against signed prices. Everyone else trades it on markets, and holders can stake it as sUSDe, an ERC-4626 vault paid from protocol revenue."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
+changes:
+  - date: "2026-11-23"
+    summary: "Recorded the sUSDe cooldown read on-chain on 23 November 2026 and attributed the stablecoin-backing percentages to the peg arbitrage page, and noted that USDtb is a separate stablecoin issued by Anchorage Digital Bank."
 faq:
   - question: "Is USDe a normal stablecoin?"
     answer: "No. Ethena's own documentation says USDe is not the same as a fiat stablecoin like USDC or USDT. It is a synthetic dollar backed by crypto assets and matching short futures positions, plus stable assets such as liquid stablecoins and short-duration real-world assets. The risks differ, and the documentation lists funding, liquidation, custodial, exchange failure and backing-asset risks."
@@ -117,6 +120,10 @@ sources:
     url: "https://github.com/ethena-labs/bbp-public-assets/blob/main/contracts/contracts/StakedUSDe.sol"
     kind: "code"
     publisher: "Ethena"
+  - title: "USDtb"
+    url: "https://docs.ethena.fi/overview/usdtb"
+    kind: "docs"
+    publisher: "Ethena"
   - title: "ENA and governance"
     url: "https://docs.ethena.fi/overview/ena"
     kind: "governance"
@@ -142,6 +149,8 @@ The original design was narrower: staked ETH or ETH against short perpetuals, wi
 
 Weights shift between them, subject to governance and a Risk Committee. In the documentation's account, when crypto funding compresses the portfolio leans toward lending and real-world assets, and when it widens the portfolio returns to crypto basis trades. For a reader this means "USDe" no longer names one trade. The mix at any date is a fact to look up on the transparency dashboard, not a constant.
 
+USDe is not Ethena's only dollar token. The documentation also lists USDtb, described as a USD stablecoin that, as of October 2025, is issued by Anchorage Digital Bank and has its own documentation site. This page does not cover how USDtb is backed or redeemed, and nothing here about USDe's hedging applies to it by default.
+
 ## Minting and redeeming
 
 USDe is an ERC-20 whose contract has a single `minter` address, set by its owner and pointed at the `EthenaMinting` contract. The documentation describes the minter permission as one of the most powerful non-owner roles, since it can create an unlimited amount of USDe, which is why the surrounding controls matter.
@@ -166,7 +175,7 @@ sUSDe is the staked form of USDe. The staking contract is the ERC-4626 vault fro
 
 **Vested rewards.** When the rewarder role sends USDe to the contract, the amount vests linearly over eight hours. The contract's asset count excludes the unvested portion, so a staker cannot deposit just before a payment and withdraw just after it. A worked case with round numbers: 1,000,000 USDe is staked against 1,000,000 sUSDe, so each is worth 1.0000 USDe. A reward of 3,000 USDe arrives. Four hours later half has vested and each sUSDe is worth 1.0015. After eight hours each is worth 1.0030, and the value continues from there until the next payment.
 
-**Cooldown.** The contract can require a cooldown before USDe is withdrawn. When a holder starts to unstake, their sUSDe is burned and the USDe moves to a separate silo contract. After the cooldown they call `unstake` to receive it. The contract's maximum is 90 days. The current value is an on-chain variable set by an admin role, and the documents disagree about it: one says 14 days, another says it is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The only reliable figure is the contract's `cooldownDuration`.
+**Cooldown.** The contract can require a cooldown before USDe is withdrawn. When a holder starts to unstake, their sUSDe is burned and the USDe moves to a separate silo contract. After the cooldown they call `unstake` to receive it. The contract's maximum is 90 days. The current value is an on-chain variable set by an admin role, and the documents disagree about it: one says 14 days, another says it is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The only reliable figure is the contract's `cooldownDuration`. Read on Ethereum on 23 November 2026, `cooldownDuration` on the sUSDe contract returned 86,400 seconds, one day, with `MAX_COOLDOWN_DURATION` at 90 days. An admin can change it, so treat that reading as a dated observation.
 
 The reward flow is partly off chain. The documentation says a subsidiary of the Ethena Foundation calculates APY weekly and distributes rewards through a StakingRewardsDistributor contract, in several smaller payments through the following week, so reward flows can differ from a rate inferred from the latest eight-hour window. The documentation also says sUSDe accrues only positive or flat rewards, and that negative revenue is meant to fall on the reserve fund. Both statements describe a policy of the protocol, not a property the contract enforces.
 
@@ -184,10 +193,10 @@ ENA is the governance token. It governs the composition of backing, the introduc
 
 The documentation names seven categories: funding, liquidation, custodial, exchange failure, backing assets, stablecoin-related, and margin collateral. In plain terms:
 
-- **Funding.** Negative funding means paying to hold the hedge.
+- **Funding.** Negative funding means paying to hold the hedge. The funding rate is set on the venues where the short is held, for example on an order-book exchange such as [Hyperliquid](/protocols/hyperliquid), where it is paid hourly.
 - **Liquidation of the short.** The short loses when prices rise and needs margin. A fast move can require more margin than can be posted in time.
 - **Custody and exchange.** Custodian or exchange failure, freeze or dispute.
 - **Backing assets.** A staking token used as collateral can depeg from the asset that hedges it.
 - **Stablecoin and margin.** Linear perpetuals are margined in USDT, which leaves the issuer long USDT.
 
-Liquidity is the risk that is easy to miss. A holder who cannot mint or redeem directly exits through a market, so the price on that market sets the exit, whatever the backing is worth. The same page says about 0.5 percent of backing is typically kept in stablecoin form in the minting contract for on-demand redemptions, replenished from the roughly 4 percent of backing held as stablecoins. Those percentages are the page's own and may be out of date, so treat them as a prompt to check the dashboard. Larger redemptions need the backing to be unwound first. See [stablecoin mechanisms](/concepts/stablecoin-mechanisms) for the family comparison and [collateralized and synthetic dollars compared](/compare/collateralized-vs-synthetic-dollars) for a side-by-side with Sky.
+Liquidity is the risk that is easy to miss. A holder who cannot mint or redeem directly exits through a market, so the price on that market sets the exit, whatever the backing is worth. The peg arbitrage page says about 0.5 percent of backing is typically kept in stablecoin form in the minting contract for on-demand redemptions, replenished from the roughly 4 percent of backing held as stablecoins. Those percentages are the page's own and may be out of date, so treat them as a prompt to check the dashboard. Larger redemptions need the backing to be unwound first. See [stablecoin mechanisms](/concepts/stablecoin-mechanisms) for the family comparison and [collateralized and synthetic dollars compared](/compare/collateralized-vs-synthetic-dollars) for a side-by-side with Sky.

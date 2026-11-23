@@ -25,6 +25,7 @@ protocols:
   - ethena
   - spark
   - pendle
+  - safe
 glossary:
   - oracle
   - proxy

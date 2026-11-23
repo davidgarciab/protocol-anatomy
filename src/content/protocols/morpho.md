@@ -5,7 +5,10 @@ description: "How Morpho Blue isolates each loan in its own immutable market, ho
 summary: "Morpho is a lending base layer. One small immutable contract holds many isolated markets, each with one collateral, one loan asset, one oracle, one rate model and one liquidation threshold. Vaults chosen by curators route deposits, and Midnight adds fixed-rate, fixed-term loans priced by trade, not by utilization."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
+changes:
+  - date: "2026-11-23"
+    summary: "Replaced a press report that could not be read with Morpho's own Midnight documentation, and noted the five chains where Midnight parameters are enabled."
 faq:
   - question: "How is Morpho Blue different from Aave?"
     answer: "Aave lists many assets in one pool with parameters set by governance. Morpho Blue holds many separate markets, each pairing one collateral with one loan asset and fixing the oracle, interest rate model and LLTV forever at creation. Anyone can create a market from approved parameters, and a loss in one market does not reach another."
@@ -103,10 +106,10 @@ sources:
     url: "https://docs.morpho.org/get-started/resources/addresses"
     kind: "docs"
     publisher: "Morpho"
-  - title: "Morpho expands fixed-rate Midnight markets to Ethereum"
-    url: "https://thedefiant.io/news/defi/morpho-expands-fixed-rate-midnight-markets-to-ethereum"
-    kind: "research"
-    publisher: "The Defiant"
+  - title: "Midnight: what is Midnight?"
+    url: "https://docs.morpho.org/learn/concepts/midnight/"
+    kind: "docs"
+    publisher: "Morpho"
 ---
 
 Aave and Compound were built as pools. Many assets sit in one contract, governance decides which ones count as collateral, and every supplier shares the same risk budget. Morpho starts from a smaller question: what is the least a lending contract can do, if every risk choice is made when a market is created and cannot be changed afterward?
@@ -178,7 +181,7 @@ Most depositors do not choose among markets. They deposit into a vault, and a cu
 
 Caps come in two forms, an absolute amount and a share of the vault, and attach to abstract risk ids such as a collateral asset or an oracle and LLTV pair. An *adapter* translates between the vault and a venue and reports its value through `realAssets()`. Fees can include a performance fee of up to 50 percent of yield and a management fee of up to 5 percent of assets, both set by the curator. Idle assets sit in the vault, and the liquidity adapter receives new deposits and covers withdrawals when idle assets run short.
 
-The losses described above reach vault depositors differently by version, and the [curation concept page](/concepts/isolated-markets-and-curation) lists the differences. The practical point is that a vault's share price is a lagging record of what happened inside markets.
+The losses described above reach vault depositors differently by version, and the [curation concept page](/concepts/isolated-markets-and-curation) lists the differences. The practical point is that a vault's share price is a lagging record of what happened inside markets. [Euler](/protocols/euler) has the same curator and allocator structure in its EulerEarn vaults, over single-asset vaults that can accept each other as collateral.
 
 ## Midnight
 
@@ -186,7 +189,7 @@ Midnight, listed in the docs as the fixed-rate protocol beside Blue, drops the u
 
 Before maturity a position can be partially liquidated once debt exceeds its limit. After maturity, unpaid debt can be liquidated in part or in full. If liquidation does not cover the debt, losses can be spread to lenders through a *market loss factor*. Credit is redeemable one-for-one, net of fees and losses, up to the loan tokens available to withdraw. Lenders in a market are exposed to the whole accepted collateral set, not only to what borrowers actually posted.
 
-The addresses page lists separate Midnight contracts on Ethereum, Arc, Base, Robinhood Chain and Tempo. A press report at the time of reading said that vaults, which hold a large balance, could not yet allocate to Midnight pending DAO action. That is a governance state that can change, so check the current documentation.
+The addresses page lists separate Midnight contracts on Ethereum, Arc, Base, Robinhood Chain and Tempo, and the [Midnight concept page](https://docs.morpho.org/learn/concepts/midnight/) says its governance-approved parameters are enabled on those five chains. A market's id includes its chain id and contract address, so the same configuration on two chains is two markets. Which vaults can allocate to Midnight is a governance and curator state that can change, so check the current documentation.
 
 ## Governance and what is trusted
 
