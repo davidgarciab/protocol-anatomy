@@ -129,4 +129,4 @@ When collateral is exhausted and debt remains, the shortfall is a [bad debt](/gl
 - **SparkLend:** the same, plus dependence on Sky governance and on the Liquidity Layer for depth.
 - **Morpho:** the oracle and LLTV of the specific market, the curator and version of any vault, and thin markets. A market with little borrowed can have a manipulable share price, as the docs warn.
 
-For the design argument see [isolated markets and curation](/concepts/isolated-markets-and-curation). For the oracle layer all three depend on, see [oracles and dependencies](/concepts/oracles-and-dependencies).
+For the design argument see [isolated markets and curation](/concepts/isolated-markets-and-curation). Two more designs sit between these poles: [Compound III](/protocols/compound), a pool with a single borrowable asset, and [Euler](/protocols/euler), where vault-to-vault collateral links make a market as isolated or as pooled as its curator chooses. For the oracle layer all three depend on, see [oracles and dependencies](/concepts/oracles-and-dependencies).

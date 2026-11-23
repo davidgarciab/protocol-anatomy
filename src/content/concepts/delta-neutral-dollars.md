@@ -23,6 +23,7 @@ tags:
 protocols:
   - ethena
   - maker-sky
+  - hyperliquid
 glossary:
   - usde
   - susde

@@ -7,7 +7,7 @@ import { pagePath } from '../../lib/site';
 
 const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
 const protocols = new Map((await getCollection('protocols')).map((entry) => [entry.id, entry.data.title]));
-const description = 'Side-by-side comparisons of lending, vault minting, AMM pricing, balance accounting and liquidation across Aave, Uniswap, Maker, Curve and Lido.';
+const description = 'Side-by-side comparisons of lending, vault minting, AMM pricing, balance accounting and liquidation across the protocols this site covers.';
 ---
 
 <BaseLayout title="Compare DeFi protocols: lending, AMMs, stablecoins, staking" description={description}>

@@ -5,8 +5,10 @@ description: "How Uniswap prices swaps, tracks liquidity-provider claims, and se
 summary: "Uniswap is an automated market maker. A swap moves the reserves of a pool and the pool’s invariant sets the price. v2 spreads fungible liquidity across every price. v3 and v4 concentrate it between ticks. v4 keeps that pricing and changes the contracts around it: one PoolManager, flash settlement, and optional hooks."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
 changes:
+  - date: "2026-11-23"
+    summary: "Noted that protocol fees now cover all v2 and v3 pools on 11 chains, and added the UniswapX auction-types page to back the Ethereum exclusivity window."
   - date: "2026-10-29"
     summary: "Replaced the vague protocol-fee note with the UNIfication fee switch, the TokenJar and Firepit, and the v4 fee activation, and added how UniswapX orders are filled."
   - date: "2026-10-26"
@@ -69,6 +71,10 @@ sources:
     publisher: "Uniswap Agora"
   - title: "UniswapX overview"
     url: "https://developers.uniswap.org/docs/liquidity/uniswapx/overview"
+    kind: "docs"
+    publisher: "Uniswap"
+  - title: "UniswapX auction types"
+    url: "https://developers.uniswap.org/docs/liquidity/uniswapx/concepts/auction-types"
     kind: "docs"
     publisher: "Uniswap"
   - title: "How Uniswap works"
@@ -185,7 +191,7 @@ A v3 swap walks the current tick range, then crosses into the next initialized t
 
 The v4 architecture page says v4 keeps v3’s capital efficiency and adds hooks, a singleton, and flash accounting. All pools live in `PoolManager`. Creating a pool writes state instead of deploying a new pair contract. A multi-pool swap does not have to transfer the intermediate token; the manager records deltas and settles at the end. The docs call that flash accounting.
 
-[Hooks](/glossary/hook/) are optional. The hooks documentation says a pool with no hook uses the same concentrated-liquidity behavior as v3. If a hook is set, it is part of the pool key passed to `initialize` and cannot be added or swapped later. The hooks documentation lists callbacks around initialize, liquidity changes, swaps, and donate. The hook declares which of those it implements by flags in its address. The architecture page also describes custom accounting: a hook can charge a fee or opt out of the concentrated-liquidity curve. A hooked pool follows that curve only when its hook leaves the curve in place. The pool will call whatever code was hashed into the pool key.
+[Hooks](/glossary/hook/) are optional. The hooks documentation says a pool with no hook uses the same concentrated-liquidity behavior as v3. If a hook is set, it is part of the pool key passed to `initialize` and cannot be added or swapped later. The hooks documentation lists callbacks around initialize, liquidity changes, swaps, and donate. The hook declares which of those it implements by flags in its address. The architecture page also describes custom accounting: a hook can charge a fee or opt out of the concentrated-liquidity curve. A hooked pool follows that curve only when its hook leaves the curve in place. The pool will call whatever code was hashed into the pool key. [Balancer V3](/protocols/balancer) takes a similar route with hooks on a shared Vault, and [Euler](/protocols/euler) attaches hooks to lending vaults.
 
 The launch post dated 31 January 2025 says v4 was live on Ethereum, Polygon, Arbitrum, OP Mainnet, Base, BNB Chain, Blast, World Chain, Avalanche, and Zora. The [Uniswap Foundation’s announcement](https://uniswapfoundation.org/blog/uniswap-v4-supercharging-defi-across-chains) of the same day lists twelve chains, adding Ink and Soneium to that list. Treat the chain list as time-specific. The architectural claims above are about the contract design, not about which deployment an interface routes through today.
 
@@ -203,13 +209,13 @@ For most of Uniswap's history the protocol fee was a switch that governance coul
 
 As proposed, fees roll out in stages. On v2 the LP fee drops from 0.30 percent to 0.25 percent and the 0.05 percent difference becomes a protocol fee. On v3 the protocol fee starts at one quarter of the LP fee for the 0.01 percent and 0.05 percent pools and one sixth for the 0.30 percent and 1 percent pools. Fees from each source go through an adapter into an immutable contract called the **TokenJar**. The only way to withdraw from it is another contract, the **Firepit**, and it requires UNI to be burned. The proposal also burned 100 million UNI from the treasury as a retroactive adjustment, set Uniswap Labs' interface, wallet and API fees to zero, and approved a 20 million UNI annual growth budget.
 
-Rollout then continued through separate votes. A February 2026 temp check described fees as running on v2 and a curated set of v3 pools on Ethereum mainnet and proposed extending them to eight more chains and to all v3 pools through a tier-based adapter. A proposal to activate v4 fees, Part 1 of 2, was executed on 27 July 2026 on the governance dashboard. It sets a fee adapter as the protocol fee controller on each chain's pool manager, with fees applied to three pool families: pools with a static fee and no hooks, pools launched after a continuous clearing auction, and aggregator hook pools. Its stated examples map a 5 basis point LP fee to a 1.25 basis point protocol fee and a 25 basis point LP fee to 4. The first vote covered Ethereum, Arbitrum, Base, BNB Chain, Polygon, Optimism and Robinhood Chain, and left five further chains for a later proposal. The dashboard lists an expansion to Arc as executed on 5 October 2026.
+Rollout then continued through separate votes. A February 2026 temp check described fees as running on v2 and a curated set of v3 pools on Ethereum mainnet and proposed extending them to eight more chains and to all v3 pools through a tier-based adapter. A proposal to activate v4 fees, Part 1 of 2, was executed on 27 July 2026 on the governance dashboard. The proposal text says protocol fees were by then live across all v2 and v3 pools on 11 chains, so the curated v3 list above no longer describes the rollout. It sets a fee adapter as the protocol fee controller on each chain's pool manager, with fees applied to three pool families: pools with a static fee and no hooks, pools launched after a continuous clearing auction, and aggregator hook pools. Its stated examples map a 5 basis point LP fee to a 1.25 basis point protocol fee and a 25 basis point LP fee to 4. The first vote covered Ethereum, Arbitrum, Base, BNB Chain, Polygon, Optimism and Robinhood Chain, and left five further chains for a later proposal. The dashboard lists an expansion to Arc as executed on 5 October 2026.
 
 Two consequences for a reader. The pool's fee is no longer one number: an LP earns the pool fee minus the protocol share, and the share differs by version, tier and chain. And "does this pool pay a protocol fee?" is a question about the adapter and the chain, so read it from the pool or the governance record, not from a page like this one.
 
 ## UniswapX and the router
 
-UniswapX is not a pool. The swapper signs an order, which authorizes a token transfer through Permit2 as long as the amounts received match a price that decays over time, and **fillers** compete to execute it. Because the filler pays the gas, the order is gasless for the swapper. On Ethereum the order first goes through a quote round, the best quoter gets a short exclusive window of about 24 seconds, and if that filler backs out the order falls into an open Dutch auction that anyone can fill. The realized price depends on when the first successful filler settles. A filler can route through Uniswap pools or any other liquidity.
+UniswapX is not a pool. The swapper signs an order, which authorizes a token transfer through Permit2 as long as the amounts received match a price that decays over time, and **fillers** compete to execute it. Because the filler pays the gas, the order is gasless for the swapper. On Ethereum the order first goes through a quote round (the [auction types](https://developers.uniswap.org/docs/liquidity/uniswapx/concepts/auction-types) page lists Ethereum as an RFQ plus exclusive Dutch auction), the best quoter gets a short exclusive window of about 24 seconds, and if that filler backs out the order falls into an open Dutch auction that anyone can fill. The realized price depends on when the first successful filler settles. A filler can route through Uniswap pools or any other liquidity.
 
 The consequence for analysis is that a swap through the Uniswap interface can be settled by a pool, by several pools, or by a filler's own inventory, and the on-chain pool never sees the order when a filler uses other liquidity. A pool's volume is therefore not all of Uniswap's trading.
 

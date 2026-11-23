@@ -28,6 +28,7 @@ tags:
 protocols:
   - lido
   - eigenlayer
+  - rocket-pool
 glossary:
   - steth
   - wsteth

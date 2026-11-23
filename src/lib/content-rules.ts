@@ -1,6 +1,6 @@
 import { SOURCE_KINDS, VERSION_STATUSES, type SourceKind, type VersionStatus } from './site';
 
-export const REQUIRED_PROTOCOLS = ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle'] as const;
+export const REQUIRED_PROTOCOLS = ['aave', 'uniswap', 'maker-sky', 'curve', 'lido', 'morpho', 'eigenlayer', 'ethena', 'spark', 'pendle', 'compound', 'balancer', 'chainlink', 'hyperliquid', 'rocket-pool', 'euler', 'aerodrome', 'safe'] as const;
 export const REQUIRED_GUIDES = [
   'aave-versions',
   'uniswap-versions',
@@ -12,6 +12,14 @@ export const REQUIRED_GUIDES = [
   'ethena-mint-and-exit',
   'spark-savings-and-liquidity',
   'pendle-maturity-and-collateral',
+  'compound-versions',
+  'balancer-versions',
+  'chainlink-reading-a-feed',
+  'hyperliquid-hypercore-and-hip-3',
+  'rocket-pool-minipools-and-megapools',
+  'euler-vault-types',
+  'aerodrome-velodrome-and-aero',
+  'safe-modules-guards-and-delegatecall',
 ] as const;
 export const REQUIRED_CONCEPTS = [
   'automated-market-makers',

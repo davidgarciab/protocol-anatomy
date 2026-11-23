@@ -8,7 +8,7 @@ import { questionGroups } from '../lib/questions';
 
 const groups = await questionGroups();
 const total = groups.reduce((sum, group) => sum + group.items.length, 0);
-const description = `${total} questions about how Aave, Uniswap, MakerDAO/Sky, Curve and Lido work, each answered from the cited documentation and linked to its article.`;
+const description = `${total} questions about how DeFi protocols such as Aave, Uniswap, Lido, Hyperliquid and Safe work, each answered from the cited documentation and linked to its article.`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -27,7 +27,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title="DeFi protocol questions answered: Aave, Uniswap, Maker, Curve, Lido" description={description} jsonLd={jsonLd}>
+<BaseLayout title="DeFi protocol questions answered, with sources" description={description} jsonLd={jsonLd}>
   <Header slot="header" />
   <main id="main" class="page">
     <header class="article-header">

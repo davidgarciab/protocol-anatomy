@@ -45,6 +45,7 @@ const pathname = Astro.url.pathname;
 const sources = data.sources as Source[];
 const versionContext = 'versionContext' in data ? data.versionContext : undefined;
 const pageUrl = canonicalUrl(pathname);
+const markdownPath = entry.collection === 'site' ? undefined : `${pathname.replace(/\/+$/, '')}.md`;
 const modified = lastModified(data);
 const changes = [...data.changes].sort((a, b) => b.date.localeCompare(a.date));
 const ogImage = `/og/${pathname.replace(/^\/+|\/+$/g, '')}.png`;
@@ -87,7 +88,8 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'TechArticle',
-      headline: data.title,
+      headline: (data.seoTitle ?? data.title).slice(0, 110),
+      alternativeHeadline: data.title,
       description: data.description,
       datePublished: data.published,
       dateModified: modified,
@@ -137,7 +139,18 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={data.seoTitle ?? data.title} description={data.description} type="article" jsonLd={jsonLd} ogImage={ogImage}>
+<BaseLayout
+  title={data.seoTitle ?? data.title}
+  description={data.description}
+  type="article"
+  jsonLd={jsonLd}
+  ogImage={ogImage}
+  published={data.published}
+  modified={modified}
+  section={kicker}
+  tags={data.tags}
+  markdownPath={markdownPath}
+>
   <Header slot="header" />
   <main id="main" class="page">
     <article>

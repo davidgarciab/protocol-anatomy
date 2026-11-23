@@ -5,8 +5,10 @@ description: "How Curve prices pegged assets with StableSwap, volatile assets wi
 summary: "Curve runs separate AMMs for pegged assets, volatile assets, and markets priced elsewhere. StableSwap flattens the price near a peg. CryptoSwap concentrates liquidity around a moving scale. FXSwap recenters that kind of curve with a refuel budget. Stableswap-NG is the pegged-pool factory."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
 changes:
+  - date: "2026-11-23"
+    summary: "Re-read the CryptoSwap gamma wording, which still contradicts itself, and added the LlamaLend v1 and v2 distinction from the crvUSD overview."
   - date: "2026-10-29"
     summary: "Added veCRV, gauges and the boost formula, and the July 2023 Vyper compiler incident that affected several Curve pools."
 faq:
@@ -163,7 +165,7 @@ K = A * K0 * γ^2 / (γ + 1 - K0)^2
 
 `A` still concentrates liquidity. The understanding-CryptoSwap page says an `A` of 10,000 in CryptoSwap corresponds to an `A` of 1 in StableSwap. Copying a stablecoin pool’s `A` into a tricrypto pool uses the wrong scale.
 
-`gamma` (γ) changes how the curve leaves the concentrated region. On 13 October 2026 that same page said two different things about the direction. One sentence says higher gamma pulls more liquidity in around the center. Later sentences say higher gamma spreads liquidity wider, and the parameterization note says a higher gamma with a lower `A` spreads liquidity across a wider range. Those instructions disagree. The linked CryptoSwap whitepaper is a PDF whose text did not extract reliably here, so this page does not pick a direction from the paper. Read the pool’s stored gamma against the formula above, and treat the prose page as unsettled until those sentences match.
+`gamma` (γ) changes how the curve leaves the concentrated region. When re-read on 23 November 2026, that same page still said two different things about the direction. One sentence says higher gamma pulls more liquidity in around the center. Later sentences say higher gamma spreads liquidity wider, and the parameterization note says a higher gamma with a lower `A` spreads liquidity across a wider range. Those instructions disagree. The linked CryptoSwap whitepaper is a PDF whose text did not extract reliably here, so this page does not pick a direction from the paper. Read the pool’s stored gamma against the formula above, and treat the prose page as unsettled until those sentences match.
 
 The internal price is a `price_scale` the pool updates. Liquidity concentrates around that scale. A trade away from it pays more slippage, which is the point: the pool is not offering v2-style depth at every price, and it is not offering StableSwap’s peg. The same page says a rebalance runs only after the internal price clears an adjustment step and the cost stays under half of the trading fees earned. If fees are too small, the center of liquidity can sit away from the market. That stuck state is a documented CryptoSwap failure mode.
 
@@ -175,7 +177,7 @@ The internal price is a `price_scale` the pool updates. Liquidity concentrates a
 
 The [crvUSD overview](https://docs.curve.finance/developer/crvusd/overview/) describes a stablecoin minted against approved collateral. The monetary mechanism is LLAMMA, an AMM that converts collateral toward the stablecoin as the collateral price falls, instead of a single auction at a liquidation ratio. Soft liquidation is a different idea from Aave’s `liquidationCall` or Maker’s `grab`.
 
-The same page versions the controller and AMM blueprints. V3 is described as the current blueprint on the controller factory. Existing markets keep the blueprint they were deployed with; setting a new implementation does not rewrite them. The overview lists markets on V1, V2, and V3. LlamaLend is a related lending deployment and is not the same contract family as a Stableswap-NG pool.
+The same page versions the controller and AMM blueprints. V3 is described as the current blueprint on the controller factory. Existing markets keep the blueprint they were deployed with; setting a new implementation does not rewrite them. The overview lists markets on V1, V2, and V3. LlamaLend is a related lending deployment and is not the same contract family as a Stableswap-NG pool. The overview says LlamaLend v1 adopted the V3 blueprint, while LlamaLend v2 is a separate Vyper 0.4.3 modular architecture, so a market's version decides which code it runs.
 
 Savings crvUSD (`scrvUSD`) is described there as a yield-bearing wrapper that takes a portion of borrower interest. It is another tokenized claim, not the StableSwap LP token.
 
@@ -187,7 +189,7 @@ Holders lock CRV for between one week and four years and receive **veCRV**, comp
 
 A **gauge** is the contract where a pool's LP tokens are staked to earn CRV. A pool becomes eligible for emissions when a DAO vote adds its gauge to the gauge controller, and gauge weights decide how much CRV each receives. The boost is the way veCRV reaches liquidity providers. The docs give it as `B = min(2.5, 1 + 1.5 × (your veCRV / total veCRV) / (your deposit / gauge total))`, between 1x and 2.5x. A provider with a small deposit in a large gauge and a large share of veCRV gets close to the maximum. A provider with none gets 1x. The page adds that the boost updates when a deposit, a withdrawal or a claim touches the gauge.
 
-Three reading notes. The invariant and the emissions are independent: gauge weights change a pool's CRV income, not its prices. A reported pool yield often includes boosted CRV, so a provider without veCRV should expect the low end of a range. And lock-based influence is concentrated by design, since four-year locks cost liquidity. The same mechanism appears in other protocols' governance, and [Pendle's move from vePENDLE to sPENDLE](/protocols/pendle) is a case of a protocol dropping it.
+Three reading notes. The invariant and the emissions are independent: gauge weights change a pool's CRV income, not its prices. A reported pool yield often includes boosted CRV, so a provider without veCRV should expect the low end of a range. And lock-based influence is concentrated by design, since four-year locks cost liquidity. The same mechanism appears in other protocols' governance, and [Pendle's move from vePENDLE to sPENDLE](/protocols/pendle) is a case of a protocol dropping it. [Aerodrome](/protocols/aerodrome) pushes the model further, with a weekly vote that directs nearly all emissions, and [Balancer](/protocols/balancer) retired veBAL in 2026.
 
 ## When the compiler was the bug: July 2023
 

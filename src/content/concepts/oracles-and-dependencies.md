@@ -23,6 +23,10 @@ protocols:
   - morpho
   - spark
   - pendle
+  - compound
+  - chainlink
+  - euler
+  - hyperliquid
 glossary:
   - oracle
   - health-factor

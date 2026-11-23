@@ -5,10 +5,10 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 
 const protocols = (await getCollection('protocols')).sort((a, b) => a.data.order - b.data.order);
-const description = 'Directory of the lending, exchange, stablecoin, and staking protocols covered by Protocol Anatomy.';
+const description = `${protocols.length} DeFi protocols explained from their docs and code: lending, exchanges, perpetuals, stablecoins, staking, oracles and multisigs.`;
 ---
 
-<BaseLayout title="DeFi protocols covered: Aave, Uniswap, Maker, Curve, Lido" description={description}>
+<BaseLayout title="DeFi protocols explained: lending, DEXs, staking, perps" description={description}>
   <Header slot="header" />
   <main id="main" class="page">
     <header class="article-header">

@@ -17,6 +17,7 @@ tags:
 protocols:
   - aave
   - maker-sky
+  - compound
 glossary:
   - utilization
   - reserve-factor

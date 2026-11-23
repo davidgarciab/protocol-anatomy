@@ -13,6 +13,8 @@ tags:
 protocols:
   - uniswap
   - curve
+  - balancer
+  - aerodrome
 glossary:
   - liquidity-pool
   - lp-share

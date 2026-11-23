@@ -5,7 +5,10 @@ description: "How EigenLayer lets staked ETH and tokens back other services, how
 summary: "EigenLayer is a set of contracts for restaking. Stakers deposit ETH through an EigenPod or tokens through a strategy, delegate to an operator, and the operator allocates slices of that stake to operator sets that services define. A service can slash only the stake allocated to its own set."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
+changes:
+  - date: "2026-11-23"
+    summary: "Added the October 2026 fix to queued slash share accounting, which came after the 1.13.0 release the page described."
 faq:
   - question: "How does EigenLayer slashing work?"
     answer: "A service calls the AllocationManager with an operator, an operator set, the strategies and a fraction to slash of each allocation. The contract reduces the operator's allocation and maximum magnitude, lowers its delegated shares, and marks the slashed shares as burnable or redistributable. Stakers see the effect as a smaller amount withdrawable. Slashing went live on Ethereum mainnet on 17 April 2025."
@@ -92,6 +95,10 @@ sources:
     url: "https://github.com/Layr-Labs/eigenlayer-contracts/blob/main/src/contracts/core/AllocationManager.sol"
     kind: "code"
     publisher: "Eigen Labs"
+  - title: "Fix: correct queued slash share accounting (pull request 1759)"
+    url: "https://github.com/Layr-Labs/eigenlayer-contracts/pull/1759"
+    kind: "code"
+    publisher: "Eigen Labs"
   - title: "Core contracts v1.13.0 release notes"
     url: "https://github.com/Layr-Labs/eigenlayer-contracts/releases/tag/v1.13.0"
     kind: "docs"
@@ -156,7 +163,7 @@ Two things follow that the shorthand "unique stake" can hide. The maximum falls 
 
 For native ETH there is a second factor. Inactivity and beacon chain slashing do not reduce deposit shares. They lower a *beacon chain slashing factor* that multiplies with the operator's. A deposit scaling factor, updated on each deposit, keeps a new deposit from being scaled by slashes that happened before it.
 
-Slashed shares are marked burnable or redistributable. Burned shares are converted to tokens and sent to a dead address. A redistributing set, created with its recipients fixed at creation, sends them there. Anyone can call the clearing functions once the delay passes. Release 1.13.0 added a mandatory slash resolution delay of 50,400 blocks, about seven days, before slashed shares can be cleared, and a separate pause flag for burning and redistribution.
+Slashed shares are marked burnable or redistributable. Burned shares are converted to tokens and sent to a dead address. A redistributing set, created with its recipients fixed at creation, sends them there. Anyone can call the clearing functions once the delay passes. Release 1.13.0 added a mandatory slash resolution delay of 50,400 blocks, about seven days, before slashed shares can be cleared, and a separate pause flag for burning and redistribution. A later fix, merged on 19 October 2026 under the name v1.13.1 in its release scripts, corrects a rounding mismatch in how queued withdrawals are counted as slashable, which could over-slash an operator with queued withdrawals by a wei-scale amount that grows with the number of queued stakers.
 
 ## What the core contracts check, and what they do not
 

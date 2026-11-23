@@ -58,17 +58,6 @@
     "why": "The accounting page quotes AToken.balanceOf, which multiplies the scaled balance by normalized income."
   },
   {
-    "id": "aave-v3-wad-ray",
-    "kind": "github-file",
-    "repo": "aave/aave-v3-core",
-    "path": "contracts/protocol/libraries/math/WadRayMath.sol",
-    "ref": "master",
-    "articles": [
-      "src/content/concepts/on-chain-accounting.md"
-    ],
-    "why": "The half-up ray multiplication used for aToken balances is quoted from this file."
-  },
-  {
     "id": "aave-v3-pool",
     "kind": "github-file",
     "repo": "aave/aave-v3-core",
@@ -208,61 +197,6 @@
     "why": "NG factory behavior, including how new pools are deployed and that existing pools stay immutable, is part of the Curve version guide."
   },
   {
-    "id": "uniswap-v3-sqrt-price-math",
-    "kind": "github-file",
-    "repo": "Uniswap/v3-core",
-    "path": "contracts/libraries/SqrtPriceMath.sol",
-    "ref": "main",
-    "articles": [
-      "src/content/concepts/concentrated-liquidity.md"
-    ],
-    "why": "The concentrated-liquidity page quotes the token0 and token1 delta comments and the v3 signed rounding direction from this file."
-  },
-  {
-    "id": "uniswap-v3-liquidity-amounts",
-    "kind": "github-file",
-    "repo": "Uniswap/v3-periphery",
-    "path": "contracts/libraries/LiquidityAmounts.sol",
-    "ref": "main",
-    "articles": [
-      "src/content/concepts/concentrated-liquidity.md"
-    ],
-    "why": "The three price-versus-range branches for how much of each token a position holds come from getAmountsForLiquidity."
-  },
-  {
-    "id": "uniswap-v4-sqrt-price-math",
-    "kind": "github-file",
-    "repo": "Uniswap/v4-core",
-    "path": "src/libraries/SqrtPriceMath.sol",
-    "ref": "main",
-    "articles": [
-      "src/content/concepts/concentrated-liquidity.md"
-    ],
-    "why": "v4 uses the same delta comments as v3 and the opposite sign on the signed helpers. A change to either would affect the concentrated-liquidity page."
-  },
-  {
-    "id": "uniswap-v4-liquidity-amounts",
-    "kind": "github-file",
-    "repo": "Uniswap/v4-periphery",
-    "path": "src/libraries/LiquidityAmounts.sol",
-    "ref": "main",
-    "articles": [
-      "src/content/concepts/concentrated-liquidity.md"
-    ],
-    "why": "v4 getLiquidityForAmounts repeats the three range branches and takes the minimum liquidity inside the range."
-  },
-  {
-    "id": "uniswap-v2-library",
-    "kind": "github-file",
-    "repo": "Uniswap/v2-periphery",
-    "path": "contracts/libraries/UniswapV2Library.sol",
-    "ref": "master",
-    "articles": [
-      "src/content/concepts/constant-product.md"
-    ],
-    "why": "The worked swap and the swap calculator use getAmountOut from this file."
-  },
-  {
     "id": "aave-v3-origin-generic-logic",
     "kind": "github-file",
     "repo": "aave-dao/aave-v3-origin",
@@ -345,5 +279,78 @@
       "src/content/concepts/yield-tokenization.md"
     ],
     "why": "The market parameters and swap functions described in the Pendle pages are read from this contract."
+  },
+  {
+    "id": "comet-main",
+    "kind": "github-file",
+    "repo": "compound-finance/comet",
+    "path": "contracts/CometWithExtendedAssetList.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/compound.md",
+      "src/content/guides/compound-versions.md",
+      "src/content/guides/chainlink-reading-a-feed.md"
+    ],
+    "why": "The absorb, buyCollateral and getPrice excerpts and the asset limit on the Compound pages are read from this contract."
+  },
+  {
+    "id": "safe-contract-main",
+    "kind": "github-file",
+    "repo": "safe-global/safe-smart-account",
+    "path": "contracts/Safe.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/safe.md",
+      "src/content/guides/safe-modules-guards-and-delegatecall.md"
+    ],
+    "why": "The execTransaction order and signature types described on the Safe pages are read from this contract."
+  },
+  {
+    "id": "safe-changelog",
+    "kind": "github-file",
+    "repo": "safe-global/safe-smart-account",
+    "path": "CHANGELOG.md",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/safe.md",
+      "src/content/guides/safe-modules-guards-and-delegatecall.md"
+    ],
+    "why": "The Safe version differences and the unreleased changes listed on the Safe pages come from this changelog."
+  },
+  {
+    "id": "aerodrome-docs-emissions",
+    "kind": "github-file",
+    "repo": "aerodrome-finance/docs",
+    "path": "content/emissions.mdx",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/aerodrome.md",
+      "src/content/guides/aerodrome-velodrome-and-aero.md"
+    ],
+    "why": "The emissions schedule and rebase formula on the Aerodrome page are taken from this file, and the merger into Aero may change it."
+  },
+  {
+    "id": "balancer-v3-vault",
+    "kind": "github-file",
+    "repo": "balancer/balancer-v3-monorepo",
+    "path": "pkg/vault/contracts/Vault.sol",
+    "ref": "main",
+    "articles": [
+      "src/content/protocols/balancer.md",
+      "src/content/guides/balancer-versions.md"
+    ],
+    "why": "The unlock, settlement and transient accounting behavior described on the Balancer pages is implemented in this contract."
+  },
+  {
+    "id": "euler-vault-kit-main",
+    "kind": "github-file",
+    "repo": "euler-xyz/euler-vault-kit",
+    "path": "README.md",
+    "ref": "master",
+    "articles": [
+      "src/content/protocols/euler.md",
+      "src/content/guides/euler-vault-types.md"
+    ],
+    "why": "The EVK vault description on the Euler pages is based on this repository and the Euler docs."
   }
 ]

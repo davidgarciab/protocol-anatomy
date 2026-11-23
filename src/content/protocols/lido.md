@@ -5,8 +5,10 @@ description: "How Lido turns staked ether into stETH shares, reports validator b
 summary: "Lido is a liquid staking protocol for ether. A deposit mints shares in a pool of validators. stETH rebases so balances track the pool. wstETH wraps those shares into a static balance. Exiting is a queued withdrawal finalized by an accounting report, not a transfer of the liquid token."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
 changes:
+  - date: "2026-11-23"
+    summary: "Pointed the Curated Module v2 phase dates at the module overview page and re-checked the stVaults, oracle and withdrawal figures."
   - date: "2026-10-29"
     summary: "Added the StakingRouter module and fee structure, Curated Module v2 and the Community Staking Module with their operator bonds and reward shares."
   - date: "2026-10-26"
@@ -68,6 +70,10 @@ sources:
     publisher: "Lido"
   - title: "CSM context and background"
     url: "https://github.com/lidofinance/docs/blob/main/run-on-lido/csm/context-and-background.md"
+    kind: "docs"
+    publisher: "Lido"
+  - title: "Curated Module v2 overview"
+    url: "https://docs.lido.fi/run-on-lido/cm-v2/"
     kind: "docs"
     publisher: "Lido"
   - title: "Curated Module v2 node operator types"
@@ -150,7 +156,7 @@ Submitted ETH is not instantly one validator. Ethereum requires 32 ETH to activa
 
 ## Who runs the validators
 
-Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary/node-operator/) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key.
+Lido Core does not replace Ethereum’s validator set with a single contract. [Node operators](/glossary/node-operator/) run the validators. Which operators are admitted, and under which module, is a protocol and governance choice. In the basic Core deposit the user does not pick a validator. Rewards, downtime penalties, and slashings are Ethereum consensus events that later show up in the share rate. A transfer of stETH does not move a validator key. [Rocket Pool](/protocols/rocket-pool) makes the opposite choice: anyone can run a validator, and a bond of the operator's own ETH stands in front of the pooled stake.
 
 This is the main trust boundary of the pooled token. The token is liquid. The stake is operated by other parties, under Ethereum’s rules, with a governance process deciding the operator set.
 
@@ -160,7 +166,7 @@ Core does not hold a list of operators. A **StakingRouter** registers *staking m
 
 Two modules matter for a reader.
 
-**Curated Module v2** replaces the original permissioned list. Phase 1 is live on Ethereum mainnet, and the docs plan phase 2 for the first quarter of 2027. Operators are created through a gate that checks a Merkle proof, then a Curated Module Committee assigns them to an operator group and a stake weight. Without that assignment an operator receives no deposits. The docs list six operator types with different bonds and reward shares, for example Professional Trusted Operators with a bond of 11 ETH for the first key, 0.1 ETH for each of the next 17 and 0.7 ETH afterward, and a reward share of 3.5 percent, while public-good, decentralization and extra-effort operators receive 4 percent. New professional operators start on a trial profile with a lower share and half the allocation weight. This module uses 0x02 withdrawal credentials.
+**Curated Module v2** replaces the original permissioned list. Phase 1 is live on Ethereum mainnet, and the [overview page](https://docs.lido.fi/run-on-lido/cm-v2/) plans phase 2 for the first quarter of 2027. Operators are created through a gate that checks a Merkle proof, then a Curated Module Committee assigns them to an operator group and a stake weight. Without that assignment an operator receives no deposits. The docs list six operator types with different bonds and reward shares, for example Professional Trusted Operators with a bond of 11 ETH for the first key, 0.1 ETH for each of the next 17 and 0.7 ETH afterward, and a reward share of 3.5 percent, while public-good, decentralization and extra-effort operators receive 4 percent. New professional operators start on a trial profile with a lower share and half the allocation weight. This module uses 0x02 withdrawal credentials.
 
 **The Community Staking Module (CSM)** is permissionless. Anyone can create an operator, upload keys and post a bond in one transaction. The docs describe two modules sharing one interface: one for 0x01 validators capped at 32 ETH and one for 0x02 validators of up to 2,048 ETH. The first offers three profiles. A default operator posts 2.4 ETH for the first key and 1.3 ETH for each further key, and receives 3.5 percent of rewards, with 6.5 percent going to the DAO. A verified independent staker profile posts 1.5 ETH for the first key and receives 6 percent on its first 16 keys. A verified distributed-validator cluster profile posts 1.5 ETH and then 0.5 ETH per key. The 0x02 module has one profile, posts 32 ETH for the first key and 30 ETH for later keys, and receives 2 percent. The docs say the 0x02 module launched with a stake-share limit of 0.01 percent that a committee raises in steps, so new keys can wait for the next increase before getting deposits.
 

@@ -12,6 +12,8 @@ tags:
   - utilization
 protocols:
   - aave
+  - compound
+  - euler
 glossary:
   - utilization
   - atoken

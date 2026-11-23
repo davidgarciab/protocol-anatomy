@@ -24,6 +24,7 @@ tags:
 protocols:
   - uniswap
   - aave
+  - balancer
 glossary:
   - flash-loan
   - flash-accounting

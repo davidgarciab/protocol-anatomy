@@ -5,7 +5,10 @@ description: "How Spark turns Sky's stablecoin reserves into a money market, sav
 summary: "Spark is the capital allocator in the Sky ecosystem. SparkLend is an Aave V3 fork run conservatively, Spark Savings are ERC-4626 vaults that earn from allocations, and the Liquidity Layer moves stablecoins between governance-approved venues under rate limits. Governance runs through the Sky Atlas and the SPK token."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-23"
+changes:
+  - date: "2026-11-23"
+    summary: "Updated the SparkLend collateral set (rETH frozen, weETH, WBTC and cbBTC listed) and the governance process, since the Spark Risk Council was removed on 27 August 2026. Removed an unsupported airdrop date."
 faq:
   - question: "What is Spark in DeFi?"
     answer: "Spark is the ecosystem's liquidity and yield layer for the Sky stablecoin system. It has three products: SparkLend, a money market built from Aave V3 code and centered on USDS; Spark Savings, a set of ERC-4626 vaults that earn from allocations or Sky rates; and the Spark Liquidity Layer, a non-custodial allocator that deploys Sky's stablecoin reserves across DeFi, CeFi and real-world asset venues."
@@ -120,7 +123,7 @@ SparkLend is a fork of [Aave V3](/protocols/aave): tokens such as the supply rec
 
 Its documented risk features form a stack, and each is meant to fail independently of the others:
 
-- **A restricted collateral set.** ETH correlated collateral is limited to wstETH and rETH. BTC e-mode collateral was removed on a public timeline: noticed on the Sky forum, executed in the June 2026 spell, with remaining positions force-liquidated on 8 June 2026.
+- **A restricted collateral set.** On Ethereum the docs list WETH, wstETH, weETH, WBTC and cbBTC as the assets that can back new borrowing, with stablecoins borrow-only. The ETH e-mode category is used by WETH and wstETH, and rETH has been frozen since 23 April 2026. BTC e-mode collateral was removed on a public timeline: noticed on the Sky forum, executed in the June 2026 spell, with remaining positions force-liquidated on 8 June 2026.
 - **Caps.** Per-asset supply and borrow caps are set by Sky governance, and a Cap Automator scales them with market depth.
 - **Minimal rehypothecation.** Collateral supplied stays in the reserve.
 - **Rate limits** on cross-module flows: deposits, withdrawals, bridging and PSM swaps.
@@ -168,8 +171,8 @@ Spark's app also exposes Morpho-based isolated markets, each one collateral and 
 
 ## Governance
 
-Governance centers on the Spark Agent artifact in the Sky Atlas. It controls budgets, risk settings, asset onboarding, Liquidity Layer integrations and new chain deployments, and changes go through Atlas Root Edit proposals. SPK holders vote directly or delegate to whitelisted delegates. A proposal needs a proposer holding 1 percent of SPK supply, 100 million, or a nested contributor. A Spark Risk Council reviews for one week and can stop a risky or malicious proposal, and an operational facilitator checks alignment with the Atlas, before a Snapshot vote. SPK can be staked through Symbiotic's infrastructure. The airdrop claim period ended on 17 December 2025.
+Governance centers on the Spark Agent artifact in the Sky Atlas. It controls budgets, risk settings, asset onboarding, Liquidity Layer integrations and new chain deployments, and changes go through Atlas Root Edit proposals. SPK holders vote directly or delegate to whitelisted delegates. A proposal needs a proposer holding 1 percent of SPK supply, 100 million, or a nested contributor. An operational facilitator checks alignment with the Atlas within seven days, and then a three-day Snapshot vote needs more than 50 percent in favor. The docs say the Spark Risk Council, which earlier reviewed proposals and could stop a risky one, was removed from the Sky Atlas on 27 August 2026, so the facilitator review is now the only review before the vote. SPK can be staked through Symbiotic's infrastructure, with a minimum withdrawal delay of two weeks.
 
 ## What remains trusted
 
-SparkLend inherits Aave V3's contract risk and adds the parameter choices of Sky governance. The Liquidity Layer relies on the whitelist, limits and roles being right. Savings vaults rely on every venue the layer touches, and on layers of capital whose size is stated by Spark and Sky. The oracle stack reduces single-feed failure, not common-mode failure. Everything is upgraded through a governance process that the Risk Council can stop, but that a small number of delegates can steer in its bootstrapping phase, which the documentation itself notes.
+SparkLend inherits Aave V3's contract risk and adds the parameter choices of Sky governance. The Liquidity Layer relies on the whitelist, limits and roles being right. Savings vaults rely on every venue the layer touches, and on layers of capital whose size is stated by Spark and Sky. The oracle stack reduces single-feed failure, not common-mode failure. Everything is upgraded through a governance process in which a facilitator review is the only check before the vote, and a small number of whitelisted delegates can steer the vote.

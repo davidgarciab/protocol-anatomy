@@ -16,6 +16,7 @@ protocols:
   - uniswap
   - curve
   - lido
+  - safe
 glossary:
   - proxy
   - usds

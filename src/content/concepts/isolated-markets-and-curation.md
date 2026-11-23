@@ -24,6 +24,7 @@ protocols:
   - morpho
   - aave
   - spark
+  - euler
 glossary:
   - isolated-market
   - lltv

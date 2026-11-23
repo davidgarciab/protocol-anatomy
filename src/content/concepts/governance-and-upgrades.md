@@ -20,6 +20,8 @@ protocols:
   - lido
   - curve
   - eigenlayer
+  - safe
+  - aerodrome
 glossary:
   - proxy
   - hub
