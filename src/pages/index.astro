@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, pagePath } from '../lib/site';
+import { SITE, authorJsonLd, organizationJsonLd, pagePath, websiteJsonLd } from '../lib/site';
 import { groupLabel } from '../lib/relate';
 import { featuredQuestions } from '../lib/questions';
 
@@ -19,10 +19,14 @@ const homeDescription = `How ${protocols.length} DeFi protocols work, from Aave 
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: SITE.name,
-  url: SITE.url,
-  description: homeDescription,
+  '@graph': [
+    {
+      ...websiteJsonLd(),
+      description: homeDescription,
+      creator: { '@id': authorJsonLd()['@id'] },
+    },
+    organizationJsonLd(),
+  ],
 };
 ---
 
