@@ -16,6 +16,7 @@ const jsonLd = {
   '@type': 'ProfilePage',
   url: canonicalUrl('/about/'),
   name: `About ${SITE.name}`,
+  isPartOf: { '@id': `${SITE.url}/#website` },
   mainEntity: authorJsonLd(),
 };
 ---
