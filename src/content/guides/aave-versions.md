@@ -4,8 +4,10 @@ description: "What changed in Aave’s accounting, risk, and liquidation between
 summary: "V3 gathers supply and debt for a market inside one Pool and reprices every position when risk parameters change. V4 keeps utilization interest at an immutable hub, lets spokes define markets, and adds a collateral risk premium plus a target-health-factor liquidation."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-23"
 changes:
+  - date: "2026-11-23"
+    summary: "Added the BabylonSpoke liquidation variant from the V4 overview, which the guide had not covered."
   - date: "2026-10-26"
     summary: "Updated the V4 status to the September 2026 update’s network list and corrected who can refresh a position’s dynamic risk configuration."
 order: 1
@@ -102,6 +104,8 @@ V3 liquidations are sized by a close factor. The V4 overview states the V3 defau
 V4 removes that default. The liquidator repays what is required to reach a spoke-wide target health factor, which must be at least the liquidation threshold of 1. A Dutch-style bonus then pays more as the health factor falls, between a minimum set by `liquidationBonusFactor` and the collateral’s maximum bonus. Dust rules can enlarge the repayment so a position is not left with a tiny remainder. The overview sets that dust threshold at 1,000 USD of value. If collateral is gone and debt remains, the shortfall is a deficit. Another spoke can cover it by spending supplied shares through `eliminateDeficit`.
 
 The bonus formula in the overview is linear between the liquidation threshold and `healthFactorForMaxBonus`. It is a function of health factor at the start of the call, not an on-chain auction that runs across blocks. “Dutch auction” in that document is the shape of the bonus, and it should not be confused with Maker’s collateral auction.
+
+The overview also documents a variant that departs from all of this. The BabylonSpoke accepts native BTC locked through Babylon’s Trustless Bitcoin Vaults as its single collateral reserve, which can never be borrowed. Each user has at most one collateral and one debt reserve, there is no liquidation fee, and the canonical `liquidationCall` reverts. Liquidations run only through a liquidation manager fixed at deployment, with a cap on the collateral removed and no target-health-factor sizing. A V4 position on that spoke is therefore not liquidated the way the rest of this section describes.
 
 ## What did not change
 
