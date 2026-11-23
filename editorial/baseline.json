@@ -49,6 +49,11 @@
     "observedAt": "2026-11-23",
     "url": "https://github.com/aerodrome-finance/docs/commit/c9dc6a72ea10a1312109d9250d8e8a1bf6e0a173"
   },
+  "balancer-v3-vault": {
+    "observed": "d567abd7e2292d12eaa17f09df9080fa0fced9d3",
+    "observedAt": "2026-11-23",
+    "url": "https://github.com/balancer/balancer-v3-monorepo/commit/d567abd7e2292d12eaa17f09df9080fa0fced9d3"
+  },
   "comet-main": {
     "observed": "f766f51583c23acc33b2a7824654ef2029a96804",
     "observedAt": "2026-11-23",
