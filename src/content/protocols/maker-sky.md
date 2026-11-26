@@ -5,8 +5,10 @@ description: "How Maker vaults account for collateral and DAI debt, and how Sky�
 summary: "Maker’s Vat is a ledger of collateral and stablecoin debt. A vault locks collateral, draws DAI, and pays a stability fee that accrues by raising a per-collateral rate. Sky keeps a one-for-one path between DAI and USDS and adds a savings token, sUSDS, without replacing the vault ledger with an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Flagged where Sky’s own pages disagree about the MKR converter and SKY minting, and corrected the auction starting price."
   - date: "2026-11-23"
     summary: "Added the MKR to SKY migration status, the SKY supply cap and the delayed-upgrade penalty from the Sky documentation."
   - date: "2026-10-29"
@@ -120,6 +122,10 @@ sources:
     url: "https://github.com/sky-ecosystem/usds"
     kind: "code"
     publisher: "Sky"
+  - title: "SKY token and MKR converter"
+    url: "https://developers.skyeco.com/protocol/tokens/sky/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "SUsds.sol"
     url: "https://github.com/sky-ecosystem/sdai/blob/susds/src/SUsds.sol"
     kind: "code"
@@ -170,13 +176,13 @@ The [stability fee](/glossary/stability-fee/) is therefore not a utilization cur
 
 A vault is unsafe when `art * rate` exceeds `ink * spot`. `grab` is the Vat function that confiscates it: collateral (`ink`) and normalized debt (`art`) are taken off the urn, and the debt is recorded as `sin`, the system’s unbacked debt. The Vat documentation is explicit that `grab` is how vaults are liquidated at the ledger layer.
 
-Selling the seized collateral is a different module. A keeper calls `Dog.bark` on an unsafe vault. The [collateral liquidation documentation](https://developers.skyeco.com/protocol/vaults/collateral-liquidation/) says `bark` confiscates the vault, sends its collateral to that collateral type’s `Clipper`, adds the debt to the Vow’s bad-debt accumulator, and starts a Dutch auction whose starting price is read from the Oracle Security Module. The auction aims to raise `tab`, the debt plus the liquidation penalty `chop`, and it does not sell more collateral than that needs. Liquidation is not a fixed close factor inside the Vat. The docs say `bark` takes all of the debt by default, but `Dog` also keeps a global `Hole` and a per-collateral `hole` on the stablecoin that active auctions may need to raise. When a new auction would exceed them, `dog.sol` performs a partial liquidation, and it will not leave a dusty remainder in the vault. If the auction does not cover the debt, `sin` remains until surplus or governance absorbs it.
+Selling the seized collateral is a different module. A keeper calls `Dog.bark` on an unsafe vault. The [collateral liquidation documentation](https://developers.skyeco.com/protocol/vaults/collateral-liquidation/) says `bark` confiscates the vault, sends its collateral to that collateral type’s `Clipper`, adds the debt to the Vow’s bad-debt accumulator, and starts a Dutch auction whose starting price is the Oracle Security Module price scaled up by a configured factor. The auction aims to raise `tab`, the debt plus the liquidation penalty `chop`, and it does not sell more collateral than that needs. Liquidation is not a fixed close factor inside the Vat. The docs say `bark` takes all of the debt by default, but `Dog` also keeps a global `Hole` and a per-collateral `hole` on the stablecoin that active auctions may need to raise. When a new auction would exceed them, `dog.sol` performs a partial liquidation, and it will not leave a dusty remainder in the vault. If the auction does not cover the debt, `sin` remains until surplus or governance absorbs it.
 
 ## USDS, the converter, and savings
 
 Sky’s token docs describe USDS as an ERC-20 with permit support, upgradeable through the UUPS pattern and ERC-1967 storage. The [DAI–USDS converter](https://developers.skyeco.com/protocol/tokens/usds/) exchanges the two tokens at one-to-one in both directions. The same page says no fee is charged and that a fee cannot be enabled later on that route. The converter is a convenience over the joins. It does not reprice DAI.
 
-The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary/sky-savings-rate/). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
+The [token routes](https://developers.skyeco.com/quick-start/protocol-token-routes/) also fix MKR to SKY at 1:24,000, a rate that the delayed-upgrade penalty described below has since reduced for MKR converted late. They describe sUSDS as an ERC-4626 deposit of USDS into the [Sky Savings Rate](/glossary/sky-savings-rate/). sUSDS and the older sDAI token are not one-for-one, because each has accrued a different rate since it launched. The sUSDS contract stores an accumulator `chi` and a rate `ssr`. Share-to-asset conversion uses that accumulator, so a transfer of sUSDS transfers a claim whose USDS value changes, while the USDS stays in the savings module.
 
 The routes page points DAI–USDC and USDS–USDC conversion at LitePSM-style contracts. The [LitePSM page](https://developers.skyeco.com/protocol/liquidity/litepsm/) describes swaps with no slippage against a pool of pre-minted DAI or USDS, so availability is limited by that pool, and it says fees have not been activated and could change. That is a Curve-free version of the [peg stability module](/glossary/peg-stability-module/) idea: it can hold the market price near one dollar only while its pool has inventory. It does not make a vault safer.
 
@@ -188,7 +194,7 @@ Maker began as a system in which every unit of DAI was backed by a vault. Sky de
 
 This changes what a USDS holder is exposed to. The [Sky Savings Rate](/glossary/sky-savings-rate/) behind sUSDS is, per the same documentation, funded by protocol revenue, including fees from collateralized loans and returns from capital deployed across the agent network, and it is set by a governance vote, not by utilization. The documentation also states that sUSDS holders are not exposed to a specific agent's performance. That sentence describes the intended separation. The loss layers that stand behind it, which Spark's documentation lists, are the agent's own junior capital first, then the layers above it.
 
-The last layer is a token. Sky describes SKY as the protocol's ultimate backstop: if the system is undercollateralized after the other layers are exhausted, it can mint and sell SKY to recapitalize. The same page says this has never been triggered. SKY stakers also vote on protocol parameters, and surplus can flow back to them through buybacks and distributions. Sky's page says 22 percent of monthly net protocol revenue goes to a Core Council buffer. The same page records the MKR to SKY migration: governance approved a fixed 1 to 24,000 conversion in August 2024 and capped total SKY supply at 23,462,665,147 in November 2024, with no programmatic emissions. It says about 90.5 percent of MKR had migrated, and that unconverted MKR faces a delayed-upgrade penalty that began in September 2025 at 1 percent fewer SKY per MKR and grows by 1 percent every three months. The page lists both the supply cap and the recapitalization mint without saying how the two fit together, so treat the mint as a last-resort governance action, not a scheduled issuance.
+The last layer is a token. Sky describes SKY as the protocol's ultimate backstop: if the system is undercollateralized after the other layers are exhausted, it can mint and sell SKY to recapitalize. The same page says this has never been triggered. SKY stakers also vote on protocol parameters, and surplus can flow back to them through buybacks and distributions. Sky's page says 22 percent of monthly net protocol revenue goes to a Core Council buffer. The same page records the MKR to SKY migration: governance approved a fixed 1 to 24,000 conversion in August 2024 and capped total SKY supply at 23,462,665,147 in November 2024, with no programmatic emissions and no future minting. It says about 90.5 percent of MKR had migrated, and that unconverted MKR faces a delayed-upgrade penalty that began in September 2025 at 1 percent fewer SKY per MKR and grows by 1 percent every three months. The developer portal’s [SKY page](https://developers.skyeco.com/protocol/tokens/sky/) still describes a two-way, fee-free converter at 1:24,000, which does not mention the penalty. The documentation page also states both “no future minting” and a recapitalization mint without saying how the two fit together. Check the converter and the token’s mint authority on chain before relying on either statement.
 
 ## Emergency shutdown is now an archive page
 

@@ -5,8 +5,10 @@ description: "How Spark turns Sky's stablecoin reserves into a money market, sav
 summary: "Spark is the capital allocator in the Sky ecosystem. SparkLend is an Aave V3 fork run conservatively, Spark Savings are ERC-4626 vaults that earn from allocations, and the Liquidity Layer moves stablecoins between governance-approved venues under rate limits. Governance runs through the Sky Atlas and the SPK token."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Updated the Liquidity Layer integrations and networks after the September offboarding and November deprecations, and re-sourced the stUSDS description to Sky."
   - date: "2026-11-23"
     summary: "Updated the SparkLend collateral set (rETH frozen, weETH, WBTC and cbBTC listed) and the governance process, since the Spark Risk Council was removed on 27 August 2026. Removed an unsupported airdrop date."
 faq:
@@ -63,6 +65,10 @@ versions:
     status: "active"
     note: "Operating since November 2024 by Spark's account. Non-custodial allocator under governance-set rate limits."
 sources:
+  - title: "stUSDS"
+    url: "https://developers.skyeco.com/protocol/tokens/stusds/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "Spark documentation"
     url: "https://docs.spark.fi/"
     kind: "docs"
@@ -132,7 +138,7 @@ Its documented risk features form a stack, and each is meant to fail independent
 - **A variable close factor.** If health factor is below 1 but above 0.95, up to 50 percent of debt can be covered in a liquidation. At or below 0.95, up to 100 percent. The [collateral and liquidation page](/concepts/collateral-and-liquidation) discusses what this does to liquidator incentives.
 - **Granular borrowing-power control.** Governance can reduce an asset's borrowing power to zero without immediately liquidating existing borrowers.
 
-SparkLend is also fed from the Liquidity Layer. When utilization runs high, the layer can move USDS, USDC and USDT in to let withdrawals and liquidations clear, and out when other venues offer a better risk-adjusted return. That makes Spark, in the documentation's phrase, the largest depositor in its own market, which gives its liquidity a source that ordinary suppliers' do not have. It also means SparkLend's depth depends on an allocator's decisions.
+SparkLend is also fed from the Liquidity Layer. When utilization runs high, the layer can move stablecoins such as USDS, USDC and USDT, or WETH, in to let withdrawals and liquidations clear, and out when other venues offer a better risk-adjusted return. That makes Spark, in the documentation's phrase, the largest depositor in its own market, which gives its liquidity a source that ordinary suppliers' do not have. It also means SparkLend's depth depends on an allocator's decisions.
 
 SparkLend on Gnosis Chain has been deprecated: the markets are frozen, remaining borrow positions are being liquidated, and suppliers can still withdraw. The Ethereum market is unaffected.
 
@@ -153,17 +159,17 @@ Two roles operate it. A `RELAYER` moves capital between approved venues, and a `
 
 A worked example of a rate limit. Suppose a venue has a maximum of 100 million and a slope of 10 million per day. If the relayer uses all of it, the available amount is zero. After one day it is 10 million, after five days 50 million, and after ten days it is back at the ceiling. A compromised relayer can therefore move at most the ceiling at once and the slope thereafter. These numbers are illustrative, not Spark's configuration.
 
-The documented integrations are broad: USDS minting through the Sky allocation system and one-to-one conversion with DAI, PSM swaps between USDS and USDC, Circle's cross-chain USDC transfer and LayerZero bridging, Aave-compatible markets including SparkLend and Aave V3, ERC-4626 vaults including Spark-curated Morpho vaults, Curve pools restricted to one-to-one stablecoin pools, Uniswap V4 stablecoin pools restricted to hookless one-to-one pools, OTC desks, Ethena USDe minting and sUSDe cooldowns, Lido and ether.fi staking, Maple redemptions, Superstate subscriptions and SPK farm staking. Supported networks include Ethereum, Base, Arbitrum, Optimism, Unichain, Avalanche, Robinhood and X Layer.
+The documented integrations are broad: USDS minting through the Sky allocation system and one-to-one conversion with DAI, PSM swaps between USDS and USDC, Circle’s cross-chain USDC transfer and LayerZero bridging, Aave-compatible markets such as SparkLend, ERC-4626 vaults including Spark-curated Morpho vaults, Curve pools restricted to one-to-one stablecoin pools, Uniswap V4 stablecoin pools restricted to hookless one-to-one pools, OTC desks, Lido and ether.fi staking, and SPK farm staking. The set shrinks as well as grows. The documentation says the 10 September 2026 spell set to zero the rate limits for Ethena minting and sUSDe cooldowns, Maple redemptions and Superstate subscriptions, among others, and an April spell wound down the Aave V3 allocations. It lists Ethereum, Base, Arbitrum, Avalanche, Robinhood and X Layer as supported networks, with Optimism and Unichain deprecated in November 2026.
 
-Most of those venues have their own pages here: [Morpho](/protocols/morpho), [Ethena](/protocols/ethena), [Lido](/protocols/lido), [Curve](/protocols/curve), [Uniswap](/protocols/uniswap) and [Aave](/protocols/aave). Spark's yield is the sum of their risks, bounded by Spark's limits.
+Several of those venues have their own pages here, including [Morpho](/protocols/morpho), [Lido](/protocols/lido), [Curve](/protocols/curve) and [Uniswap](/protocols/uniswap). Spark’s yield is the sum of the risks of the venues in use, bounded by Spark’s limits.
 
 ## Spark Savings
 
-Savings vaults are ERC-4626 tokens. The documentation lists the current set: spUSDC, spUSDT, spPYUSD, spETH and spUSDG as Spark V2 vaults that earn through the Liquidity Layer, sUSDS and stUSDS as Sky products with rates set by Sky governance, and legacy vaults sUSDC V1 and sDAI. Different vaults have different yield sources, operators and risk profiles.
+Savings vaults are ERC-4626 tokens. The documentation lists the current set: spUSDC, spUSDT, spPYUSD, spETH and spUSDG as Spark V2 vaults that earn through the Liquidity Layer, sUSDS as a Sky product with its rate set by Sky governance, and legacy vaults sUSDC V1 and sDAI. Different vaults have different yield sources, operators and risk profiles. Savings on Optimism and Unichain is deprecated and withdrawal-only.
 
 The V2 vaults hold a liquidity buffer of up to 10 million for atomic withdrawals. Larger withdrawals use *savings liquidity intents*: the user signs a request for any amount, and the Liquidity Layer fulfils it, usually within a few minutes, according to the documentation. The documentation also says a vault can be put into recovery mode, temporarily halting withdrawals so all users are treated equally.
 
-The documented loss-absorbing layers for the USD vaults, from first to last: Spark's own junior risk capital, other Primes' junior capital, a planned senior risk token (srUSDS), Sky's surplus buffer, an aggregate surplus buffer, a SKY mint to recapitalize, and only then equal losses across USDS holders. The documentation puts Spark's stablecoin equity at over 35 million. Read that list as the intended order, written by the party that runs the vaults. spETH is described as backed by Spark's balance sheet and insurance. stUSDS lends USDS against SKY collateral and carries, per the documentation, potential liquidity constraints and no automatic liquidations.
+The documented loss-absorbing layers for the USD vaults, from first to last: Spark's own junior risk capital, other Primes' junior capital, a planned senior risk token (srUSDS), Sky's surplus buffer, an aggregate surplus buffer, a SKY mint to recapitalize, and only then equal losses across USDS holders. The documentation puts Spark's stablecoin equity at over 35 million. Read that list as the intended order, written by the party that runs the vaults. spETH is described as backed by Spark's balance sheet and insurance. [stUSDS](https://developers.skyeco.com/protocol/tokens/stusds/), a related Sky token that the Spark savings list did not include when re-read on 26 November 2026, is described by Sky as risk capital that funds SKY-backed borrowing and absorbs a greater share of system risk.
 
 ## Isolated Markets
 

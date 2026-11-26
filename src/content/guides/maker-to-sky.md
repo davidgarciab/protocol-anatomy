@@ -1,11 +1,13 @@
 ---
 title: "From Maker vaults to Sky tokens"
 description: "Which Maker accounting Sky still uses, and which names changed with DAI, USDS, MKR, and SKY."
-summary: "Sky did not replace the Vat with a new stablecoin design. DAI remains the internal stablecoin debt. USDS is a one-for-one ERC-20 path onto that debt. sUSDS is a savings vault. MKR converts to SKY at a fixed 24,000-to-1 rate. The vault safety check is still art times rate against ink times spot."
+summary: "Sky did not replace the Vat with a new stablecoin design. DAI remains the internal stablecoin debt. USDS is a one-for-one ERC-20 path onto that debt. sUSDS is a savings vault. MKR converts to SKY at a base rate of 24,000 SKY per MKR, less a delayed-upgrade penalty. The vault safety check is still art times rate against ink times spot."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Added the MKR delayed-upgrade penalty, which changes the conversion the guide had described as a fixed 24,000-to-1 rate."
   - date: "2026-10-26"
     summary: "Replaced the Maker documentation links, which now redirect to the Sky portal, with their new Sky pages, and corrected the LitePSM constraints."
 order: 3
@@ -75,6 +77,14 @@ sources:
     url: "https://github.com/sky-ecosystem/usds"
     kind: "code"
     publisher: "Sky"
+  - title: "Sky Protocol: capital allocation and the Sky Savings Rate"
+    url: "https://insights.skyeco.com/sky-documentation"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "SKY token and MKR converter"
+    url: "https://developers.skyeco.com/protocol/tokens/sky/"
+    kind: "docs"
+    publisher: "Sky"
   - title: "SUsds.sol"
     url: "https://github.com/sky-ecosystem/sdai/blob/susds/src/SUsds.sol"
     kind: "code"
@@ -98,9 +108,11 @@ The [protocol token routes](https://developers.skyeco.com/quick-start/protocol-t
 | Route | Documented rate | Constraint worth remembering |
 | --- | --- | --- |
 | DAI ↔ USDS | 1:1, both directions | No fee, and the USDS page says a fee cannot be added later on this converter |
-| MKR ↔ SKY | 1 MKR = 24,000 SKY | Fixed conversion, not a market price |
+| MKR ↔ SKY | 1 MKR = 24,000 SKY | Base rate, not a market price. Sky’s documentation also reports a delayed-upgrade penalty on late MKR conversion; see below |
 | USDS ↔ sUSDS | ERC-4626 share price | Not 1:1 with sDAI, because the two savings tokens have accrued different rates |
 | DAI or USDS ↔ USDC | Peg-module swap | Limited by the pool of pre-minted DAI or USDS behind LitePSM and its USDS wrapper. Fees are inactive today and could change. Not a curve |
+
+The MKR row needs a caveat that the routes page does not give. The [Sky documentation](https://insights.skyeco.com/sky-documentation) says a delayed-upgrade penalty took effect in September 2025: a holder converting MKR receives 1 percent less SKY, and the reduction grows by a further 1 percent every three months. The developer portal’s [SKY page](https://developers.skyeco.com/protocol/tokens/sky/) still describes the converter as two-way, fee-free and fixed at 1:24,000. The two cannot both describe the current converter, so read its terms on chain before quoting a conversion.
 
 DAI is still in the table. The docs do not tell holders that DAI is frozen or that it must be converted. An integration can keep using DAI, USDS, or both, and should not assume balances are interchangeable without the converter. They are the same face value only after that conversion, not the same ERC-20 address.
 
@@ -120,7 +132,7 @@ The old Maker documentation host no longer serves its module pages. When this pu
 
 - Price DAI and USDS as the same unit only along the documented converter, and do not pool them one-for-one with sUSDS, stUSDS, or sDAI.
 - Display vault debt as `art * rate` after `drip`, not as the stored `art`.
-- Treat SKY as the governance token at the fixed conversion from MKR, and do not infer a market rate of 24,000 from the converter. The converter is the peg between the two governance tokens, in the same way the DAI converter is a peg between the two stablecoin tokens.
+- Treat SKY as the governance token that MKR converts into. Do not assume 24,000 SKY per MKR: apply whatever delayed-upgrade penalty the converter currently charges, and do not treat the base rate as a market price.
 - Expect USDS upgradeability. Do not expect the Vat’s safety check to be upgradeable in the same way; changes there are governance actions on a live ledger, which is its own risk, documented as authorization on Vat functions rather than as a UUPS token.
 
 The system can still fail the way a collateralized stablecoin fails: an oracle writes a bad `spot`, an auction does not cover `sin`, or governance raises a ceiling the collateral cannot support. The new tickers do not change that list.

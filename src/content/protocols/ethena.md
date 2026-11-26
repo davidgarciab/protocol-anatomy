@@ -5,8 +5,10 @@ description: "How Ethena's USDe stays near a dollar with hedged backing, who can
 summary: "Ethena issues USDe, a synthetic dollar backed by assets whose price risk is hedged with short futures, plus stable assets. Approved counterparties mint and redeem against signed prices. Everyone else trades it on markets, and holders can stake it as sUSDe, an ERC-4626 vault paid from protocol revenue."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Recorded that the sUSDe cooldown was set to zero on 26 November 2026, and noted a documentation conflict about who runs the gatekeepers."
   - date: "2026-11-23"
     summary: "Recorded the sUSDe cooldown read on-chain on 23 November 2026 and attributed the stablecoin-backing percentages to the peg arbitrage page, and noted that USDtb is a separate stablecoin issued by Anchorage Digital Bank."
 faq:
@@ -19,7 +21,7 @@ faq:
   - question: "How does sUSDe earn yield?"
     answer: "sUSDe is an ERC-4626 vault. Reward payments of USDe are added to the staking contract and vest linearly over eight hours, which raises the USDe value of each sUSDe. The protocol states that sUSDe accrues only positive or flat rewards, with negative revenue meant to be absorbed by the reserve fund."
   - question: "How long does it take to unstake sUSDe?"
-    answer: "Unstaking goes through a cooldown, a parameter the contract caps at 90 days. Ethena's documents give different current figures, including 14 days in the contract overview and between 1 and 7 days in the staking page, so read cooldownDuration on the staking contract before relying on any number."
+    answer: "Unstaking can go through a cooldown, a parameter the contract caps at 90 days. Ethena’s documents give different figures, including 14 days in the contract overview and between 1 and 7 days in the staking page, and the contract itself read zero on 26 November 2026. Read cooldownDuration on the staking contract before relying on any number."
   - question: "Where are Ethena's backing assets held?"
     answer: "With regulated custodians, named in the documentation as Copper, Ceffu, Kraken and Anchorage Digital, under an arrangement called off-exchange settlement. The custodian delegates margin value to an exchange without transferring the assets, and profit and loss settle on frequent cycles, generally daily."
 order: 8
@@ -60,6 +62,10 @@ versions:
     status: "active"
     note: "A separate dollar stablecoin that the documentation says is issued by Anchorage Digital Bank."
 sources:
+  - title: "sUSDe cooldown change transaction"
+    url: "https://etherscan.io/tx/0xe8735ccfa1a5ff9321d5b907271179731cd11699a466728c124c78794fb21cd1"
+    kind: "code"
+    publisher: "Ethereum"
   - title: "Ethena overview"
     url: "https://docs.ethena.fi/"
     kind: "docs"
@@ -157,7 +163,7 @@ USDe is an ERC-20 whose contract has a single `minter` address, set by its owner
 
 Minting works by signed order. A user, in practice an approved market maker, signs an EIP-712 order against a price Ethena supplies off chain. The order goes to Ethena's backend, which runs checks and submits it on chain. By design, Ethena is the only caller of `mint()` and `redeem()`. A `route` parameter says where the incoming assets go and must be one of the registered custodian addresses, so funds end up with custodians within a single transaction. Redemption pays from backing assets the minting contract holds for the purpose, and a large redemption may take several blocks.
 
-Three controls limit damage if the minter key is compromised. An on-chain limit applies to the amount minted and redeemed per block. `GATEKEEPER` roles can disable minting and redemption and remove minters. Only the default admin role can re-enable them. The documentation also says gatekeepers run in separate accounts that Ethena does not control.
+Three controls limit damage if the minter key is compromised. An on-chain limit applies to the amount minted and redeemed per block. `GATEKEEPER` roles can disable minting and redemption and remove minters. Only the default admin role can re-enable them. The contract overview says gatekeepers would run in separate accounts not tied to Ethena, while the [key trust assumptions](https://docs.ethena.fi/technical-design/key-trust-assumptions) page says the role is distributed both inside Ethena Labs and among external stakeholders.
 
 Ethena states that it earns no profit from minting or redeeming, since slippage and execution costs are included in the price. Direct mint and redeem is open only to approved market-making counterparties after KYC and KYB checks. Everyone else acquires USDe on external pools and exchanges, which is also how the peg is arbitraged. The peg arbitrage page describes approved users minting when USDe trades above a dollar on an external market and redeeming when it trades below.
 
@@ -175,7 +181,7 @@ sUSDe is the staked form of USDe. The staking contract is the ERC-4626 vault fro
 
 **Vested rewards.** When the rewarder role sends USDe to the contract, the amount vests linearly over eight hours. The contract's asset count excludes the unvested portion, so a staker cannot deposit just before a payment and withdraw just after it. A worked case with round numbers: 1,000,000 USDe is staked against 1,000,000 sUSDe, so each is worth 1.0000 USDe. A reward of 3,000 USDe arrives. Four hours later half has vested and each sUSDe is worth 1.0015. After eight hours each is worth 1.0030, and the value continues from there until the next payment.
 
-**Cooldown.** The contract can require a cooldown before USDe is withdrawn. When a holder starts to unstake, their sUSDe is burned and the USDe moves to a separate silo contract. After the cooldown they call `unstake` to receive it. The contract's maximum is 90 days. The current value is an on-chain variable set by an admin role, and the documents disagree about it: one says 14 days, another says it is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The only reliable figure is the contract's `cooldownDuration`. Read on Ethereum on 23 November 2026, `cooldownDuration` on the sUSDe contract returned 86,400 seconds, one day, with `MAX_COOLDOWN_DURATION` at 90 days. An admin can change it, so treat that reading as a dated observation.
+**Cooldown.** The contract can require a cooldown before USDe is withdrawn. When a holder starts to unstake, their sUSDe is burned and the USDe moves to a separate silo contract. After the cooldown they call `unstake` to receive it. The contract's maximum is 90 days. The current value is an on-chain variable set by an admin role, and the documents disagree about it: one says 14 days, another says it is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The only reliable figure is the contract's `cooldownDuration`. Read on Ethereum on 23 November 2026, `cooldownDuration` on the sUSDe contract returned 86,400 seconds, one day. Three days later, on 26 November, it returned zero, after [a transaction in block 26,498,715](https://etherscan.io/tx/0xe8735ccfa1a5ff9321d5b907271179731cd11699a466728c124c78794fb21cd1) changed it, with `MAX_COOLDOWN_DURATION` still at 90 days. At zero, the contract turns off `cooldownAssets` and `cooldownShares`, restores the ordinary ERC-4626 `withdraw` and `redeem`, and lets holders claim USDe already waiting in the silo. An admin can change it again, so treat each reading as a dated observation.
 
 The reward flow is partly off chain. The documentation says a subsidiary of the Ethena Foundation calculates APY weekly and distributes rewards through a StakingRewardsDistributor contract, in several smaller payments through the following week, so reward flows can differ from a rate inferred from the latest eight-hour window. The documentation also says sUSDe accrues only positive or flat rewards, and that negative revenue is meant to fall on the reserve fund. Both statements describe a policy of the protocol, not a property the contract enforces.
 
