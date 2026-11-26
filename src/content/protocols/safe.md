@@ -5,7 +5,10 @@ description: "How Safe smart accounts turn an owner threshold into an onchain ch
 summary: "Safe is a widely used multisig smart account for DAO and protocol treasuries. A Safe is a proxy whose logic checks that a threshold of owner signatures matches a transaction hash. Modules can bypass that threshold, guards can restrict it, and a delegatecall can rewrite the account, which is why what signers see before signing matters as much as the contract."
 status: "published"
 published: "2026-11-23"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Removed a five-of-nine figure for Morpho governance that the Morpho documentation no longer states."
 faq:
   - question: "What is a Safe and how does it differ from a normal wallet?"
     answer: "A Safe is a smart contract account, not a key pair. Its address can receive funds like any other, but a transaction executes only if enough owners have signed a hash of it. The owner list and a threshold, such as 3 of 5, are stored in the contract. Owners can be externally owned accounts, other contracts or passkeys."
@@ -83,7 +86,7 @@ sources:
     publisher: "NCC Group"
 ---
 
-Many protocols on this site end in a multisig. [Aave](/protocols/aave) has guardians, [Balancer](/protocols/balancer) has an emergency subDAO, and [Morpho](/protocols/morpho) has a five-of-nine governance multisig. The word "multisig" hides a contract, and NCC Group calls Safe a widely used multi-signature wallet solution. This page explains what it does, where its flexibility becomes risk, and why the largest theft in crypto history involved one without breaking it.
+Many protocols on this site end in a multisig. [Aave](/protocols/aave) has guardians, [Balancer](/protocols/balancer) has an emergency subDAO, and [Morpho](/protocols/morpho) governance acts through multisigs. The word "multisig" hides a contract, and NCC Group calls Safe a widely used multi-signature wallet solution. This page explains what it does, where its flexibility becomes risk, and why the largest theft in crypto history involved one without breaking it.
 
 The [guide](/guides/safe-modules-guards-and-delegatecall) covers modules, guards and delegatecall in more detail.
 

@@ -5,8 +5,10 @@ description: "How Morpho Blue isolates each loan in its own immutable market, ho
 summary: "Morpho is a lending base layer. One small immutable contract holds many isolated markets, each with one collateral, one loan asset, one oracle, one rate model and one liquidation threshold. Vaults chosen by curators route deposits, and Midnight adds fixed-rate, fixed-term loans priced by trade, not by utilization."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Removed a five-of-nine multisig figure that the cited governance page no longer states, and a leftover press-report note on Midnight."
   - date: "2026-11-23"
     summary: "Replaced a press report that could not be read with Morpho's own Midnight documentation, and noted the five chains where Midnight parameters are enabled."
 faq:
@@ -60,7 +62,7 @@ versions:
     note: "Adapter-based vaults with absolute and relative caps, timelocks and a sentinel role."
   - name: "Midnight"
     status: "active"
-    note: "Fixed-rate, fixed-term markets with separate contracts. Press reports said vaults could not yet allocate to it pending DAO action."
+    note: "Fixed-rate, fixed-term markets with separate contracts and their own deployed addresses."
 sources:
   - title: "Morpho markets"
     url: "https://docs.morpho.org/learn/concepts/market"
@@ -193,6 +195,6 @@ The addresses page lists separate Midnight contracts on Ethereum, Arc, Base, Rob
 
 ## Governance and what is trusted
 
-The documentation says the core contract is immutable and that governance is limited. Its powers are to enable new LLTVs and rate models, to switch on a fee up to 25 percent and set its recipient, and to control the MORPHO token and treasury. Approved actions are carried out by a five-of-nine multisig. The same page lists no timelock for those actions, so a depositor relies on the narrowness of the powers, not on a delay.
+The documentation says the core contract is immutable and that governance is limited. Its powers are to enable new LLTVs and rate models, to switch on a fee up to 25 percent and set its recipient, and to control the MORPHO token and treasury. Approved actions are implemented by governance multisigs whose members governance chooses. When re-read on 26 November 2026, the page listed those addresses but stated no signing threshold and no timelock, so read both from the contracts. A depositor’s main protection here is how narrow the powers are.
 
 What remains trusted: each market's oracle and its operator, the curator of any vault, the vault's version and its adapters, the front end and the data indexers a user relies on, and, in Midnight, offer makers and the solver or router that builds a take. The core contract's small size is its argument for safety, but it does not audit a market's inputs.

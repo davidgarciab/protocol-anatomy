@@ -5,8 +5,10 @@ description: "How Morpho's names map to contracts: Blue markets, V1 and V2 vault
 summary: "'Morpho V2' is not a replacement for Blue. Blue is the variable-rate core and stays. Vaults V2 is a newer vault design that can allocate across protocols. Midnight is a separate fixed-rate, fixed-term protocol. This guide separates the three so an integrator or lender knows which contract a name points to."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Attributed the Vaults V2 launch order to the announcement, and corrected where the announcement says waiting lenders can earn a variable rate."
   - date: "2026-11-23"
     summary: "Removed a sentence that relied on a press report, and pointed readers to each vault page for whether it allocates to Midnight."
 faq:
@@ -45,7 +47,7 @@ versions:
     note: "First vault generation. V1.0 realizes bad debt when it occurs. V1.1 does not and leaves it in the market."
   - name: "Vaults V2"
     status: "active"
-    note: "Adapter-based vaults with caps on risk ids, timelocks and a sentinel role. Reported to launch before Midnight."
+    note: "Adapter-based vaults with caps on risk ids, timelocks and a sentinel role. The V2 announcement planned to launch them before Midnight."
   - name: "Midnight"
     status: "active"
     note: "Fixed-rate, fixed-term, offer-based markets. Announced with V2 and deployed as separate contracts."
@@ -119,7 +121,7 @@ Morpho describes the offer mechanism as signed offers published by makers. Borro
 
 Liquidation differs from Blue. Before maturity a position can be partially liquidated when debt exceeds its limit. After maturity, unpaid debt can be partly or fully liquidated, and losses that liquidation does not cover can be socialized to lenders through a market loss factor. Lenders are exposed to the market's full accepted collateral set.
 
-The same announcement says Vaults V2 can allocate to Blue, to Midnight and to later releases, and that a lender can earn variable yield on Blue while waiting for a Midnight offer to match. Whether a particular vault has been set up to allocate to Midnight is current state, not design, so confirm it on the vault's own page.
+The same announcement says Vaults V2 can allocate to Blue, to Midnight and to later releases, and that a lender can earn a variable rate on Morpho V1 or other protocols while waiting for a Midnight offer to match. Whether a particular vault has been set up to allocate to Midnight is current state, not design, so confirm it on the vault's own page.
 
 ## What to check before relying on a name
 
