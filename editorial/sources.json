@@ -60,14 +60,15 @@
   {
     "id": "aave-v3-pool",
     "kind": "github-file",
-    "repo": "aave/aave-v3-core",
-    "path": "contracts/protocol/pool/Pool.sol",
-    "ref": "master",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/pool/Pool.sol",
+    "ref": "main",
     "articles": [
       "src/content/protocols/aave.md",
-      "src/content/concepts/flash-liquidity.md"
+      "src/content/concepts/flash-liquidity.md",
+      "src/content/comparisons/pooled-vs-isolated-lending.md"
     ],
-    "why": "The Aave overview cites Pool.supply, and the flash-liquidity page describes the V3 flash-loan entry points on this pool."
+    "why": "The Aave overview quotes Pool.supply, and the flash-liquidity page cites the flash-loan premium split in this file."
   },
   {
     "id": "uniswap-v3-pool",

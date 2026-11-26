@@ -4,7 +4,10 @@ description: "How Uniswap v2 flash swaps, v3 flash, v4 deltas, and Aave V3 flash
 summary: "These mechanisms all hand a transaction liquidity it must replace before the call ends. v2 enforces that with the swap product check. v3 charges the pool fee inside flash. v4 reverts unless every delta is settled before unlock returns. Aave V3 can take a fee or, on flashLoan, open debt instead."
 status: "published"
 published: "2026-10-14"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Corrected where the Aave flash-loan premium goes: to the treasury since V3.4, although one docs page still describes a split."
 faq:
   - question: "Why can a flash loan be offered without collateral?"
     answer: "Because the pool sends tokens, or records a debt, and the same call has to make the pool whole. If it does not, the transaction reverts and the send never happened. Uniswap v2, v3, v4, and Aave V3 all use that atomicity, with different functions, fees, and end states."
@@ -33,6 +36,14 @@ related:
   - on-chain-accounting
   - constant-product
 sources:
+  - title: "Aave V3 Pool"
+    url: "https://www.aave.com/docs/aave-v3/smart-contracts/pool"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Pool.sol in aave-v3-origin"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/pool/Pool.sol"
+    kind: "code"
+    publisher: "Aave"
   - title: "Uniswap v2 flash swaps"
     url: "https://developers.uniswap.org/docs/protocols/v2/guides/flash-swaps"
     kind: "docs"
@@ -119,7 +130,7 @@ Aave’s flash-loan docs describe a different menu. The pool will send a reserve
 
 `flashLoan` can take several reserves in one call. The borrower may open a variable-rate debt position backed by supplied collateral or credit delegation. The flash fee is waived for approved flash borrowers, which the ACL manager controls. `flashLoanSimple` takes one reserve. The docs say its fee is not waived, and that it cannot open a debt position. It is the smaller call for a borrower that will repay in full.
 
-The fee is initialized at deployment to 0.05 percent and can be changed by a governance vote. The current value is `FLASHLOAN_PREMIUM_TOTAL`, not the initialization number. Part of that premium can go to liquidity providers and part to the protocol treasury. This page does not read the live premium from a deployment. A contract that hardcodes 0.05 percent is assuming a parameter.
+The fee is initialized at deployment to 0.05 percent and can be changed by a governance vote. The current value is `FLASHLOAN_PREMIUM_TOTAL`, not the initialization number. The flash-loan page still describes a split of that premium between liquidity providers and the treasury. The [Pool reference](https://www.aave.com/docs/aave-v3/smart-contracts/pool) says instead that since V3.4 the whole premium goes to the treasury, and `FLASHLOAN_PREMIUM_TO_PROTOCOL` in the [current code](https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/pool/Pool.sol) returns 100 percent. This page does not read the live premium from a deployment. A contract that hardcodes 0.05 percent is assuming a parameter.
 
 If `flashLoan` opens a debt position, the transaction can succeed and leave a normal Aave borrow behind. That borrow is then subject to [health factor and liquidation](/concepts/collateral-and-liquidation). Atomicity protected the flash. It did not retire the debt. `flashLoanSimple` does not have that branch.
 

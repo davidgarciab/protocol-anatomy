@@ -5,8 +5,10 @@ description: "Aave lends out other suppliers' deposits at a utilization-based ra
 summary: "Aave and Maker both take collateral and issue debt, but the debt comes from different places. Aave borrowers draw tokens that suppliers deposited, and the rate follows utilization. Maker borrowers mint a stablecoin that did not exist before, and governance sets the fee. The collateral check, the accrual index, and the failure mode follow from that."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Updated Aave’s shortfall handling to V3 deficit accounting and Umbrella."
   - date: "2026-10-29"
     summary: "Added a pointer to the pooled and isolated lending comparison."
 faq:
@@ -37,6 +39,14 @@ tags:
   - stablecoins
   - interest
 sources:
+  - title: "Aave V3 Pool"
+    url: "https://www.aave.com/docs/aave-v3/smart-contracts/pool"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave Umbrella"
+    url: "https://aave.com/docs/aave-v3/umbrella"
+    kind: "docs"
+    publisher: "Aave"
   - title: "Aave V4 overview"
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
     kind: "docs"
@@ -100,7 +110,7 @@ An Aave supplier’s yield is the borrowers’ interest, routed through the liqu
 
 ## How each one fails
 
-In both designs the residual loss is bad debt. If Aave collateral is worth less than the debt after liquidation, later suppliers and the reserve’s own accounting bear the shortfall until governance does something else. If a Maker auction does not raise enough stablecoin, the system keeps unbacked debt (`sin`) until surplus cancels it. The [collateral and liquidation](/concepts/collateral-and-liquidation) article compares the two liquidation paths in detail, and [liquidation compared](/compare/liquidation-compared) sets them next to crvUSD.
+In both designs the residual loss is bad debt. If Aave collateral runs out while debt remains, V3 since release 3.3 records the shortfall as a [deficit on the reserve](https://www.aave.com/docs/aave-v3/smart-contracts/pool). [Umbrella](https://aave.com/docs/aave-v3/umbrella) can cover it from staked assets, after a first-loss amount the DAO covers. A deficit that nothing covers leaves the reserve owed less than it owes its suppliers. If a Maker auction does not raise enough stablecoin, the system keeps unbacked debt (`sin`) until surplus cancels it. The [collateral and liquidation](/concepts/collateral-and-liquidation) article compares the two liquidation paths in detail, and [liquidation compared](/compare/liquidation-compared) sets them next to crvUSD.
 
 ## What they share
 

@@ -5,8 +5,10 @@ description: "Health factors, vault ratios and LLAMMA bands compared: when a pos
 summary: "Aave closes part of a debt when a health factor falls below 1 and pays the liquidator a bonus. Maker confiscates the whole vault in the Vat and sells the collateral through a separate auction. crvUSD converts collateral gradually as the price moves through bands. The residue in each design is bad debt."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Noted that Aave V3 records bad debt as a reserve deficit."
   - date: "2026-10-29"
     summary: "Added Morpho Blue, which has no close factor and a bonus derived from the LLTV, and SparkLend’s variable close factor."
 faq:
@@ -37,6 +39,10 @@ tags:
   - collateral
   - risk
 sources:
+  - title: "Aave V3 Pool"
+    url: "https://www.aave.com/docs/aave-v3/smart-contracts/pool"
+    kind: "docs"
+    publisher: "Aave"
   - title: "Aave V4 overview"
     url: "https://github.com/aave/aave-v4/blob/main/docs/overview.md"
     kind: "docs"
@@ -81,7 +87,7 @@ Collateral is an asset the protocol can take if a debt is not covered, and liqui
 | How much is taken at once? | A [close factor](/glossary/close-factor/): half the debt by default, all of it in the cases below | Enough to restore a target health factor, unless dust rules force more | The vault is confiscated by `Dog.bark`, normally in full, or in part when the `Hole` limits on active auctions apply | Gradual, band by band |
 | Who sells the collateral? | The liquidator, who repays debt and receives collateral | The liquidator | A separate auction contract, `dog.sol` and the auctions beside it | The AMM itself |
 | What does the liquidator earn? | A static [bonus](/glossary/liquidation-bonus/), minus a protocol fee | A bonus that rises as health falls | The auction’s result, not a bonus inside `grab` | No liquidator transaction is needed for the conversion |
-| What is the residue called? | [Bad debt](/glossary/bad-debt/) | A deficit, which another spoke can clear with supplied shares | `sin`, unbacked debt | Not covered here |
+| What is the residue called? | [Bad debt](/glossary/bad-debt/), recorded since V3.3 as a [reserve deficit](https://www.aave.com/docs/aave-v3/smart-contracts/pool) | A deficit, which another spoke can clear with supplied shares | `sin`, unbacked debt | Not covered here |
 
 ## Aave V3: a health factor and a close factor
 

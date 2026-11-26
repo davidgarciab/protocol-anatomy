@@ -4,8 +4,10 @@ description: "What changed in Aave’s accounting, risk, and liquidation between
 summary: "V3 gathers supply and debt for a market inside one Pool and reprices every position when risk parameters change. V4 keeps utilization interest at an immutable hub, lets spokes define markets, and adds a collateral risk premium plus a target-health-factor liquidation."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Corrected the V3 close-factor rule and the removal of Isolation Mode in V3.7, and pinned the BabylonSpoke citation after the V4 main branch was reset."
   - date: "2026-11-23"
     summary: "Added the BabylonSpoke liquidation variant from the V4 overview, which the guide had not covered."
   - date: "2026-10-26"
@@ -36,7 +38,7 @@ versions:
     note: "Lending-pool generation in the protocol-v2 repository, before the V3 Pool and its configurator."
   - name: "V3"
     status: "active"
-    note: "Single Pool per market, aTokens, variable debt tokens, eMode, isolation mode, and a close factor."
+    note: "Single Pool per market, aTokens, variable debt tokens, eMode, and a close factor. V3.7 removed Isolation Mode."
   - name: "V4"
     status: "active"
     note: "Hub and spokes. Activated on Ethereum mainnet on 30 March 2026. The September 2026 update lists it on Ethereum, Avalanche, Base, and Arc, under caps."
@@ -65,19 +67,27 @@ sources:
     url: "https://governance.aave.com/t/al-development-update-september-2026/25744"
     kind: "governance"
     publisher: "Aave Labs"
+  - title: "Aave V4 overview with the BabylonSpoke"
+    url: "https://github.com/aave/aave-v4/blob/8be3e0d59efc23cd1d4664a88743340533dd5a0c/docs/overview.md#babylonspoke"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave changelog"
+    url: "https://aave.com/docs/resources/changelog"
+    kind: "docs"
+    publisher: "Aave"
   - title: "protocol-v2 repository"
     url: "https://github.com/aave/protocol-v2"
     kind: "code"
     publisher: "Aave"
 ---
 
-Aave did not replace a token. It replaced the way a market shares liquidity and the way a liquidation chooses its size. V2, in the `protocol-v2` repository, is the lending-pool generation that introduced aToken interest and debt tokens before the V3 `Pool`. This guide focuses on V3 and V4, because those are the two architectures with current primary documentation. V2 is historical context, not a third design to integrate as if it were the hub.
+Aave did not replace a token. It replaced the way a market shares liquidity and the way a liquidation chooses its size. V2, in the `protocol-v2` repository, which is now archived, is the lending-pool generation with aTokens and debt tokens that came before the V3 `Pool`. This guide focuses on V3 and V4, because those are the two architectures with current primary documentation. V2 is historical context, not a third design to integrate as if it were the hub.
 
 The [Aave overview](/protocols/aave) walks through one market. The differences below are the ones that change an integration.
 
 ## One pool, or a hub with markets attached
 
-In V3, a market’s cash, debt, and configuration live with a single `Pool`. The address provider points at that pool and can change its implementation. Listing a new asset means initializing a reserve on that pool: an aToken, a variable debt token, and an interest strategy. Liquidity does not automatically serve a second market. A separate deployment is a separate pool, which is why Ethereum, an L2, and a fork can share code and not share cash.
+In V3, a market’s cash, debt, and configuration live with a single `Pool`. The address provider points at that pool and can change its implementation. Listing a new asset means initializing a reserve on that pool with an aToken and a variable debt token, plus rate parameters in the pool’s interest-rate strategy. Liquidity does not automatically serve a second market. A separate deployment is a separate pool, which is why Ethereum, an L2, and a fork can share code and not share cash.
 
 V4’s overview inverts that. The hub holds the liquidity and the utilization rate. Spokes are the markets. A spoke can be added, and the overview’s stated reason is to avoid migrating liquidity every time a borrowing mode is added or removed. Caps still stop a spoke from draining the hub. The activation proposal describes the hub as immutable and the spokes as upgradeable. That split is the security claim: the shared accounting is frozen, the product surface is not.
 
@@ -99,13 +109,13 @@ This is closer to “existing loans keep their covenant unless you touch them”
 
 ## Close factor, or target health factor
 
-V3 liquidations are sized by a close factor. The V4 overview states the V3 defaults it is replacing: 50 percent of the debt in the ordinary case, and 100 percent when the health factor is below 0.95 or the position is under a value cutoff. The liquidation bonus on the collateral is a static parameter. A liquidator cannot choose “just enough to make the position healthy” as the protocol’s own target. They repay up to the close factor.
+V3 liquidations are sized by a close factor. The [V3 Pool docs](https://www.aave.com/docs/aave-v3/smart-contracts/pool) give the current rule: up to 50 percent of the borrower’s debt in the ordinary case, and a reserve’s full debt when the health factor is at or below 0.95 or the collateral or debt in that reserve is worth less than 2,000 base currency units. The liquidation bonus on the collateral is a static parameter. A liquidator cannot choose “just enough to make the position healthy” as the protocol’s own target. They repay up to the close factor.
 
 V4 removes that default. The liquidator repays what is required to reach a spoke-wide target health factor, which must be at least the liquidation threshold of 1. A Dutch-style bonus then pays more as the health factor falls, between a minimum set by `liquidationBonusFactor` and the collateral’s maximum bonus. Dust rules can enlarge the repayment so a position is not left with a tiny remainder. The overview sets that dust threshold at 1,000 USD of value. If collateral is gone and debt remains, the shortfall is a deficit. Another spoke can cover it by spending supplied shares through `eliminateDeficit`.
 
 The bonus formula in the overview is linear between the liquidation threshold and `healthFactorForMaxBonus`. It is a function of health factor at the start of the call, not an on-chain auction that runs across blocks. “Dutch auction” in that document is the shape of the bonus, and it should not be confused with Maker’s collateral auction.
 
-The overview also documents a variant that departs from all of this. The BabylonSpoke accepts native BTC locked through Babylon’s Trustless Bitcoin Vaults as its single collateral reserve, which can never be borrowed. Each user has at most one collateral and one debt reserve, there is no liquidation fee, and the canonical `liquidationCall` reverts. Liquidations run only through a liquidation manager fixed at deployment, with a cap on the collateral removed and no target-health-factor sizing. A V4 position on that spoke is therefore not liquidated the way the rest of this section describes.
+The overview, [as of a commit merged on 11 November 2026](https://github.com/aave/aave-v4/blob/8be3e0d59efc23cd1d4664a88743340533dd5a0c/docs/overview.md#babylonspoke), also documents a variant that departs from all of this. The BabylonSpoke accepts native BTC locked through Babylon’s Trustless Bitcoin Vaults as its single collateral reserve, which can never be borrowed. Each user has at most one collateral and one debt reserve, there is no liquidation fee, and the canonical `liquidationCall` reverts. Liquidations run only through a liquidation manager fixed at deployment, with a cap on the collateral removed and no target-health-factor sizing. A V4 position on that spoke is therefore not liquidated the way the rest of this section describes. The repository’s `main` branch was reset on 23 November to a commit from before that merge, so on 26 November the current overview did not contain the variant.
 
 ## What did not change
 
@@ -115,4 +125,4 @@ V4 also did not, on the evidence of the 2026 updates, switch V3 off. The April u
 
 ## Migration, stated narrowly
 
-A V3 aToken is a claim on a V3 pool. It is not a V4 hub share. Moving funds is a withdraw on one system and a supply on the other, subject to caps and to whatever liquidity the V3 pool has. Nothing in the V4 overview describes an automatic conversion of aToken balances. Credit delegation, isolation mode, and efficiency mode are V3 configuration tools. V4’s equivalents, where they exist, are spoke configuration and collateral risk, and they should be read from the spoke rather than assumed to share V3’s names.
+A V3 aToken is a claim on a V3 pool. It is not a V4 hub share. Moving funds is a withdraw on one system and a supply on the other, subject to caps and to whatever liquidity the V3 pool has. Nothing in the V4 overview describes an automatic conversion of aToken balances. Credit delegation and efficiency mode are V3 configuration tools. Isolation Mode was one too until [V3.7 removed it](https://aave.com/docs/resources/changelog) in favor of isolated efficiency-mode categories. V4’s equivalents, where they exist, are spoke configuration and collateral risk, and they should be read from the spoke rather than assumed to share V3’s names.
