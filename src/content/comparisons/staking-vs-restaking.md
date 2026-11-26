@@ -13,7 +13,7 @@ faq:
   - question: "Who decides when stETH is penalized versus when restaked ETH is slashed?"
     answer: "For stETH the penalty comes from Ethereum's own rules for validators and flows through Lido's oracle report into the share rate. For restaked stake the fault definition belongs to each service, executed through its slasher address. The EigenLayer contracts check the mechanics of a slash but not whether a fault happened."
   - question: "Which exit is slower, Lido or EigenLayer?"
-    answer: "They are separate waits that add up when stacked. A Lido withdrawal request waits for the oracle report and for validators to exit, and the claim is an NFT. A EigenLayer queued withdrawal cannot complete for 100,800 blocks, about 14 days, and a deallocation also takes 14 days to apply."
+    answer: "They are separate waits that add up when stacked. A Lido withdrawal request waits for the oracle report and for validators to exit, and the claim is an NFT. An EigenLayer queued withdrawal cannot complete for 100,800 blocks, about 14 days, and a deallocation also takes 14 days to apply."
 order: 7
 protocols:
   - lido

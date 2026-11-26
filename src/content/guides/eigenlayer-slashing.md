@@ -5,7 +5,10 @@ description: "How EigenLayer's slashing rules changed, from whole-stake opt-in t
 summary: "EigenLayer's early design exposed an operator's whole stake to every service it joined. Slashing launched in April 2025 with operator sets and unique stake. Later core releases moved the slasher into the AllocationManager, added operator-set rewards and a seven-day wait before slashed shares are cleared."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Corrected the delay table: 17.5 days applies to changing an allocation delay or slasher, and each operator sets its own allocation delay."
 faq:
   - question: "When did EigenLayer slashing go live?"
     answer: "On Ethereum mainnet on 17 April 2025, according to Eigen Labs' announcement. The testnet came earlier, and the launch post listed redistribution of slashed funds as a feature that was not yet live."
@@ -125,7 +128,8 @@ The reason for such a delay is not stated in the release notes beyond hardening 
 | --- | --- | --- |
 | Queued withdrawal completes | 100,800 blocks, 14 days | DelegationManager |
 | Operator deallocation takes effect | 100,800 blocks, 14 days | AllocationManager |
-| Allocation delay or slasher change | 126,000 blocks, 17.5 days | AllocationManager |
+| New allocation takes effect | The operator’s own allocation delay, which can be zero | AllocationManager |
+| A change to that allocation delay, or to a slasher | 126,000 blocks, 17.5 days | AllocationManager |
 | Slashed shares can be cleared | 50,400 blocks, about 7 days | Release 1.13.0 |
 
 A staker who wants out cannot avoid exposure for the whole 14 days, and a slash recorded in that window still scales what they can withdraw.
