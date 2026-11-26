@@ -5,7 +5,10 @@ description: "How Pendle splits yield-bearing assets into principal and yield to
 summary: "Pendle wraps a yield-bearing token as SY, splits it into a principal token and a yield token that expire on a date, and trades both against SY in a single AMM that tightens as maturity approaches. A PT is a fixed rate, a YT is a leveraged variable rate. sPENDLE now receives protocol revenue."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Added sources for the Boros and limit-order descriptions, and dated sPENDLE by when staking went live."
 faq:
   - question: "How does Pendle give a fixed yield?"
     answer: "You buy a principal token below its face value and hold it to maturity, when it redeems one-for-one for the accounting asset. The discount you paid, annualized, is the fixed rate, and it does not depend on what the underlying asset pays in the meantime. The risk you keep is that the underlying asset or its redemption fails."
@@ -18,7 +21,7 @@ faq:
   - question: "How does Pendle make money?"
     answer: "A 5 percent fee on all yield accrued by YTs, including points, and a swap fee that scales with time to maturity. Twenty percent of swap fees go to the pool's liquidity providers. The remaining swap fees and all YT fees go 80 percent to PENDLE buybacks, 10 percent to the treasury and 10 percent to operations."
   - question: "What replaced vePENDLE?"
-    answer: "sPENDLE. PENDLE stakes into it one-for-one, unstaking takes 14 days or is immediate for a 5 percent fee, and it receives the buyback-funded share of protocol revenue. Pendle announced it on 20 January 2026, and vePENDLE locks were paused on 29 January."
+    answer: "sPENDLE. PENDLE stakes into it one-for-one, unstaking takes 14 days or is immediate for a 5 percent fee, and it receives the buyback-funded share of protocol revenue. sPENDLE staking went live on 20 January 2026, and vePENDLE locks were paused on 29 January."
 order: 10
 category: "Yield trading"
 mechanism: "Yield tokenization into PT and YT, traded against SY in a pool whose curve tightens toward maturity."
@@ -49,7 +52,7 @@ versions:
     note: "SY, PT and YT with a PT and SY pool per maturity. The AMM was adapted from Notional Finance's design."
   - name: "sPENDLE"
     status: "active"
-    note: "Replaced vePENDLE for governance and revenue sharing. Announced 20 January 2026."
+    note: "Replaced vePENDLE for governance and revenue sharing. Staking went live 20 January 2026."
   - name: "vePENDLE"
     status: "deprecated"
     note: "New locks paused 29 January 2026. Existing holders received non-transferable virtual sPENDLE that expires at unlock."
@@ -60,6 +63,14 @@ versions:
     status: "active"
     note: "A separate platform for trading funding rates with yield units and margin."
 sources:
+  - title: "Boros overview"
+    url: "https://docs.pendle.finance/boros-docs/Introduction"
+    kind: "docs"
+    publisher: "Pendle"
+  - title: "Limit orders overview"
+    url: "https://docs.pendle.finance/pendle-v2-dev/LimitOrder/Overview"
+    kind: "docs"
+    publisher: "Pendle"
   - title: "Pendle: introduction"
     url: "https://docs.pendle.finance/pendle-v2/Introduction"
     kind: "docs"
@@ -181,7 +192,7 @@ The docs define a *watermark rate* as the highest recorded exchange rate between
 
 ## Limit orders and Boros
 
-Pendle has a limit order contract: makers sign orders off chain and takers fill them on chain, with maker incentives. Boros is a separate platform from the same team for trading funding rates, with *yield units*, an order book and margin. It launched with funding rates from centralized and decentralized perpetual exchanges and lists spread markets. It is an adjacent product with its own risks, not part of the PT and YT mechanism above.
+Pendle has a [limit order contract](https://docs.pendle.finance/pendle-v2-dev/LimitOrder/Overview): makers sign orders off chain and takers fill them on chain, with maker incentives in some markets. [Boros](https://docs.pendle.finance/boros-docs/Introduction) is a separate platform from the same team for trading funding rates, with *yield units*, an order book and margin. It launched with funding rates from centralized and decentralized perpetual exchanges and lists spread markets. It is an adjacent product with its own risks, not part of the PT and YT mechanism above.
 
 ## Trust that remains
 

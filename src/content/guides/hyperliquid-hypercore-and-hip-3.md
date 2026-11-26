@@ -5,7 +5,10 @@ description: "How Hyperliquid's HyperCore, HyperEVM, HIP-1 and HIP-3 differ, who
 summary: "Hyperliquid names several things alike. HyperCore is the native order book and margin engine, the HyperEVM is a smart contract layer on the same consensus, HIP-1 tokens trade on native spot books, and HIP-3 perpetual markets are run by staked deployers. Each has different listing rules, oracles and failure modes."
 status: "published"
 published: "2026-11-23"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Added the separate HIP-3 backstop liquidator as a fourth difference from core perpetuals, and cited the HIP-2 page."
 faq:
   - question: "Is a HIP-3 perpetual the same as a core Hyperliquid perpetual?"
     answer: "They share the clearinghouse, margining and order book engine, and a user trades both through the same API. They differ in who runs the market: a HIP-3 deployer stakes HYPE, defines the oracle and contract specification, sets oracle prices and leverage limits, and can be slashed by validator vote for malicious operation."
@@ -42,6 +45,10 @@ versions:
     status: "active"
     note: "Deployer-run perpetual markets with independent margining and order books, a 500,000 HYPE staking requirement and validator slashing."
 sources:
+  - title: "HIP-2: Hyperliquidity"
+    url: "https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-2-hyperliquidity"
+    kind: "specification"
+    publisher: "Hyperliquid"
   - title: "About Hyperliquid"
     url: "https://hyperliquid.gitbook.io/hyperliquid-docs/about-hyperliquid"
     kind: "docs"
@@ -98,7 +105,7 @@ The docs also describe the HyperEVM as being in an alpha stage with a gradual ro
 
 ## HIP-1 and HIP-2
 
-HIP-1 is a token standard with a capped supply, specified by the deployer at genesis: a name, decimals, a maximum supply and optional initial balances. It comes with onchain spot order books between HIP-1 pairs. HIP-2, Hyperliquidity, is the liquidity bootstrapper for such tokens, a strategy that the docs say runs as part of block transition logic with no operators, secured by the same consensus.
+HIP-1 is a token standard with a capped supply, specified by the deployer at genesis: a name, decimals, a maximum supply and optional initial balances. It comes with onchain spot order books between HIP-1 pairs. [HIP-2](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-2-hyperliquidity), Hyperliquidity, is the liquidity bootstrapper for such tokens, a strategy that the docs say runs as part of block transition logic with no operators, secured by the same consensus.
 
 Neither of these is a perpetual market. They matter here because a thin new spot market is where a manipulable price is most likely to come from, and a HyperEVM contract can read it.
 
@@ -106,13 +113,14 @@ Neither of these is a perpetual market. They matter here because a thin new spot
 
 HIP-3 is where the trust model changes most. A deployer meeting a staking requirement can launch a perpetual dex. The docs describe what the deployer is responsible for: market definition, including the oracle definition and contract specifications, and market operation, including setting oracle prices, leverage limits and settling the market if needed.
 
-The mechanism that protects traders is economic. The deployer must keep 500,000 HYPE staked, the requirement is held for at least 183 days after deployment, and validators can slash the stake by a stake-weighted vote if the market is operated maliciously. The stake stays slashable during the 7-day unstaking queue. The docs are candid about the limits: slashing does not distinguish malicious from incompetent behavior, and it does not distinguish a deployer that deviates from a good spec from one that follows a bad spec or one whose keys are stolen.
+The mechanism that protects traders is economic. The deployer must keep 500,000 HYPE staked, the requirement is held for at least 183 days after deployment, and validators can slash the stake by a stake-weighted vote if the market is operated maliciously. The stake stays slashable during the 7-day unstaking queue, and slashed stake is burned rather than paid to users. The docs are candid about the limits: slashing does not distinguish malicious from incompetent behavior, and it does not distinguish a deployer that deviates from a good spec from one that follows a bad spec or one whose keys are stolen.
 
-Three differences from a core perpetual follow.
+Four differences from a core perpetual follow.
 
 1. **The oracle is the deployer's.** The docs note that perpetuals make the most mathematical sense with a well-defined underlying that is hard to manipulate, and that most price indices are not suitable.
 2. **Margin is per dex.** Cross margin positions on dexs with the same collateral share margin only for users with a unified account or portfolio margin. For the standard account mode, cross margin applies only within one dex. HIP-3 dexs also support a no-cross mode.
 3. **Fees can differ.** Deployers can configure an additional fee share between 0 and 300 percent, and if it is above 100 percent the protocol fee rises to match.
+4. **The backstop is separate.** Each HIP-3 dex has its own onchain backstop liquidator, which accepts only assets with cross margin enabled and falls back to auto-deleveraging. HLP is the backstop for core markets, not for these.
 
 Settlement is also different. A deployer can halt trading on an asset, which cancels all orders and settles positions to the current mark price, and resume it later. The docs suggest this can be used to list dated contracts.
 

@@ -5,7 +5,10 @@ description: "How Hyperliquid runs perpetual and spot order books on its own L1,
 summary: "Hyperliquid is a layer-1 chain whose core execution layer, HyperCore, runs onchain perpetual and spot order books with margin built in. Validators publish the oracle price, positions are liquidated through the book first and through a community vault last, and auto-deleveraging closes the solvency gap. HIP-3 lets staked deployers list their own perpetual markets."
 status: "published"
 published: "2026-11-23"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Added the separate HIP-3 backstop liquidator and burned slashed stake, and cited the HIP-2 page."
 faq:
   - question: "What is HyperCore and how is it different from the HyperEVM?"
     answer: "HyperCore is the part of Hyperliquid's state that holds margin accounts and the perpetual and spot order books, executed by the chain itself with no offchain book. The HyperEVM is a general-purpose smart contract environment secured by the same consensus. Contracts on the HyperEVM can read HyperCore prices through precompiles, according to the docs."
@@ -52,6 +55,10 @@ versions:
     status: "active"
     note: "Permissionless perpetual markets run by deployers who stake HYPE, with their own margining, order books and oracle definitions."
 sources:
+  - title: "HIP-2: Hyperliquidity"
+    url: "https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-2-hyperliquidity"
+    kind: "specification"
+    publisher: "Hyperliquid"
   - title: "About Hyperliquid"
     url: "https://hyperliquid.gitbook.io/hyperliquid-docs/about-hyperliquid"
     kind: "docs"
@@ -190,11 +197,11 @@ The docs give a reward rate that falls with the square root of total stake, and 
 
 ## HIP-1, HIP-2 and HIP-3
 
-Hyperliquid Improvement Proposals define extensions inside the protocol. HIP-1 is a capped-supply token standard with onchain spot order books between pairs of tokens. HIP-2, Hyperliquidity, is a decentralized onchain strategy that bootstraps liquidity for new HIP-1 tokens, which the docs say is inspired by Uniswap and part of block transition logic with no operators.
+Hyperliquid Improvement Proposals define extensions inside the protocol. HIP-1 is a capped-supply token standard with onchain spot order books between pairs of tokens. [HIP-2](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-2-hyperliquidity), Hyperliquidity, is a decentralized onchain strategy that bootstraps liquidity for new HIP-1 tokens, which the docs say is inspired by Uniswap and part of block transition logic with no operators.
 
 **HIP-3** is the one that changes the risk model. It lets a deployer list perpetual markets permissionlessly. The deployer defines each market, including the oracle and contract specifications, and operates it by setting oracle prices, leverage limits and settlement. The docs give a staking requirement of 500,000 HYPE, expected to fall over time and held for at least 183 days after deployment. Each deployer can launch one perp dex with its own margining, order books and settings, and the first three assets need no auction.
 
-The safety mechanism is slashing. The docs say validators can slash a deployer's stake by a stake-weighted vote for malicious market operation, even during the unstaking queue, and that slashing does not distinguish malice from incompetence, a poorly designed spec or a compromised key. For a trader this is a clear change in what "a Hyperliquid perpetual" means. A HIP-3 market inherits the clearinghouse and the book, and its oracle is the deployer's responsibility. The docs say a deployer can also settle an asset with a halt action that cancels orders and settles positions at the current mark.
+The safety mechanism is slashing. The docs say validators can slash a deployer's stake by a stake-weighted vote for malicious market operation, even during the unstaking queue, and that slashing does not distinguish malice from incompetence, a poorly designed spec or a compromised key. For a trader this is a clear change in what "a Hyperliquid perpetual" means. A HIP-3 market inherits the clearinghouse and the book, and its oracle is the deployer's responsibility. The docs say a deployer can also settle an asset with a halt action that cancels orders and settles positions at the current mark. Slashed stake is burned, not paid to affected traders. The [HIP-3 page](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-3-builder-deployed-perpetuals) also describes the backstop differently from core markets: each HIP-3 dex has its own onchain backstop liquidator, which takes over only assets with cross margin enabled and falls back to auto-deleveraging. The HLP step described above should not be assumed for a HIP-3 market.
 
 ## Bridges and USDC
 
