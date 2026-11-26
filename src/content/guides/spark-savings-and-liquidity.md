@@ -2,16 +2,19 @@
 title: "Spark Savings and liquidity intents"
 seoTitle: "Spark Savings vaults: spUSDC, sUSDS, sDAI and withdrawals"
 description: "How Spark's savings tokens differ, which rate each one earns, how large withdrawals work through liquidity intents, and what the liquidity buffer means."
-summary: "Spark lists nine savings tokens that look alike and are not. Some earn a Sky-set rate, some earn from Spark Liquidity Layer allocations at a rate Spark governance sets, and one lends against SKY. Small withdrawals use an idle buffer. Larger ones are signed requests that the Liquidity Layer fills."
+summary: "Spark lists eight savings tokens that look alike and are not. Some earn a Sky-set rate and others earn from Spark Liquidity Layer allocations at a rate Spark governance sets, while Sky’s related stUSDS lends against SKY. Small withdrawals use an idle buffer. Larger ones are signed requests that the Liquidity Layer fills."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Updated the savings list to eight tokens, added the wider liquidity-intent coverage and the Optimism and Unichain deprecation, and re-sourced stUSDS to Sky."
 faq:
   - question: "What is the difference between sUSDS, sDAI and spUSDC?"
     answer: "sUSDS and sDAI earn rates set by Sky governance, the Sky Savings Rate and the DAI Savings Rate. spUSDC is a Spark Savings V2 vault that deploys USDC through the Spark Liquidity Layer, and its rate is managed by Spark governance. All are ERC-4626 vault tokens, so the redemption rate rises over time."
     featured: true
   - question: "What happens if I withdraw more than a Spark vault holds idle?"
-    answer: "You submit a Savings Liquidity Intent, a signed request for any amount. The Spark Liquidity Layer then fills it from its allocations, and the documentation says large requests are usually fulfilled within a few minutes. It cannot be cancelled in the first hour, and initially the flow covers the USDC and USDT vaults on Ethereum."
+    answer: "You submit a Savings Liquidity Intent, a signed request for any amount. The Spark Liquidity Layer then fills it from its allocations, and the documentation says large requests are usually fulfilled within a few minutes. It cannot be cancelled in the first hour. The flow covers spUSDC, spUSDT, spETH and spPYUSD on Ethereum, and spUSDC and spUSDT on X Layer."
   - question: "Can Spark stop withdrawals from a savings vault?"
     answer: "The documentation says that in the event of a potential loss, Spark can put vaults into recovery mode, temporarily halting withdrawals so every user gets equal treatment and a bank run is avoided. It is an operational control that a depositor should know exists before they rely on instant liquidity."
 order: 9
@@ -44,8 +47,16 @@ versions:
     note: "Yield from the Spark Liquidity Layer, rates managed by Spark governance."
   - name: "stUSDS"
     status: "active"
-    note: "Sky product that lends USDS against SKY. Carries liquidity and liquidation-design risk the others do not."
+    note: "Sky risk capital token that funds SKY-backed borrowing. Not on the Spark savings list when re-read."
 sources:
+  - title: "stUSDS"
+    url: "https://developers.skyeco.com/protocol/tokens/stusds/"
+    kind: "docs"
+    publisher: "Sky"
+  - title: "Spark referral codes"
+    url: "https://docs.spark.fi/integrators/referral-codes"
+    kind: "docs"
+    publisher: "Spark"
   - title: "Spark Savings"
     url: "https://docs.spark.fi/products/spark-savings"
     kind: "docs"
@@ -68,11 +79,11 @@ sources:
     publisher: "Spark"
 ---
 
-Spark's savings page lists nine tokens. Their names are similar, they share a standard, and they behave the same way in a wallet. The differences are in where the yield comes from and who can change the rate.
+Spark’s savings documentation lists eight tokens. Their names are similar, they share a standard, and they behave the same way in a wallet. The differences are in where the yield comes from and who can change the rate.
 
 The [protocol page](/protocols/spark) places these vaults in the wider system. This guide separates them and walks through the withdrawal paths.
 
-## The nine tokens
+## The tokens
 
 | Token | Asset | Yield source | Operator | Version |
 | --- | --- | --- | --- | --- |
@@ -82,11 +93,12 @@ The [protocol page](/protocols/spark) places these vaults in the wider system. T
 | spETH | ETH | Spark Liquidity Layer | Spark | V2 |
 | spUSDG | USDG | Spark Liquidity Layer | Spark | V2 |
 | sUSDS | USDS | Sky Savings Rate | Sky | none |
-| stUSDS | USDS | A rate from lending against SKY | Sky | none |
 | sUSDC | USDC | Sky Savings Rate | Spark | V1, legacy |
 | sDAI | DAI | DAI Savings Rate | Sky | legacy |
 
-Every token follows the [ERC-4626](/glossary/erc-4626/) vault standard. Each token is a share of the vault's assets, and its redemption value rises as the vault earns. Holding one in a wallet earns without any claim action.
+Sky’s [stUSDS](https://developers.skyeco.com/protocol/tokens/stusds/) is often listed beside these. The Spark savings documentation did not include it when re-read on 26 November 2026, and it is covered below because it shares the naming. Savings on Optimism and Unichain is deprecated: deposits are disabled there and holders are told to convert to sUSDS and bridge to Ethereum.
+
+Every listed token follows the [ERC-4626](/glossary/erc-4626/) vault standard. Each token is a share of the vault's assets, and its redemption value rises as the vault earns. Holding one in a wallet earns without any claim action.
 
 ## Three kinds of rate
 
@@ -94,7 +106,7 @@ Every token follows the [ERC-4626](/glossary/erc-4626/) vault standard. Each tok
 
 **Rates managed by Spark governance.** The V2 vaults earn from whatever the Liquidity Layer does with the deposits, and the vault's rate is managed by Spark governance. The documentation says the USD vaults are fully backed by USDS, a statement that links their safety to Sky's collateral base. This is why a Spark vault's risk includes the [Sky system](/protocols/maker-sky) as well as the venues the layer uses.
 
-**A rate from lending.** stUSDS lends USDS to borrowers who post SKY as collateral. The documentation says it carries potential liquidity constraints and no automatic liquidations. Do not treat it as another savings token.
+**A rate from lending.** [Sky’s stUSDS page](https://developers.skyeco.com/protocol/tokens/stusds/) calls it a risk capital token: supplying USDS funds SKY-backed borrowing, pays an stUSDS rate, and takes on a greater share of system risk. Do not treat it as another savings token.
 
 The V2 design says it minimizes exposure to riskier collateral such as perpetual futures and spreads across DeFi and real-world-asset yield. That is a stance, not a fixed rule. The composition per vault is shown in the Spark app and the Savings Data API.
 
@@ -113,7 +125,7 @@ For a withdrawal larger than the idle amount, the vault uses an asynchronous req
 3. The funds are transferred to the user's wallet automatically.
 4. A request cannot be cancelled in its first hour. If the layer has not filled it after an hour, cancellation becomes available.
 
-The documentation says the flow starts on Ethereum mainnet for the USDC and USDT vaults. It says large requests are usually fulfilled within a few minutes, and that the vaults support activity of $100 million and more. Those are descriptions of normal conditions. The intent is only as good as the Liquidity Layer's ability to unwind positions, which is bounded by the same rate limits that protect against a compromised relayer. In a stress event, a rate limit that is correct for safety can be a delay for a large exit.
+The documentation says the flow launched on Ethereum mainnet for the USDC and USDT vaults and is now also enabled for spETH and spPYUSD there, and for spUSDC and spUSDT on X Layer. It says large requests are usually fulfilled within a few minutes, and that the vaults support activity of $100 million and more. Those are descriptions of normal conditions. The intent is only as good as the Liquidity Layer's ability to unwind positions, which is bounded by the same rate limits that protect against a compromised relayer. In a stress event, a rate limit that is correct for safety can be a delay for a large exit.
 
 ## Recovery mode
 
@@ -125,4 +137,4 @@ The documentation lists first-loss layers for USDS and the Spark Savings product
 
 ## For integrators
 
-The integrator documentation describes the vaults as standard ERC-4626 contracts: `deposit` and `mint` to enter, `withdraw` and `redeem` to leave, with a read-only Savings Data API for rate, TVL, depositors, liquidity and collateral composition. Integrators receive a three-digit referral code, a `uint16` between 100 and 999, to attribute deposits to their product. Because the share price rises over time, a wallet should show the value from `convertToAssets`, not the share count.
+The integrator documentation describes the vaults as standard ERC-4626 contracts: `deposit` and `mint` to enter, `withdraw` and `redeem` to leave, with a read-only Savings Data API for rate, TVL, depositors, liquidity and collateral composition. Spark assigns integrator partners a three-digit [referral code](https://docs.spark.fi/integrators/referral-codes), a `uint16` between 100 and 999, to attribute deposits to their product. Because the share price rises over time, a wallet should show the value from `convertToAssets`, not the share count.

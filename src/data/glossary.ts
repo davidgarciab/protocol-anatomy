@@ -529,7 +529,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'susde',
     term: 'sUSDe',
     definition:
-      'The staked form of USDe, an ERC-4626 vault. Its USDe value rises as reward payments are added to the staking contract and vest over eight hours. Unstaking passes through a cooldown, a parameter that the contract caps at 90 days.',
+      'The staked form of USDe, an ERC-4626 vault. Its USDe value rises as reward payments are added to the staking contract and vest over eight hours. Unstaking can pass through a cooldown, a parameter that the contract caps at 90 days and that can be set to zero.',
     related: [
       { href: '/protocols/ethena', label: 'Ethena' },
       { href: '/guides/ethena-mint-and-exit', label: 'Ethena mint and exit' },

@@ -321,7 +321,7 @@ export const diagrams: Record<string, string> = {
       },
       {
         label: 'Stake',
-        detail: 'Holders can stake USDe as sUSDe. Rewards vest over eight hours and unstaking passes through a cooldown.',
+        detail: 'Holders can stake USDe as sUSDe. Rewards vest over eight hours and unstaking can pass through a cooldown.',
       },
     ]),
     'Simplified to the crypto basis trade. The documentation describes a wider backing portfolio, and stable assets in it need no hedge.',

@@ -5,15 +5,18 @@ description: "The three ways in and out of Ethena's USDe: direct mint for approv
 summary: "Ethena has three distinct exits. Approved counterparties mint and redeem at a signed price. Everyone else sells USDe on a market at whatever price it trades. sUSDe holders unstake through a cooldown that the contract caps at 90 days, and the documents disagree on the current length."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Recorded that the sUSDe cooldown was set to zero on 26 November 2026, and what the contract does while it is zero."
 faq:
   - question: "Can anyone redeem USDe for a dollar?"
     answer: "Not directly. Ethena's documentation limits direct minting and redeeming to approved market-making counterparties that clear KYC and KYB checks. Other holders sell USDe on exchanges or AMM pools, so their exit price is the market price, which can differ from the value of the backing."
     featured: true
   - question: "Why does sUSDe have a cooldown?"
-    answer: "The contract is an ERC-4626 vault with an added cooldown so assets cannot be staked and withdrawn within a single block, and rewards vest over eight hours to prevent sniping a payment. On unstaking the sUSDe is burned immediately and the USDe waits in a silo contract until the cooldown ends."
+    answer: "The contract is an ERC-4626 vault with an added cooldown so assets cannot be staked and withdrawn within a single block, and rewards vest over eight hours to prevent sniping a payment. While a cooldown is set, unstaking burns the sUSDe immediately and the USDe waits in a silo contract until it ends. A duration of zero removes the wait."
   - question: "Is the sUSDe cooldown 7 days or 14 days?"
-    answer: "The documents differ. The contract overview mentions 14 days, the staking page says the cooldown is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The code caps it at 90 days and an admin role sets it, so the staking contract's cooldownDuration variable is the one that governs."
+    answer: "The documents differ, and the live value can be neither. The contract overview mentions 14 days, the staking page says the cooldown is dynamic and currently between 1 and 7 days, and a user guide says 7 days. The code caps it at 90 days and an admin role sets it, so the staking contract’s cooldownDuration variable is the one that governs. It read zero on 26 November 2026."
 order: 8
 protocol: "ethena"
 versionContext: "Figures such as cooldown length and redemption buffers are parameters that change. The contracts and the live dashboard decide, not the prose in any document."
@@ -42,6 +45,10 @@ versions:
     status: "active"
     note: "Burn sUSDe, wait out the cooldown in a silo contract, then withdraw USDe."
 sources:
+  - title: "sUSDe cooldown change transaction"
+    url: "https://etherscan.io/tx/0xe8735ccfa1a5ff9321d5b907271179731cd11699a466728c124c78794fb21cd1"
+    kind: "code"
+    publisher: "Ethereum"
   - title: "Ethena overview"
     url: "https://docs.ethena.fi/"
     kind: "docs"
@@ -103,7 +110,7 @@ Two practical consequences. First, the quality of exit depends on pool depth and
 
 ## Path 3: sUSDe and the cooldown
 
-Staking USDe mints sUSDe from an ERC-4626 vault. There is no minimum staking period for the entry. The exit has a cooldown.
+Staking USDe mints sUSDe from an ERC-4626 vault. There is no minimum staking period for the entry. The exit can have a cooldown.
 
 How the contract handles it, as shown in `StakedUSDeV2`:
 
@@ -114,7 +121,7 @@ How the contract handles it, as shown in `StakedUSDeV2`:
 
 During the cooldown the holder has no sUSDe and no USDe in hand, only a pending claim. The documentation also says restricted addresses can be blacklisted and their locked amount redistributed, which it describes as legally required.
 
-The cooldown length is an example of a figure to read from the chain. The contract overview says 14 days. The staking explainer says the cooldown is dynamic, currently between 1 and 7 days, depending on reserve conditions and set by governance. A user guide says 7 days. All three are in the documentation set at once. The safe approach is to read `cooldownDuration` on the staking contract and treat prose as a snapshot.
+The cooldown length is an example of a figure to read from the chain. The contract overview says 14 days. The staking explainer says the cooldown is dynamic, currently between 1 and 7 days, depending on reserve conditions and set by governance. A user guide says 7 days. All three are in the documentation set at once. The contract has moved as well: `cooldownDuration` returned one day on 23 November 2026 and zero on 26 November, after [this transaction](https://etherscan.io/tx/0xe8735ccfa1a5ff9321d5b907271179731cd11699a466728c124c78794fb21cd1). While it is zero there is no wait, and holders use the ordinary `withdraw` and `redeem`. The safe approach is to read `cooldownDuration` on the staking contract and treat prose, including this page, as a snapshot.
 
 A common alternative to unstaking is to sell sUSDe itself on a market, since the token is transferable. That passes the wait to the buyer and exposes the seller to a market discount.
 
@@ -130,7 +137,7 @@ The protocol says sUSDe accrues only positive or flat rewards, and that negative
 | --- | --- | --- | --- |
 | Who | Approved counterparties | Anyone | sUSDe holders in permitted jurisdictions |
 | Price | Signed price, about a dollar | Market price | Value at the time of burn |
-| Delay | Minutes to blocks | Immediate | Cooldown, up to 90 days by code |
+| Delay | Minutes to blocks | Immediate | Cooldown from zero to 90 days, as set on the contract |
 | Limited by | Per-block caps, backing liquidity | Pool depth | Cooldown parameter |
 | Main risk | Access, operational pause | Discount to backing | Waiting with no position |
 

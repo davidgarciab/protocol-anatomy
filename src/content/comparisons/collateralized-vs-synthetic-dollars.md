@@ -5,7 +5,10 @@ description: "How Sky's overcollateralized USDS, Ethena's delta-neutral USDe and
 summary: "Sky issues USDS against collateral worth more than the debt and liquidates when it falls short. Ethena issues USDe against hedged backing and relies on funding, custody and margin. Spark packages Sky's reserves into savings vaults. The yield is earned by different risks, and exit works differently for each."
 status: "published"
 published: "2026-10-29"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Updated Spark’s sources of yield and redemption coverage: the Ethena minting route was offboarded and liquidity intents apply only to some vaults."
 faq:
   - question: "What is the difference between USDS and USDe?"
     answer: "USDS is issued by Sky against collateral held in vaults, with a buffer above the debt and liquidation if collateral falls short. USDe is a synthetic dollar backed by assets hedged with short futures plus stable assets, with the peg held by the hedge and by approved parties minting and redeeming. Their yields come from different places and fail in different ways."
@@ -109,7 +112,7 @@ Sky Savings Rate is a policy rate. The Sky documentation describes it as funded 
 
 USDe's yield comes from market structure. Funding is paid when long demand exceeds short demand. Lending revenue and real-world-asset yield add to it. Ethena's documents report historical funding for ETH of 16 percent in 2021, 0.6 percent in 2022, about 9 percent in 2023 and about 13 percent in 2024, and these are the issuer's figures and not a forecast. A rate that comes from leverage demand can disappear when leverage demand does.
 
-Spark's vault rates are set by Spark governance for the V2 vaults and by Sky for sUSDS and stUSDS. Their source is the Liquidity Layer's allocations, which include other protocols' products, among them [Ethena](/protocols/ethena) minting and [Morpho](/protocols/morpho) vaults, according to Spark's documentation. Part of Spark's yield can therefore be Ethena's yield, one step removed, with Sky's balance sheet behind it.
+Spark's vault rates are set by Spark governance for the V2 vaults and by Sky for sUSDS. Their source is the Liquidity Layer's allocations, which include other protocols' products, among them [Morpho](/protocols/morpho) vaults, according to Spark’s documentation, which says an [Ethena](/protocols/ethena) minting route was offboarded in September 2026. Part of Spark's yield can therefore be Ethena's yield, one step removed, with Sky's balance sheet behind it.
 
 ## Who can redeem, and at what price
 
@@ -117,7 +120,7 @@ Redemption is where a stablecoin's claim meets reality.
 
 - USDS has no direct par redemption for an arbitrary holder. The LitePSM swaps with approved stablecoins at no slippage against a limited pool, and vault owners can repay their debt. The PSM is the practical anchor.
 - USDe's mint and redeem are limited to approved counterparties after KYC and KYB checks. Others sell on markets. The anchor is arbitrage by those counterparties, bounded by how fast backing can be unwound. The documentation says about 0.5 percent of backing sits in the minting contract for on-demand redemptions.
-- Spark vault tokens redeem from an idle buffer of up to 10 million per vault, then through a signed liquidity intent filled by the Liquidity Layer. Spark can put a vault into recovery mode and halt withdrawals.
+- Spark vault tokens redeem from an idle buffer of up to 10 million per vault, then, for the vaults and networks that support it, through a signed liquidity intent filled by the Liquidity Layer. Spark can put a vault into recovery mode and halt withdrawals.
 
 In each case the first line of defense is a pool of immediately available stable assets, and its size is the number to look up. For the two ways out of Ethena see the [mint and exit guide](/guides/ethena-mint-and-exit). For Spark's see the [savings guide](/guides/spark-savings-and-liquidity).
 
