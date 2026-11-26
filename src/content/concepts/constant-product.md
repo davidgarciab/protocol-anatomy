@@ -5,15 +5,17 @@ description: "How the x · y = k invariant sets a Uniswap v2 price, and where v3
 summary: "Constant-product pricing keeps the product of two reserves from falling when a swap pays its fee. The spot price is the reserve ratio. The rule is uniform across all prices in v2, only inside a tick range in v3 and v4, and only the outer region of a Curve StableSwap pool."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Noted the Uniswap v2 protocol fee: where it is on, LPs earn 0.25 of the 0.30 percent."
   - date: "2026-10-14"
     summary: "Added a worked v2 swap with the fee split out, from `getAmountOut` in `UniswapV2Library.sol`, and a swap calculator."
 faq:
   - question: "What does x · y = k mean in a Uniswap v2 pool?"
     answer: "`x` and `y` are the two reserves and their product is `k`. The pool agrees to any trade that does not shrink `x * y` after fees. The last unit of `y` costs more than the first because the reserve of `y` is shrinking while the reserve of `x` is growing."
   - question: "Where does the Uniswap v2 swap fee go?"
-    answer: "The v2 flash-swap guide puts the fee at 0.30 percent on the input, implemented by counting only 99.7 percent of the input toward the product check. The pool can therefore increase `k` slightly. That increase is the LP’s fee income, left in the reserves."
+    answer: "The v2 flash-swap guide puts the fee at 0.30 percent on the input, implemented by counting only 99.7 percent of the input toward the product check. The pool can therefore increase `k` slightly, and the fee stays in the reserves. All of it went to LPs while the protocol fee was off. Where governance has turned it on, since December 2025, LPs earn 0.25 percent and 0.05 percent goes to the protocol."
   - question: "Does constant-product pricing hold in Uniswap v3 and Curve?"
     answer: "Not uniformly. The rule is uniform across all prices in v2, only inside a tick range in v3 and v4, and only the outer region of a Curve StableSwap pool."
 order: 3
@@ -32,6 +34,14 @@ related:
   - concentrated-liquidity
   - liquidity-pools
 sources:
+  - title: "UNIfication proposal"
+    url: "https://blog.uniswap.org/unification"
+    kind: "governance"
+    publisher: "Uniswap Labs"
+  - title: "Activate v4 Protocol Fees (Part 1/2)"
+    url: "https://vote.uniswapfoundation.org/proposals/100"
+    kind: "governance"
+    publisher: "Uniswap"
   - title: "UniswapV2Library.sol at 87edfdca"
     url: "https://github.com/Uniswap/v2-periphery/blob/87edfdcaf49ccc52591502993db4c8c08ea9eec0/contracts/libraries/UniswapV2Library.sol"
     kind: "code"
@@ -60,7 +70,7 @@ The spot price of `y` in units of `x` is `x / y` only as a marginal price, befor
 
 ## The fee is inside the product check
 
-The v2 flash-swap guide puts the fee at 0.30 percent on the input. The familiar quote multiplies the input by 997 and the reserve by 1000 so that only 99.7 percent of the input counts toward the product. The pool can therefore increase `k` slightly. It must not decrease `k` using the post-fee balances. That increase is the LP’s fee income, left in the reserves so that each LP token claims a larger inventory.
+The v2 flash-swap guide puts the fee at 0.30 percent on the input. The familiar quote multiplies the input by 997 and the reserve by 1000 so that only 99.7 percent of the input counts toward the product. The pool can therefore increase `k` slightly. It must not decrease `k` using the post-fee balances. That increase is the fee, left in the reserves so that each LP token claims a larger inventory. All of it was LP income while the protocol fee was off. [Uniswap’s UNIfication proposal](https://blog.uniswap.org/unification) turns the fee on by splitting the 0.30 percent into 0.25 for LPs and 0.05 for the protocol, and a [later proposal](https://vote.uniswapfoundation.org/proposals/100) says protocol fees are now live on all v2 pools on 11 chains. The trader’s quote is the same either way.
 
 A sketch of the quote, with the rounding made obvious, is on the [Uniswap](/protocols/uniswap) page. The deployed pair does not trust the caller’s arithmetic. It measures token balances. If the product check fails, the swap reverts. There is no partial fill.
 
@@ -78,7 +88,7 @@ amountOut       = 997 × 300,000 / (100 × 1,000 + 997)
 
 The trader pays an average of 2,961.47 USDC per ETH, 1.28 percent below the 3,000 spot price. Without the fee the same trade would return 2,970.30 USDC, so about 0.99 percentage points of the gap is the curve and the rest is the fee. After the trade the pool holds 101 ETH and 297,038.53 USDC. The new spot price is 2,940.98, and the next buyer of ETH starts from there.
 
-The product moved from 30,000,000 to about 30,000,891, up 0.003 percent. That growth is the 0.003 ETH of fee that the formula did not count toward the trade. It stays in the reserves and belongs to the LPs.
+The product moved from 30,000,000 to about 30,000,891, up 0.003 percent. That growth is the 0.003 ETH of fee that the formula did not count toward the trade. It stays in the reserves. Where the protocol fee is on, one sixth of that fee accrues to the protocol and the rest to the LPs.
 
 Size is what changes the picture. A 10 ETH input into the same pool returns 27,198.33 USDC, an average of 2,719.83: 9.34 percent below spot, of which the fee is still only a small part. The trade is a tenth of the ETH reserve, and the curve charges for that.
 

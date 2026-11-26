@@ -4,7 +4,10 @@ description: "How a liquidity provider’s claim is tracked in Uniswap v2, Unisw
 summary: "A liquidity pool holds the reserves a swap trades against. The LP share is the claim on those reserves and on fees. Uniswap v2 uses a fungible token, v3 and v4 use position NFTs from different contracts, and Curve NG uses the pool contract itself."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Noted that Uniswap v2 token holders receive fees net of any protocol share."
 order: 2
 group: "markets"
 tags:
@@ -62,7 +65,7 @@ That inventory risk has a name in constant-product markets, divergence or imperm
 
 Uniswap’s overview draws the version line clearly.
 
-v2 mints a fungible ERC-20. Balance is proportional share. Fees increase reserve value per token. Two holders can be pooled, transferred, and composed like any other token. The cost of that simplicity is that nobody chooses a price range.
+v2 mints a fungible ERC-20. Balance is proportional share. Fees increase reserve value per token, less the protocol’s share where governance has turned that fee on. Two holders can be pooled, transferred, and composed like any other token. The cost of that simplicity is that nobody chooses a price range.
 
 v3 mints an ERC-721 through `NonfungiblePositionManager` because a range is part of the position. The NFT is not a share of the whole pool. It is a share of liquidity between two [ticks](/glossary/tick/). Two NFTs in one pool can be in different ranges and earn different fees. They should not be added together as if they were v2 LP tokens.
 

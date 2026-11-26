@@ -5,7 +5,10 @@ description: "What changed between Balancer V2 and V3: the Vault's role, routers
 summary: "Balancer V2 and V3 both keep tokens in a Vault and pricing math in pools, but they are separate deployments. V3 moves user interaction into routers, adds hooks and ERC-4626 buffers, and changes fee shares and limits. The November 2025 exploit hit V2 pools, so the version of a pool decides which risks apply."
 status: "published"
 published: "2026-11-23"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Added the Vault page that supports the statement about where the Vault design began."
 faq:
   - question: "Is Balancer V3 a new version of the same Vault?"
     answer: "No. V3 is a new Vault with a new set of contracts, and the V3 docs point to a separate site for anything about V2. Both generations share the idea of a Vault that holds tokens and pools that supply math, but a V2 pool and a V3 pool are different deployments with different accounting and different interfaces."
@@ -40,6 +43,10 @@ versions:
     status: "active"
     note: "A new Vault, routers, transient accounting, hooks, ERC-4626 buffers, lower protocol fee shares and a higher amplification limit. Documented on docs.balancer.fi."
 sources:
+  - title: "Balancer V3 Vault"
+    url: "https://docs.balancer.fi/concepts/vault/"
+    kind: "docs"
+    publisher: "Balancer"
   - title: "Balancer V3 introduction"
     url: "https://docs.balancer.fi/concepts/core-concepts/introduction.html"
     kind: "docs"
@@ -74,7 +81,7 @@ sources:
 
 ## The shared idea
 
-Both generations separate token accounting from pool logic. The V3 docs say the Vault architecture was first introduced in V2 and that it allows simplified pool contracts that focus on their swap, add liquidity and remove liquidity logic. In both, one Vault holds the tokens of many pools, and a pool is a contract that answers pricing questions.
+Both generations separate token accounting from pool logic. The V3 [Vault page](https://docs.balancer.fi/concepts/vault/) says the Vault architecture was first introduced in V2 and that it allows simplified pool contracts that focus on their swap, add liquidity and remove liquidity logic. In both, one Vault holds the tokens of many pools, and a pool is a contract that answers pricing questions.
 
 ## The map
 
