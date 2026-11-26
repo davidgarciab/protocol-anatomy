@@ -504,7 +504,7 @@ export const diagrams: Record<string, string> = {
   ),
   'vote-escrow-epoch': figure(
     'One epoch of vote-escrowed emissions',
-    'Aerodrome, simplified',
+    'Aerodrome before Aero, simplified',
     flow([
       {
         label: 'Lock',
@@ -523,7 +523,7 @@ export const diagrams: Record<string, string> = {
         detail: 'After the epoch changes, voters claim the previous epoch\u2019s fees and incentives, plus a rebase.',
       },
     ]),
-    'Simplified from the Aerodrome docs, which predate the announced merger into Aero.',
+    'Simplified from the Aerodrome docs. Aero replaced this weekly cycle on 21 October 2026.',
   ),
   'safe-execution': figure(
     'How a Safe executes a transaction',
