@@ -909,7 +909,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'veaero',
     term: 'veAERO',
     definition:
-      'Aerodrome’s vote-escrowed token, an ERC-721 lock of AERO for up to four years. Holders vote each epoch on how emissions are split among pools and earn the fees and incentives of the pools they back, plus a rebase.',
+      'Aerodrome’s former vote-escrowed token, an ERC-721 lock of AERO for up to four years whose holders voted each epoch on emissions. Since Aero launched on 21 October 2026, it upgrades to sAERO, a staked position that allocates rewards.',
     related: [
       { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
       { href: '/glossary/gauge', label: 'Gauge' },
@@ -919,7 +919,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'gauge',
     term: 'Gauge',
     definition:
-      'A contract where liquidity providers stake their pool position to earn token emissions. In vote-escrow exchanges such as Curve and Aerodrome, voters decide how much of each period’s emissions each gauge receives.',
+      'A contract where liquidity providers stake their pool position to earn token emissions. In vote-escrow exchanges such as Curve, and Aerodrome before Aero replaced the model in October 2026, voters decide how much of each period’s emissions each gauge receives.',
     related: [
       { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
       { href: '/protocols/curve', label: 'Curve' },
@@ -929,7 +929,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'epoch',
     term: 'Epoch',
     definition:
-      'A fixed voting and accounting period. Aerodrome’s epoch lasts seven days, starting Thursday at 00:00 UTC, and votes, emissions, fees and incentives are calculated per epoch.',
+      'A fixed voting and accounting period. Aerodrome’s epoch, before Aero replaced it in October 2026, lasted seven days from Thursday 00:00 UTC, with votes, emissions, fees and incentives calculated per epoch.',
     related: [
       { href: '/protocols/aerodrome', label: 'Aerodrome and Velodrome' },
       { href: '/glossary/veaero', label: 'veAERO' },

@@ -327,7 +327,7 @@
       "src/content/protocols/aerodrome.md",
       "src/content/guides/aerodrome-velodrome-and-aero.md"
     ],
-    "why": "The emissions schedule and rebase formula on the Aerodrome page are taken from this file, and the merger into Aero may change it."
+    "why": "The legacy emissions schedule and rebase formula on the Aerodrome page are taken from this file. Aero replaced that design on 21 October 2026."
   },
   {
     "id": "balancer-v3-vault",
