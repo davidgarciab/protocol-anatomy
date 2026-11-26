@@ -25,21 +25,21 @@
   {
     "id": "aave-v3-math",
     "kind": "github-file",
-    "repo": "aave/aave-v3-core",
-    "path": "contracts/protocol/libraries/math/MathUtils.sol",
-    "ref": "master",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/libraries/math/MathUtils.sol",
+    "ref": "main",
     "articles": [
       "src/content/concepts/on-chain-accounting.md",
       "src/content/concepts/interest-rate-models.md"
     ],
-    "why": "The accounting page quotes the linear supply factor and the binomial variable-debt approximation from this file."
+    "why": "The accounting and rate pages compare the V3.0 excerpts with the current supply factor and variable-debt formula in this file."
   },
   {
     "id": "aave-v3-reserve-logic",
     "kind": "github-file",
-    "repo": "aave/aave-v3-core",
-    "path": "contracts/protocol/libraries/logic/ReserveLogic.sol",
-    "ref": "master",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/libraries/logic/ReserveLogic.sol",
+    "ref": "main",
     "articles": [
       "src/content/concepts/on-chain-accounting.md",
       "src/content/concepts/interest-rate-models.md"
@@ -49,13 +49,13 @@
   {
     "id": "aave-v3-atoken",
     "kind": "github-file",
-    "repo": "aave/aave-v3-core",
-    "path": "contracts/protocol/tokenization/AToken.sol",
-    "ref": "master",
+    "repo": "aave-dao/aave-v3-origin",
+    "path": "src/contracts/protocol/tokenization/AToken.sol",
+    "ref": "main",
     "articles": [
       "src/content/concepts/on-chain-accounting.md"
     ],
-    "why": "The accounting page quotes AToken.balanceOf, which multiplies the scaled balance by normalized income."
+    "why": "The accounting page describes how the current AToken.balanceOf rounds, and quotes the V3.0 version of it."
   },
   {
     "id": "aave-v3-pool",
