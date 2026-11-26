@@ -1,13 +1,13 @@
 {
   "aave-v3-atoken": {
-    "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-11-23",
-    "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
+    "observed": "81049890739cb50bce772fc400018fa3f52b04b0",
+    "observedAt": "2026-11-26",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/81049890739cb50bce772fc400018fa3f52b04b0"
   },
   "aave-v3-math": {
-    "observed": "2437c5600c12ab0faefc8173fff1ca9615732ce5",
-    "observedAt": "2026-11-23",
-    "url": "https://github.com/aave/aave-v3-core/commit/2437c5600c12ab0faefc8173fff1ca9615732ce5"
+    "observed": "05b185f98b2c8cc7036ebc6761f762d9b8678b9a",
+    "observedAt": "2026-11-26",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/05b185f98b2c8cc7036ebc6761f762d9b8678b9a"
   },
   "aave-v3-origin-generic-logic": {
     "observed": "cf4e138c5959b1434a08c72c759d422c227bd47e",
@@ -25,9 +25,9 @@
     "url": "https://github.com/aave-dao/aave-v3-origin/commit/4f8884cfd5c451b91bcff6ec77c7098d191da43f"
   },
   "aave-v3-reserve-logic": {
-    "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-11-23",
-    "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
+    "observed": "81049890739cb50bce772fc400018fa3f52b04b0",
+    "observedAt": "2026-11-26",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/81049890739cb50bce772fc400018fa3f52b04b0"
   },
   "aave-v3-wad-ray": {
     "observed": "32f0e72bafdb5a29e5da5fdbd3539167964083a6",

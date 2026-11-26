@@ -5,8 +5,10 @@ description: "Why these protocols store scaled balances, normalized debt, and sh
 summary: "Aave scales aToken balances by a liquidity index. Maker stores normalized vault debt and multiplies by a rate. Lido prices shares by pooled ether. Curve accounts LP claims against the invariant D. The pattern is one global multiplier, updated lazily, instead of a transfer to every holder."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Marked the Aave excerpts as archived V3.0 code and recorded how rounding and variable-debt compounding differ in the current V3 code."
   - date: "2026-10-14"
     summary: "Added a worked example of two aToken balances growing with one liquidity index."
   - date: "2026-10-14"
@@ -31,6 +33,14 @@ related:
   - liquid-staking
   - liquidity-pools
 sources:
+  - title: "MathUtils.sol in aave-v3-origin"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/math/MathUtils.sol"
+    kind: "code"
+    publisher: "Aave"
+  - title: "TokenMath.sol in aave-v3-origin"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/helpers/TokenMath.sol"
+    kind: "code"
+    publisher: "Aave"
   - title: "Aave V3 tokenization"
     url: "https://aave.com/docs/aave-v3/smart-contracts/tokenization"
     kind: "docs"
@@ -82,6 +92,8 @@ A Lido share is the same pattern aimed at ether. The index is pooled ether over 
 ## How the Aave V3 indexes move
 
 The Aave excerpts in this section were read on 14 October 2026 at the latest commit for each file: `MathUtils.sol` at `2437c560`, `ReserveLogic.sol` and `AToken.sol` at `6d6fa53d`, and `WadRayMath.sol` at `32f0e72b`. The Maker, Lido, Curve, and sUSDS sources on this page were read on 13 October 2026. Nothing here is a V4 hub formula.
+
+These excerpts are the original V3.0 code, and `aave-v3-core` is now archived. In `aave-dao/aave-v3-origin` at commit `8305565`, the V3.7 code read on 26 November 2026, two details differ. `AToken.balanceOf` now rounds the product down, through [`TokenMath`](https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/helpers/TokenMath.sol), while debt balances round up. And [`calculateCompoundedInterest`](https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/math/MathUtils.sol) evaluates `1 + x + x^2/2 + x^3/6`, the first terms of the series for `e^x` with `x` equal to the rate times elapsed time over a year, in place of the binomial expansion described below. The linear supply factor and the conditions that skip an index update are the same in both.
 
 `AToken.balanceOf` does not return the stored word by itself:
 

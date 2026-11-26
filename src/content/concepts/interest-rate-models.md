@@ -5,8 +5,10 @@ description: "How Aave’s two-slope utilization curve differs from Maker’s go
 summary: "Aave sets a variable borrow rate from utilization, with a kink at an optimal point and a reserve factor that skims the supplier rate. Maker sets a stability fee per collateral type and accrues it by raising a shared rate multiplier. The two are not interchangeable formulas."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Distinguished the V3.0 binomial approximation from the current V3 compounding formula."
   - date: "2026-10-14"
     summary: "Corrected how Aave rates compound: the liquidity index accrues linearly and the variable-borrow index uses a binomial approximation, as `MathUtils.sol` shows."
 order: 6
@@ -28,6 +30,10 @@ related:
   - stablecoin-mechanisms
   - on-chain-accounting
 sources:
+  - title: "MathUtils.sol in aave-v3-origin"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/math/MathUtils.sol"
+    kind: "code"
+    publisher: "Aave"
   - title: "Aave V3 interest rate strategy"
     url: "https://aave.com/docs/aave-v3/smart-contracts/interest-rate-strategy"
     kind: "docs"
@@ -60,7 +66,7 @@ sources:
 
 The V3 strategy documentation describes two slopes around `OPTIMAL_USAGE_RATIO`. Below that utilization, the variable borrow rate is a base plus a fraction of the first slope. Above it, the second slope applies to the remaining distance up to full utilization. The second slope is the expensive region. It is how the pool shouts that cash is scarce.
 
-The function returns a liquidity rate and a variable borrow rate in ray units, a fixed-point scale of 1e27. Aave treats those values as annual rates. The index update is not one shared compounding function. In `MathUtils.sol` at `2437c560` and `ReserveLogic.sol` at `6d6fa53d`, the liquidity index accrues linearly and the variable-borrow index uses a binomial approximation. The formulas, and the conditions that skip an update, are on the [accounting](/concepts/on-chain-accounting) page. The [reserve factor](/glossary/reserve-factor/) is the share of interest that does not go to suppliers. So the supply rate is not `utilization * borrow rate`. It is that product after the treasury’s cut, and only if no other adjustment is configured. The rate-strategy documentation and the Maker sources were read on 13 October 2026. The index functions were read on 14 October 2026.
+The function returns a liquidity rate and a variable borrow rate in ray units, a fixed-point scale of 1e27. Aave treats those values as annual rates. The index update is not one shared compounding function. In both the original and the current V3 code the liquidity index accrues linearly. The variable-borrow index uses an approximation of compounding: a binomial one in `MathUtils.sol` at `2437c560`, from the archived V3.0 repository, and the first terms of the series for `e^x` in the [current `MathUtils.sol`](https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/libraries/math/MathUtils.sol). The formulas, and the conditions that skip an update, are on the [accounting](/concepts/on-chain-accounting) page. The [reserve factor](/glossary/reserve-factor/) is the share of interest that does not go to suppliers. So the supply rate is not `utilization * borrow rate`. It is that product after the treasury’s cut, and only if no other adjustment is configured. The rate-strategy documentation and the Maker sources were read on 13 October 2026. The V3.0 index functions were read on 14 October 2026 and the current ones on 26 November 2026.
 
 Rates are stored as indexes. The borrow index grows with the variable rate. Debt-token balances are scaled by it. The liquidity index grows with the supply rate. aToken balances are scaled by it. Nobody is sent a separate interest payment. The next interaction reads a larger balance. That is why a view of `balanceOf` on an aToken can change between blocks without a transfer.
 
