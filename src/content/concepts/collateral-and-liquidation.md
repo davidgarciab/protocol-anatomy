@@ -5,8 +5,10 @@ description: "How Aave, Maker, and Curve’s crvUSD decide that a position is un
 summary: "Collateral lets a protocol lend or mint against an asset it can seize. Liquidation is the seizure. Aave sizes it with a health factor and a close factor or target health factor. Maker uses art · rate against ink · spot and then an auction. crvUSD converts collateral gradually through LLAMMA."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Noted that Aave V3 records bad debt as a reserve deficit since V3.3."
   - date: "2026-10-14"
     summary: "Added a worked Aave V3 liquidation with the repay limit, bonus, and protocol fee from `GenericLogic.sol` and `LiquidationLogic.sol`, and a health-factor calculator."
   - date: "2026-10-26"
@@ -117,7 +119,7 @@ The borrower gave up 7,875 USD of ETH to clear 7,500 USD of debt. The 375 USD di
 
 ## Bad debt is the residual
 
-Every one of these mechanisms can fail open. The oracle can be late. The bonus can be too small for a liquidator to bother. The auction can find no bid. The collateral can gap through the bands faster than arbitrage restores them. The residue is [bad debt](/glossary/bad-debt/). Aave V4 names the accounting object a deficit. Maker names it `sin`. The lending pool’s suppliers, or the stablecoin’s holders, absorb it if governance does not recapitalize the system.
+Every one of these mechanisms can fail open. The oracle can be late. The bonus can be too small for a liquidator to bother. The auction can find no bid. The collateral can gap through the bands faster than arbitrage restores them. The residue is [bad debt](/glossary/bad-debt/). Aave names the accounting object a deficit, in V4 and, [since V3.3](https://www.aave.com/docs/aave-v3/smart-contracts/pool), in V3. Maker names it `sin`. The lending pool’s suppliers, or the stablecoin’s holders, absorb it if governance does not recapitalize the system.
 
 Liquidation is therefore not a punishment feature. It is the protocol’s attempt to convert a private loss into a sale before the loss is socialized. Reading a liquidator’s profit without reading the unsold remainder is half the mechanism.
 

@@ -4,7 +4,10 @@ description: "How a shared lending pool measures utilization and why that ratio,
 summary: "A lending pool holds supplied assets and lends them to borrowers who posted collateral. Utilization is borrowed liquidity over supplied liquidity. It is the input to Aave’s interest curve and the reason a nearly empty pool and a nearly full pool are different credit markets."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Updated the inputs of Aave’s rate strategy: a virtual balance and the reserve deficit."
 order: 5
 group: "credit"
 tags:
@@ -47,7 +50,7 @@ A lending pool is not a liquidity pool in the AMM sense. Nobody swaps through an
 
 ## Utilization
 
-Utilization is borrowed amount divided by the liquidity that could be borrowed. In the textbook reserve that is `debt / (available + debt)`. Aave’s strategy function is more careful. Its documented inputs include unbacked amounts and an optional virtual balance. An integration that computes utilization from token balances alone can disagree with the rate the pool is actually charging.
+Utilization is borrowed amount divided by the liquidity that could be borrowed. In the textbook reserve that is `debt / (available + debt)`. Aave’s strategy function is more careful. Its documented inputs include the pool’s own virtual underlying balance and the reserve’s deficit, passed in a field still named `unbacked`. An integration that computes utilization from token balances alone can disagree with the rate the pool is actually charging.
 
 At low utilization the pool is full of idle cash. Suppliers earn little, because little interest is being paid. Borrowers can expand. At high utilization a withdrawal can fail or a borrow can move the rate sharply, because the cash is already lent. The steep region of the rate curve exists so that state does not persist quietly.
 

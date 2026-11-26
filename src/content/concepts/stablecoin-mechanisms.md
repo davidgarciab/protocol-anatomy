@@ -5,8 +5,10 @@ description: "How DAI and USDS are minted against collateral, and why a Curve st
 summary: "A collateralized stablecoin is debt. Maker mints it against a vault and charges a stability fee. Sky’s USDS is a one-for-one token on that same debt. A Curve StableSwap pool only trades stablecoins. crvUSD is a third design that liquidates through an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Updated how Aave’s GHO reaches borrowers since V3.4."
   - date: "2026-10-29"
     summary: "Added the delta-neutral and allocator-backed designs (Ethena, Spark) and Aave’s GHO to the list of mechanisms."
 order: 8
@@ -30,6 +32,10 @@ related:
   - on-chain-accounting
   - governance-and-upgrades
 sources:
+  - title: "Aave V3.4 features"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/main/docs/3.4/Aave-v3.4-features.md"
+    kind: "docs"
+    publisher: "Aave"
   - title: "Vat (core accounting)"
     url: "https://developers.skyeco.com/protocol/core/vat/"
     kind: "docs"
@@ -84,7 +90,7 @@ A third family holds assets that move and offsets them with a derivative. Ethena
 
 ## Dollars minted by a market
 
-Aave’s GHO is minted through the borrow function of a market that already exists, within a bucket capacity governance sets for each facilitator, and its rate is steered by stewards, not by utilization. Spark packages Sky’s reserves into savings vaults and a lending market, and a rate-limited allocator moves the money. In both, the stablecoin is one product of a larger system, so its risk is the system’s. See [Aave](/protocols/aave) and [Spark](/protocols/spark).
+Aave’s GHO can be minted only by facilitators, each within a bucket capacity governance sets. Since [V3.4](https://github.com/aave-dao/aave-v3-origin/blob/main/docs/3.4/Aave-v3.4-features.md), a facilitator mints it and supplies it to the V3 Ethereum market, where borrowers draw it, and its rate is set by governance and stewards. Spark packages Sky’s reserves into savings vaults and a lending market, and a rate-limited allocator moves the money. In both, the stablecoin is one product of a larger system, so its risk is the system’s. See [Aave](/protocols/aave) and [Spark](/protocols/spark).
 
 ## What stability still depends on
 

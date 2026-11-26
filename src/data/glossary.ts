@@ -30,7 +30,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'bad-debt',
     term: 'Bad debt',
     definition:
-      'Debt that remains after the collateral securing it has been exhausted. In a lending pool it is a loss shared through the reserve; in Aave V4 the overview calls the comparable shortfall a deficit that spokes can eliminate from supplied shares.',
+      'Debt that remains after the collateral securing it has been exhausted. In a lending pool it is a loss against the reserve. Aave records it as a deficit: since V3.3 the V3 Pool tracks it per reserve for Umbrella to cover, and the V4 overview describes spokes eliminating it from supplied shares.',
     related: [
       { href: '/concepts/collateral-and-liquidation', label: 'Collateral and liquidation' },
       { href: '/guides/aave-versions', label: 'Aave versions' },
@@ -40,7 +40,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'close-factor',
     term: 'Close factor',
     definition:
-      'The fraction of a borrower’s debt that a single liquidation may repay. Aave’s V4 overview describes V3’s default close factor as 50 percent, with a 100 percent close factor in specified unhealthy or small-position cases. V4 replaces that default with a target health factor.',
+      'The fraction of a borrower’s debt that a single liquidation may repay. Aave V3’s default is 50 percent, rising to the full debt of a reserve for very unhealthy or small positions. V4 replaces that default with a target health factor.',
     related: [{ href: '/guides/aave-versions', label: 'Aave versions' }],
   },
   {
@@ -178,7 +178,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'isolation-mode',
     term: 'Isolation mode',
     definition:
-      'An Aave V3 constraint for a risky collateral. A user who enables an isolated asset as collateral can borrow only the assets governance has listed for that isolation setting, and only up to a debt ceiling.',
+      'A former Aave V3 constraint for a risky collateral: its user could borrow only listed assets, up to a debt ceiling. Aave V3.7 removed it in favor of isolated efficiency-mode categories, though instances still on V3.6 may run it.',
     related: [{ href: '/guides/aave-versions', label: 'Aave versions' }],
   },
   {
@@ -649,7 +649,7 @@ export const glossary: GlossaryEntry[] = [
     id: 'gho',
     term: 'GHO',
     definition:
-      'Aave’s stablecoin. It is minted through the borrow function of the V3 Ethereum market against collateral, within a bucket capacity that governance sets for each approved facilitator, so it is not limited by supplier liquidity. Its borrow rate is adjusted by stewards inside governance-set bounds.',
+      'Aave’s stablecoin. Only governance-approved facilitators can mint it, each within a bucket capacity. Since V3.4, a direct-minter facilitator supplies it to the V3 Ethereum market, where borrowers draw it against collateral. Its borrow rate is adjusted by stewards inside governance-set bounds.',
     related: [
       { href: '/protocols/aave', label: 'Aave' },
       { href: '/concepts/stablecoin-mechanisms', label: 'Stablecoin mechanisms' },

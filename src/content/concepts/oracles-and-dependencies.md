@@ -4,8 +4,10 @@ description: "Where Aave, Maker, Curve, and Lido take an input the chain cannot 
 summary: "Lending solvency, Maker’s spot price, some Curve coin rates, and Lido’s share rate all depend on data that is not the protocol’s own invariant. The contract will enforce the wrong number faithfully. Oracle design is the choice of who may write that number and how stale it may be."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Recorded that Aave V3.7 removed the price-oracle sentinel the page had described as current."
   - date: "2026-10-29"
     summary: "Added how isolated markets, SparkLend and Pendle principal tokens choose and combine price sources."
   - date: "2026-10-26"
@@ -36,6 +38,10 @@ related:
   - liquid-staking
   - security-assumptions
 sources:
+  - title: "Aave changelog"
+    url: "https://aave.com/docs/resources/changelog"
+    kind: "docs"
+    publisher: "Aave"
   - title: "Aave V3 smart contracts"
     url: "https://aave.com/docs/developers/smart-contracts"
     kind: "docs"
@@ -66,7 +72,7 @@ An invariant can only see the storage and the tokens it is given. Collateral val
 
 ## Four writes
 
-Aave’s `AaveOracle` is the V3 registry of price sources. Health factor is a ratio of those prices. The V3 docs also describe a sentinel that can freeze actions after an oracle outage and allow a grace period when prices return. The grace period is an admission that a fresh price after downtime would otherwise liquidate people who had no time to repay. V4’s overview says oracles are spoke-specific. Two markets sharing a hub can disagree about the price of the same asset. The hub does not reconcile them. It reconciles cash and debt shares.
+Aave’s `AaveOracle` is the V3 registry of price sources. Health factor is a ratio of those prices. Earlier V3 releases also had a sentinel for layer-2 networks that blocked borrows and some liquidations while the sequencer was down and for a grace period afterward. [V3.7 removed it](https://aave.com/docs/resources/changelog). The idea behind a grace period still matters: a fresh price after downtime can liquidate people who had no time to repay, which is why [Chainlink’s consumer guidance](/guides/chainlink-reading-a-feed) covers it. V4’s overview says oracles are spoke-specific. Two markets sharing a hub can disagree about the price of the same asset. The hub does not reconcile them. It reconciles cash and debt shares.
 
 Maker’s `spot` is the price the Vat trusts, already scaled by the liquidation ratio. The oracle and the contract that pokes `spot` are outside `frob`. A stale `spot` makes unsafe vaults look safe, or the reverse. `drip` being stale is a different bug: it stales the debt, not the collateral price. Both have to be current for the safety check to mean what governance thinks it means.
 

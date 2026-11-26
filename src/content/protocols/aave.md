@@ -5,8 +5,10 @@ description: "How Aave accounts for supply, variable debt, interest, and liquida
 summary: "Aave is a pooled lending protocol. Suppliers deposit assets into shared liquidity, borrowers post collateral, and interest follows utilization. V3 records that state in one Pool. V4 splits shared liquidity from user-facing markets and prices collateral risk on top of the utilization rate."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Corrected V3 for releases 3.4 to 3.7 (Isolation Mode and the oracle sentinel removed, GHO borrowing changed, deficit accounting) and pinned the BabylonSpoke citation."
   - date: "2026-11-23"
     summary: "Described the three governance routes (standard, Direct-to-AIP, Stewards) in place of a Snapshot-first account, and re-checked the V4, GHO and Umbrella figures against the docs and the September 2026 update."
   - date: "2026-10-29"
@@ -20,7 +22,7 @@ faq:
   - question: "How does Aave set the variable borrow rate?"
     answer: "V3 uses a two-slope utilization model per reserve. Below an optimal utilization the rate rises with the first slope. Above it the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. The optimal utilization and the slopes are per reserve, not one Aave-wide constant."
   - question: "When can an Aave V3 position be liquidated?"
-    answer: "When its health factor falls below 1, `liquidationCall` can repay debt and seize collateral. The V4 overview says V3’s default close factor is 50 percent, and 100 percent when the health factor is under 0.95 or the position is below a value threshold. The liquidator receives a bonus set on the collateral reserve."
+    answer: "When its health factor falls below 1, `liquidationCall` can repay debt and seize collateral. The V3 Pool docs say a liquidator can repay up to 50 percent of the debt, or a reserve’s full debt when the health factor is at or below 0.95 or the collateral or debt there is worth under 2,000 base currency units. The liquidator receives a liquidation bonus."
     featured: true
   - question: "What changes in Aave V4 liquidation?"
     answer: "Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls, and the overview sets the dust threshold at 1,000 USD of value."
@@ -57,7 +59,7 @@ versions:
     note: "The lending-pool generation before the V3 Pool. It is documented in the protocol-v2 repository, not in the V4 hub."
   - name: "V3"
     status: "active"
-    note: "Pool, aToken, and variable-debt-token markets. Stable-rate borrows are deprecated in the current pool interface."
+    note: "Pool, aToken, and variable-debt-token markets. Stable-rate borrows are deprecated, and V3.7 removed Isolation Mode and siloed borrowing."
   - name: "V4"
     status: "active"
     note: "Hub-and-spoke deployment. Ethereum activation was 30 March 2026. The September 2026 update lists V4 on Avalanche, Base, and Arc as well, under caps."
@@ -94,10 +96,34 @@ sources:
     url: "https://aave.com/docs/aave-v3/smart-contracts/tokenization"
     kind: "docs"
     publisher: "Aave"
-  - title: "Pool.sol in aave-v3-core"
-    url: "https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/pool/Pool.sol"
+  - title: "Pool.sol in aave-v3-origin"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/pool/Pool.sol"
     kind: "code"
     publisher: "Aave"
+  - title: "GhoAaveSteward.sol"
+    url: "https://github.com/aave-dao/gho-origin/blob/4a164421870e0ec74d72ae014ef730254538da8c/src/contracts/misc/GhoAaveSteward.sol"
+    kind: "code"
+    publisher: "Aave"
+  - title: "Aave V4 overview with the BabylonSpoke"
+    url: "https://github.com/aave/aave-v4/blob/8be3e0d59efc23cd1d4664a88743340533dd5a0c/docs/overview.md#babylonspoke"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave V3 overview"
+    url: "https://aave.com/docs/aave-v3/overview"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave changelog"
+    url: "https://aave.com/docs/resources/changelog"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave V3.4 features"
+    url: "https://github.com/aave-dao/aave-v3-origin/blob/main/docs/3.4/Aave-v3.4-features.md"
+    kind: "docs"
+    publisher: "Aave"
+  - title: "Aave V3.5 upgrade thread"
+    url: "https://governance.aave.com/t/direct-to-aip-bgd-aave-v3-5-v3-4-part-2/22639"
+    kind: "governance"
+    publisher: "Aave Governance"
   - title: "Aave V4 activation on Ethereum mainnet"
     url: "https://governance.aave.com/t/arfc-aave-v4-activation-on-ethereum-mainnet/24293"
     kind: "governance"
@@ -131,30 +157,33 @@ The tokenization docs describe two claims:
 - An [aToken](/glossary/atoken/) is minted on supply and burned on withdraw. Its balance grows with supply interest, so a transfer of aTokens transfers a growing claim, not a frozen deposit receipt.
 - A [variable debt token](/glossary/variable-debt-token/) is minted on borrow. It is not transferable. Its balance is the debt plus accrued variable interest. The pool reference says new borrows should pass interest-rate mode `2`. Stable-rate mode is deprecated in that interface.
 
-`supply` does not itself contain the interest math. In `aave-v3-core`, the pool delegates to a supply library:
+`supply` does not itself contain the interest math. The pool delegates to a supply library:
 
 ```solidity
 function supply(
-    address asset,
-    uint256 amount,
-    address onBehalfOf,
-    uint16 referralCode
+  address asset,
+  uint256 amount,
+  address onBehalfOf,
+  uint16 referralCode
 ) public virtual override {
-    SupplyLogic.executeSupply(
-        _reserves,
-        _reservesList,
-        _usersConfig[onBehalfOf],
-        DataTypes.ExecuteSupplyParams({
-            asset: asset,
-            amount: amount,
-            onBehalfOf: onBehalfOf,
-            referralCode: referralCode
-        })
-    );
+  SupplyLogic.executeSupply(
+    _reserves,
+    _eModeCategories,
+    _usersConfig[onBehalfOf],
+    DataTypes.ExecuteSupplyParams({
+      user: _msgSender(),
+      asset: asset,
+      interestRateStrategyAddress: RESERVE_INTEREST_RATE_STRATEGY,
+      amount: amount,
+      onBehalfOf: onBehalfOf,
+      referralCode: referralCode,
+      supplierEModeCategory: _usersEModeCategory[onBehalfOf]
+    })
+  );
 }
 ```
 
-That excerpt is from `contracts/protocol/pool/Pool.sol` on the `master` branch of `aave-v3-core`, as read on 13 October 2026. `master` can move. The call is the important part: the user’s asset, the recipient of the aToken, and a referral code enter one reserve update. The referral argument is unused for rewards in the current docs; they say to pass `0`.
+That excerpt is from [`src/contracts/protocol/pool/Pool.sol`](https://github.com/aave-dao/aave-v3-origin/blob/8305565ae342f1773c42cd2e4593f175fe5968a0/src/contracts/protocol/pool/Pool.sol) in `aave-dao/aave-v3-origin` at commit `8305565`, read on 26 November 2026. The older `aave-v3-core` repository, which holds the original V3.0 code, is archived. The call is the important part: the user’s asset, the recipient of the aToken, and a referral code enter one reserve update. The referral argument is unused for rewards in the current docs; they say to pass `0`.
 
 Interest is not paid by transferring tokens to each lender. The reserve keeps a liquidity index. aToken balances are scaled, and the underlying amount is the scaled balance times the normalized income. The same idea applies to variable debt and the borrow index. Touching the reserve accrues the index forward using the time since the last update and the current rate. A quiet block does not write every account.
 
@@ -164,7 +193,7 @@ Interest is not paid by transferring tokens to each lender. The reserve keeps a 
 
 [Utilization](/glossary/utilization/) is the fraction of available liquidity that is borrowed. The [interest-rate strategy](https://aave.com/docs/aave-v3/smart-contracts/interest-rate-strategy) is a two-slope model. Below an optimal utilization, the variable borrow rate rises with the first slope. Above it, the second slope is steeper, so a market that is nearly fully borrowed becomes expensive quickly. That cost is meant to pull liquidity back in or push borrowers to repay.
 
-The strategy returns a liquidity rate and a variable borrow rate, both in ray units (1e27). The [reserve factor](/glossary/reserve-factor/) sends a share of borrow interest to the treasury, so suppliers do not receive the full borrow rate times utilization. The strategy’s inputs also include unbacked liquidity and, when enabled, a virtual underlying balance. Those inputs matter for integrations that assume the textbook ratio `debt / (cash + debt)` is the only definition. Read the reserve’s strategy before hard-coding a formula.
+The strategy returns a liquidity rate and a variable borrow rate, both in ray units (1e27). The [reserve factor](/glossary/reserve-factor/) sends a share of borrow interest to the treasury, so suppliers do not receive the full borrow rate times utilization. The strategy’s documented inputs also include the pool’s own virtual underlying balance and the reserve’s deficit, passed in a field that still carries its pre-V3.4 name, `unbacked`. The deficit is added to the denominator of the supply usage ratio. Both matter for integrations that assume the textbook ratio `debt / (cash + debt)`, computed from token balances, is the only definition. Read the reserve’s strategy before hard-coding a formula.
 
 The optimal utilization and the slopes are per reserve. They are not a single Aave-wide constant.
 
@@ -172,16 +201,16 @@ The optimal utilization and the slopes are per reserve. They are not a single Aa
 
 Before a borrow is released, the pool checks that the resulting position stays within collateral rules. Collateral value is not the raw oracle value. A liquidation threshold, lower than 100 percent for risky assets, determines how much of that value counts toward solvency. A separate, usually lower, loan-to-value limits new borrowing. A position can be blocked from borrowing more and still be above the liquidation line.
 
-The health factor compares risk-adjusted collateral with debt. The V4 documentation, describing the V3 behavior it replaces, treats a health factor of 1 as the liquidation boundary. Below that, `liquidationCall` can repay debt and seize collateral. The V4 overview says V3’s default close factor is 50 percent, and 100 percent when the health factor is under 0.95 or the position is below a value threshold. The liquidator receives a bonus set on the collateral reserve. A protocol fee can take part of that bonus.
+The health factor compares risk-adjusted collateral with debt. The [V3 Pool docs](https://www.aave.com/docs/aave-v3/smart-contracts/pool) put the liquidation boundary at 1: below it, `liquidationCall` can repay debt and seize collateral. The same page says a liquidator can repay up to 50 percent of the borrower’s debt, or the full debt of a reserve when the health factor is at or below 0.95, or when the collateral or debt in that reserve is worth less than 2,000 base currency units (US dollars on most markets). The liquidator receives a bonus set on the collateral reserve, or on the efficiency-mode category when one applies. A protocol fee can take part of that bonus.
 
-If the collateral cannot cover the debt, the remainder is [bad debt](/glossary/bad-debt/). The pool cannot invent assets to fill it. Later suppliers and the reserve’s own accounting bear that loss until governance does something else.
+If the collateral cannot cover the debt, the remainder is [bad debt](/glossary/bad-debt/). The pool cannot invent assets to fill it. Since V3.3 the Pool burns the leftover debt tokens and records the amount as a deficit on that reserve, which the Umbrella system described below can cover through `eliminateReserveDeficit`. Until a deficit is covered, the reserve is owed less than it owes its suppliers.
 
 V3 also added constraints that are easy to miss from the happy-path functions:
 
-- Efficiency mode groups correlated assets so a position can use tighter risk parameters than the general market.
-- Isolation mode limits what a risky collateral can borrow against, and caps that debt.
+- Efficiency mode groups correlated assets so a position can borrow more against them than the general market allows. Since V3.7 a category can also be isolated: only its listed collateral counts toward borrowing power, and every other supplied asset counts as zero loan-to-value.
 - Supply caps and borrow caps stop a reserve from growing without a configuration change.
-- A price-oracle sentinel can block some actions after an oracle outage and allow a grace period once prices return.
+
+Earlier V3 releases also had Isolation Mode, siloed borrowing and, on layer-2 networks, a price-oracle sentinel tied to sequencer uptime. [V3.7 removed all three](https://aave.com/docs/resources/changelog). The [V3 overview](https://aave.com/docs/aave-v3/overview) notes that some instances may still run V3.6 with Isolation Mode and siloed borrowing active; `POOL_REVISION()` on the Pool returns `10` on V3.6 and `11` on V3.7.
 
 Those are configuration features of the V3 pool, not properties of every lending protocol. The [collateral and liquidation](/concepts/collateral-and-liquidation) article compares them with Maker’s vault rule.
 
@@ -193,7 +222,7 @@ V4 does not give every market its own isolated pool of cash. The [overview](http
 
 The drawn interest rate still comes from utilization at the hub. On top of it, V4 charges a [risk premium](/glossary/risk-premium/) that depends on the collateral actually covering the debt. Collateral is sorted from lower collateral-risk to higher. The premium uses the safer collateral first. The overview is explicit that actions which can make the position riskier, such as borrowing or withdrawing collateral, refresh the premium, while `supply` and `repay` do not. Premium interest is tracked as extra debt shares plus an offset, so it accrues without being a second principal the user drew from the hub.
 
-Liquidation changes as well. Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls. The overview sets the dust threshold used in that logic at 1,000 USD of value. Deficit accounting lets an authorized spoke cover a shortfall with supplied shares through `eliminateDeficit`. The overview also now documents a **BabylonSpoke**, a spoke variant that takes native BTC locked through Babylon’s Trustless Bitcoin Vaults as its single collateral reserve. That reserve can never be borrowed, each user has at most one collateral and one debt reserve, there is no liquidation fee, and liquidations run only through a liquidation manager fixed at deployment, bounded by a maximum amount of collateral to remove.
+Liquidation changes as well. Instead of a default 50 percent close factor, a liquidator repays enough to restore a target health factor, unless dust-handling rules force a larger repayment. The bonus increases as the health factor falls. The overview sets the dust threshold used in that logic at 1,000 USD of value. Deficit accounting lets an authorized spoke cover a shortfall with supplied shares through `eliminateDeficit`. The repository’s overview, [as of a commit merged on 11 November 2026](https://github.com/aave/aave-v4/blob/8be3e0d59efc23cd1d4664a88743340533dd5a0c/docs/overview.md#babylonspoke), also documents a **BabylonSpoke**, a spoke variant that takes native BTC locked through Babylon’s Trustless Bitcoin Vaults as its single collateral reserve. That reserve can never be borrowed, each user has at most one collateral and one debt reserve, there is no liquidation fee, and liquidations run only through a liquidation manager fixed at deployment, bounded by a maximum amount of collateral to remove. The repository’s `main` branch was reset on 23 November to a commit from before that merge, so on 26 November the overview linked above for the rest of V4 did not contain this section.
 
 Two further V4 behaviors are governance decisions, not automatic features of every hub:
 
@@ -204,9 +233,11 @@ The April 2026 development update says the Ethereum deployment went live on 30 M
 
 ## GHO: a stablecoin minted by the market
 
-Aave also issues its own stablecoin, GHO. It is not lent out of supplier liquidity. The Aave docs describe an ERC-20 minted on demand through the `borrow` function of the V3 Ethereum market, against eligible collateral and up to its collateral-factor limit. Because it is minted, not lent, GHO is not limited by the liquidity suppliers have deposited. What limits it is the **facilitator** bucket: a facilitator is a contract that governance has approved to mint and burn GHO, and each one has a `bucketCapacity` that the minted level cannot exceed.
+Aave also issues its own stablecoin, GHO, an ERC-20 that only a **facilitator** can mint. A facilitator is a contract that governance has approved to mint and burn GHO, and each one has a `bucketCapacity` that its minted level cannot exceed. Borrowers do not depend on other users supplying GHO.
 
-The borrow rate on GHO is not read from utilization. The docs say four GHO steward contracts, controlled by the Aave Risk Council, adjust it, along with the borrow and supply caps, facilitator bucket capacities, CCIP bridge limits, and stability-module exposure caps and fees. Each change must stay inside limits that governance approved, and the same parameter can be updated at most once per day. In `GhoAaveSteward`, the rate limits are a maximum change per parameter (optimal usage ratio, base rate, and the two slopes) held in the contract’s borrow-rate configuration. An earlier version of this page described a rule keyed to a trailing 30-day GHO price, which neither the docs nor the current steward code states. GHO holders can also deposit into the sGHO savings vault, which the docs describe as paying a fixed rate with no cooldown. A separate **GHO Stability Module** lets users swap between GHO and an approved asset, with a fee that goes to the DAO treasury and an exposure cap set by governance.
+How a V3 Ethereum borrower receives it changed in V3.4, and the sources disagree. The [GHO docs](https://aave.com/docs/primitives/gho) still describe GHO minted inside the `borrow` call, limited by collateral and the facilitator cap rather than by available liquidity. The [V3.4 release notes](https://github.com/aave-dao/aave-v3-origin/blob/main/docs/3.4/Aave-v3.4-features.md) replace that special case: GHO becomes an ordinary reserve, a `GhoDirectMinter` facilitator mints GHO and supplies it to the pool, a supply cap keeps users from supplying it, and borrowers draw the supplied GHO like any other asset. Under that design new borrowing is bounded by what the minter has supplied, which its bucket capacity bounds in turn. The upgrade to the following release, V3.5, was [reported executed on 7 August 2025](https://governance.aave.com/t/direct-to-aip-bgd-aave-v3-5-v3-4-part-2/22639).
+
+The borrow rate on GHO is set by governance and its stewards rather than left to float with utilization. The docs say four GHO steward contracts, controlled by the Aave Risk Council, adjust it, along with the borrow and supply caps, facilitator bucket capacities, CCIP bridge limits, and stability-module exposure caps and fees. Each change must stay inside limits that governance approved, and the same parameter can be updated at most once per day. In [`GhoAaveSteward`](https://github.com/aave-dao/gho-origin/blob/4a164421870e0ec74d72ae014ef730254538da8c/src/contracts/misc/GhoAaveSteward.sol), the rate limits are a maximum change per parameter (optimal usage ratio, base rate, and the two slopes) held in the contract’s borrow-rate configuration. An earlier version of this page described a rule keyed to a trailing 30-day GHO price, which neither the docs nor the current steward code states. GHO holders can also deposit into the sGHO savings vault, which the docs describe as paying a fixed rate with no cooldown. A separate **GHO Stability Module** lets users swap between GHO and an approved asset, with a fee that goes to the DAO treasury and an exposure cap set by governance.
 
 For comparison with other collateralized dollars see [Maker and Sky](/protocols/maker-sky) and the [stablecoin mechanisms](/concepts/stablecoin-mechanisms) page. The structural difference is that GHO borrowers use a market the protocol already runs, while a Maker vault is a separate debt ledger.
 

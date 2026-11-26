@@ -20,9 +20,9 @@
     "url": "https://github.com/aave-dao/aave-v3-origin/commit/2f6a0fc96a957265fb38913053831e0880345d1f"
   },
   "aave-v3-pool": {
-    "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
-    "observedAt": "2026-11-23",
-    "url": "https://github.com/aave/aave-v3-core/commit/6d6fa53d360b43f492ff5b3c7033f95aee4f1335"
+    "observed": "4f8884cfd5c451b91bcff6ec77c7098d191da43f",
+    "observedAt": "2026-11-26",
+    "url": "https://github.com/aave-dao/aave-v3-origin/commit/4f8884cfd5c451b91bcff6ec77c7098d191da43f"
   },
   "aave-v3-reserve-logic": {
     "observed": "6d6fa53d360b43f492ff5b3c7033f95aee4f1335",
@@ -35,9 +35,9 @@
     "url": "https://github.com/aave/aave-v3-core/commit/32f0e72bafdb5a29e5da5fdbd3539167964083a6"
   },
   "aave-v4-overview": {
-    "observed": "8be3e0d59efc23cd1d4664a88743340533dd5a0c",
-    "observedAt": "2026-11-23",
-    "url": "https://github.com/aave/aave-v4/commit/8be3e0d59efc23cd1d4664a88743340533dd5a0c"
+    "observed": "d6dcb7ebbc9095862ba9fa2484eeacdd530168e1",
+    "observedAt": "2026-11-26",
+    "url": "https://github.com/aave/aave-v4/commit/d6dcb7ebbc9095862ba9fa2484eeacdd530168e1"
   },
   "aave-v4-release": {
     "observed": "v0.5.11",
