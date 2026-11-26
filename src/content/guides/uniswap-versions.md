@@ -4,7 +4,10 @@ description: "How Uniswap’s pool, fee, liquidity claim, and swap settlement ch
 summary: "v2 is a fungible constant-product pair with a 0.30 percent fee. v3 keeps constant-product math inside a chosen tick range and represents positions as NFTs. v4 keeps concentrated liquidity, puts every pool in one PoolManager, settles with flash accounting, and lets a hook extend the swap."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Corrected when a v4 hook can change a pool’s fee, and noted that protocol fees have been enabled since the UNIfication vote."
 order: 2
 protocol: "uniswap"
 versionContext: "All three versions are documented as live protocol surfaces. The v4 launch post is dated 31 January 2025. Core contracts are described as non-upgradeable."
@@ -77,6 +80,10 @@ sources:
     url: "https://github.com/Uniswap/v4-core/blob/main/src/types/PoolKey.sol"
     kind: "code"
     publisher: "Uniswap"
+  - title: "PoolManager.sol"
+    url: "https://github.com/Uniswap/v4-core/blob/a7cf038cd568801a79a9b4cf92cd5b52c95c8585/src/PoolManager.sol"
+    kind: "code"
+    publisher: "Uniswap"
   - title: "Uniswap v4 is here"
     url: "https://blog.uniswap.org/uniswap-v4-is-here"
     kind: "docs"
@@ -87,7 +94,7 @@ Uniswap’s versions are easy to flatten into “v4 is newer, so it replaces v3.
 
 ## Liquidity, and the claim that represents it
 
-v2 liquidity is uniform. The LP token is an ERC-20 claim on a share of both reserves. Any two holders of the same pair token are in the same position, scaled by balance. Fees stay in the reserves and raise the value of that token. There is no range to manage and no NFT to transfer.
+v2 liquidity is uniform. The LP token is an ERC-20 claim on a share of both reserves. Any two holders of the same pair token are in the same position, scaled by balance. Fees stay in the reserves and raise the value of that token, less the protocol’s share where that fee is on. There is no range to manage and no NFT to transfer.
 
 v3 liquidity is a choice of range. The concentrated-liquidity documentation and the v3 whitepaper define the range by [ticks](/glossary/tick/) of `1.0001^i`. A position earns fees only inside its ticks. The claim is an ERC-721 from `NonfungiblePositionManager`, because two ranges are not fungible. Fees are collected to the position. They do not rebase the NFT’s token id. How much token0 and token1 that range holds, including when price is outside it, is derived on the [concentrated liquidity](/concepts/concentrated-liquidity) page.
 
@@ -97,7 +104,7 @@ Nothing in these docs converts a v2 LP token into a v3 NFT or a v4 position. Mig
 
 ## Settlement
 
-v2’s pair looks at token balances. The factory documentation’s model is: transfer tokens to the pair, then call the method. The pair’s stored reserves are compared with its actual balances. Flash swaps are the exception the flash-swap guide describes: tokens leave first, and the callback must return enough that the product still holds after the 0.30 percent fee.
+v2’s pair looks at token balances. In an ordinary swap, as the flash-swap guide describes it, the caller transfers tokens to the pair and then calls the method. The pair’s stored reserves are compared with its actual balances. Flash swaps are the exception the flash-swap guide describes: tokens leave first, and the callback must return enough that the product still holds after the 0.30 percent fee.
 
 v3 pulls payment. The swap guide says the pool calls `uniswapV3SwapCallback` and enforces `sqrtPriceLimitX96`. The caller learns what it owes during the swap. A router that still “transfers first” as if it were a v2 pair is using the wrong sequence.
 
@@ -109,9 +116,9 @@ v2’s documented pool fee is 0.30 percent, the 997/1000 factor in the flash-swa
 
 v3 pools are identified by the two tokens and a fee tier. The whitepaper connects fee tier to tick spacing: a lower fee can use a tighter grid. The same token pair can have several pools. A router picks among them.
 
-v4 identifies a pool by a `PoolKey`: the two currencies, a fee, a tick spacing, and a hook. Tick spacing is its own field. v3 is the version that pairs spacing with a fee tier. `PoolKey` says the fee is capped at 1,000,000, and that a dynamic-fee pool must set the fee to exactly `0x800000`. That value is a flag, not a fee of one hundred percent. The hook, when its address flags allow it, can change the fee after initialization. The hook itself is fixed at `initialize`. Two pools with different hooks are different pools. A hookless pool uses concentrated liquidity. A hook with custom accounting can opt out of that curve. The permission flags live in the hook address, so a hook cannot silently gain a callback it did not declare.
+v4 identifies a pool by a `PoolKey`: the two currencies, a fee, a tick spacing, and a hook. Tick spacing is its own field. v3 is the version that pairs spacing with a fee tier. `PoolKey` says the fee is capped at 1,000,000, and that a dynamic-fee pool must set the fee to exactly `0x800000`. That value is a flag, not a fee of one hundred percent. In a dynamic-fee pool the hook can change the fee after initialization; [`PoolManager`](https://github.com/Uniswap/v4-core/blob/a7cf038cd568801a79a9b4cf92cd5b52c95c8585/src/PoolManager.sol) rejects the update in a static-fee pool or from any other caller. The hook itself is fixed at `initialize`. Two pools with different hooks are different pools. A hookless pool uses concentrated liquidity. A hook with custom accounting can opt out of that curve. The permission flags live in the hook address, so a hook cannot silently gain a callback it did not declare.
 
-Protocol fee is a separate switch. The overview says governance can enable it within limits. It is not the LP fee, and it is not automatically on because a version number increased.
+Protocol fee is a separate switch. The overview says governance can enable it within limits, and governance has been doing so since the UNIfication vote of December 2025; the [overview page](/protocols/uniswap) follows that rollout. It is not the same number as the LP fee, and whether a given pool pays it depends on the version, tier and chain.
 
 ## What v4 does not discard
 

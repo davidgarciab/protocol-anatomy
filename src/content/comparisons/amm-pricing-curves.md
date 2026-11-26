@@ -5,8 +5,10 @@ description: "Constant product, concentrated ranges, StableSwap and CryptoSwap c
 summary: "Uniswap v2 spreads liquidity over every price with a constant-product rule. Uniswap v3 and v4 let providers choose a range. Curve StableSwap blends constant sum with constant product for assets that should trade near one price, and CryptoSwap re-centers liquidity for assets that move. Each curve is a different assumption about where trades will happen."
 status: "published"
 published: "2026-10-26"
-lastVerified: "2026-10-29"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Noted that part of the Uniswap v2 fee goes to the protocol where governance has turned it on."
   - date: "2026-10-29"
     summary: "Added Pendle’s yield-range AMM, which tightens toward maturity, as a fifth shape."
 faq:
@@ -37,6 +39,14 @@ tags:
   - pricing
   - liquidity
 sources:
+  - title: "UNIfication proposal"
+    url: "https://blog.uniswap.org/unification"
+    kind: "governance"
+    publisher: "Uniswap Labs"
+  - title: "Activate v4 Protocol Fees (Part 1/2)"
+    url: "https://vote.uniswapfoundation.org/proposals/100"
+    kind: "governance"
+    publisher: "Uniswap"
   - title: "How Uniswap works"
     url: "https://developers.uniswap.org/docs/get-started/concepts/how-uniswap-works"
     kind: "docs"
@@ -84,7 +94,7 @@ Every automated market maker answers the same question: given the reserves, what
 
 ## Constant product: no assumption
 
-The pool accepts any trade that does not shrink `x * y` after fees. The v2 flash-swap guide puts the fee at 0.30 percent on the input, applied by counting only 99.7 percent of the input toward the product check. The fee that stays in the reserves is the liquidity providers’ income.
+The pool accepts any trade that does not shrink `x * y` after fees. The v2 flash-swap guide puts the fee at 0.30 percent on the input, applied by counting only 99.7 percent of the input toward the product check. The fee stays in the reserves as liquidity-provider income, except that where governance has [turned on the protocol fee](https://blog.uniswap.org/unification), 0.05 of the 0.30 points go to the protocol.
 
 A worked case from the [constant product](/concepts/constant-product) article: a pool of 100 ETH and 300,000 USDC quotes 3,000 USDC per ETH. Selling 1 ETH returns about 2,961.47 USDC, 1.28 percent below spot, and most of that gap is the curve. Selling 10 ETH returns an average of 2,719.83, 9.34 percent below spot, because the trade is a tenth of the ETH reserve. The curve charges for size. It has no opinion about the price.
 

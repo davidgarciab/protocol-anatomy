@@ -5,7 +5,10 @@ description: "How Balancer's Vault holds every pool's tokens, how transient acco
 summary: "Balancer is an AMM built around one Vault that holds the tokens and accounts for all pools, while each pool contract supplies only its pricing math. V3 adds transient accounting, routers, hooks and built-in support for yield-bearing tokens. V2 pools were exploited in November 2025, and governance was restructured in 2026."
 status: "published"
 published: "2026-11-23"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Added the boosted-pools source behind the share of yield-bearing tokens in a boosted pool."
 faq:
   - question: "What does the Balancer Vault do that a pool contract does not?"
     answer: "The Vault holds the tokens of every pool, mints and burns pool tokens, records the debts and credits of an operation, and enforces that they settle before a transaction ends. A pool only exposes its math, such as how much to pay for a swap. Separating the two lets pool authors skip accounting code."
@@ -51,6 +54,10 @@ versions:
     status: "active"
     note: "A new Vault with routers, transient accounting, hooks, ERC-4626 buffers and a protocol-wide Authorizer. The V3 docs describe pool types including weighted, stable, StableSurge, Gyroscope, AutoRange and liquidity bootstrapping pools."
 sources:
+  - title: "Boosted pools"
+    url: "https://docs.balancer.fi/concepts/explore-available-balancer-pools/boosted-pool.html"
+    kind: "docs"
+    publisher: "Balancer"
   - title: "Balancer V3 introduction"
     url: "https://docs.balancer.fi/concepts/core-concepts/introduction.html"
     kind: "docs"
@@ -181,7 +188,7 @@ Balancer's [concentrated liquidity](/concepts/concentrated-liquidity) differs fr
 
 The Vault has native support for tokens whose value drifts against another asset. A token marked `WITH_RATE` has an external exchange rate that the pool should use when pricing, with wstETH and a euro stablecoin as the docs' examples. A **rate provider** supplies that rate, and the docs say it can come from an oracle, a ratio of balances or another calculation. As with [Curve's asset types](/protocols/curve), the pool will clear trades against whatever the provider says, so a wrong rate is a wrong price.
 
-ERC-4626 **liquidity buffers** let the Vault quote trades between an ERC-4626 token and its underlying, such as a wrapped lending token and its asset, without wrapping through the lending protocol each time. The docs say buffers are internal to the Vault, are not pools, and trade on `previewDeposit` and `previewMint`. They enable boosted pools, where 25 to 100 percent of the tokens earn yield elsewhere. The docs also say yield fees are charged on interactions when a token is configured to pay them and yield accrued since the last computation.
+ERC-4626 **liquidity buffers** let the Vault quote trades between an ERC-4626 token and its underlying, such as a wrapped lending token and its asset, without wrapping through the lending protocol each time. The docs say buffers are internal to the Vault, are not pools, and trade on `previewDeposit` and `previewMint`. They enable [boosted pools](https://docs.balancer.fi/concepts/explore-available-balancer-pools/boosted-pool.html), where 25 to 100 percent of the tokens earn yield elsewhere. The docs also say yield fees are charged on interactions when a token is configured to pay them and yield accrued since the last computation.
 
 ## Fees
 

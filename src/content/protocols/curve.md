@@ -5,8 +5,10 @@ description: "How Curve prices pegged assets with StableSwap, volatile assets wi
 summary: "Curve runs separate AMMs for pegged assets, volatile assets, and markets priced elsewhere. StableSwap flattens the price near a peg. CryptoSwap concentrates liquidity around a moving scale. FXSwap recenters that kind of curve with a refuel budget. Stableswap-NG is the pegged-pool factory."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-11-23"
+lastVerified: "2026-11-26"
 changes:
+  - date: "2026-11-26"
+    summary: "Resolved the CryptoSwap gamma direction from the invariant, and added the hardcoded 50 percent admin fee of Stableswap-NG."
   - date: "2026-11-23"
     summary: "Re-read the CryptoSwap gamma wording, which still contradicts itself, and added the LlamaLend v1 and v2 distinction from the crvUSD overview."
   - date: "2026-10-29"
@@ -152,7 +154,7 @@ The pool can therefore hold a rebasing token or a vault token without pretending
 
 NG pools are deployed from a factory implementation index. The integration docs say a pool keeps the implementation it was deployed with when the factory later adds a new one. “The NG factory” is not a single bytecode frozen for every pool address.
 
-Fees are pool parameters. The deploy documentation describes an off-peg fee multiplier that can raise the fee when the pool is away from balance. This page does not quote a universal admin-fee percentage. That cut is configuration.
+Fees are pool parameters. The integration guide describes an off-peg fee multiplier that raises the fee when the pool is away from balance. It also says the admin share in Stableswap-NG is hardcoded at 50 percent of trading fees, with the rest accruing to liquidity providers through the virtual price. That figure belongs to NG pools; older generations have their own settings.
 
 ## CryptoSwap
 
@@ -165,7 +167,7 @@ K = A * K0 * γ^2 / (γ + 1 - K0)^2
 
 `A` still concentrates liquidity. The understanding-CryptoSwap page says an `A` of 10,000 in CryptoSwap corresponds to an `A` of 1 in StableSwap. Copying a stablecoin pool’s `A` into a tricrypto pool uses the wrong scale.
 
-`gamma` (γ) changes how the curve leaves the concentrated region. When re-read on 23 November 2026, that same page still said two different things about the direction. One sentence says higher gamma pulls more liquidity in around the center. Later sentences say higher gamma spreads liquidity wider, and the parameterization note says a higher gamma with a lower `A` spreads liquidity across a wider range. Those instructions disagree. The linked CryptoSwap whitepaper is a PDF whose text did not extract reliably here, so this page does not pick a direction from the paper. Read the pool’s stored gamma against the formula above, and treat the prose page as unsettled until those sentences match.
+`gamma` (γ) changes how the curve leaves the concentrated region. In the formula above, `K` is `A` times `K0` times `γ² / (γ + 1 − K0)²`. When the pool is away from balance, `K0` is below 1, and a larger γ keeps that last factor closer to 1. The StableSwap-like behavior therefore persists further from balance: the concentrated region is wider. The understanding-CryptoSwap page is inconsistent on this. One sentence says higher gamma pulls more liquidity in around the center, while later sentences and the parameterization note say a higher gamma spreads liquidity wider. The formula, which the [CryptoSwap whitepaper](https://docs.curve.finance/assets/files/whitepaper_cryptoswap-de196d8f95aae3164a1226234d6d96ca.pdf) also gives, supports the second reading.
 
 The internal price is a `price_scale` the pool updates. Liquidity concentrates around that scale. A trade away from it pays more slippage, which is the point: the pool is not offering v2-style depth at every price, and it is not offering StableSwap’s peg. The same page says a rebalance runs only after the internal price clears an adjustment step and the cost stays under half of the trading fees earned. If fees are too small, the center of liquidity can sit away from the market. That stuck state is a documented CryptoSwap failure mode.
 

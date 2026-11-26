@@ -4,7 +4,10 @@ description: "How Curve’s StableSwap pools, CryptoSwap pools, Stableswap-NG fa
 summary: "Curve did not ship a single V1-to-V4 exchange. It shipped an invariant for pegged assets, a later invariant for volatile assets, an FXSwap pool for externally priced markets, a factory of immutable pool instances, and a separate stablecoin whose liquidation is an AMM."
 status: "published"
 published: "2026-10-13"
-lastVerified: "2026-10-26"
+lastVerified: "2026-11-26"
+changes:
+  - date: "2026-11-26"
+    summary: "Corrected what the Curve MetaRegistry does: it aggregates pools across factories, and it is not described as reporting a pool’s ABI."
 order: 4
 protocol: "curve"
 versionContext: "Stableswap-NG, CryptoSwap, and FXSwap are current AMM families. crvUSD controller blueprints are versioned, and a market keeps the blueprint it was deployed with."
@@ -89,7 +92,7 @@ Stableswap-NG is the factory the current integration guide tells developers to u
 
 NG implementations are indexed. The integration documentation says the factory can add an implementation, and an existing pool keeps its own. There is no global “Curve V4 pool” that every address silently became. When you read a pool, read its implementation, its `A`, its fee, and its asset types.
 
-Older pools remain. Routing that only knows the NG factory will miss them. Curve’s metaregistry exists so integrators can ask one contract which ABI a pool speaks. This guide does not duplicate registry addresses. They are deployment data and belong in the docs next to the factory.
+Older pools remain. Routing that only knows the NG factory will miss them. The integration guide points to Curve’s MetaRegistry, which aggregates pools across the NG factories and legacy deployments, so one contract can be queried for pools of every family. This guide does not duplicate registry addresses. They are deployment data and belong in the docs next to the factory.
 
 ## CryptoSwap is not a higher StableSwap version
 
@@ -115,6 +118,6 @@ LLAMMA’s soft liquidation — converting collateral in bands as price moves �
 | A CryptoSwap pool | `price_scale`, `A`, and gamma | A peg of one, or the StableSwap scale for `A` |
 | An FXSwap pool | A StableSwap-style curve plus the refuel budget | That the pool is where the price is discovered |
 | A crvUSD controller | Collateral bands and the minted stablecoin | That it is an LP position |
-| An older factory pool | Whichever ABI the registry reports | NG asset types |
+| An older pool | The interface of that pool’s own contract | NG asset types |
 
 The [constant product](/concepts/constant-product) article is the baseline both AMM families are departing from. Curve’s departure is deliberate and partial: far from the peg or the price scale, the curve is allowed to resemble a product pool so that one coin cannot be drained at a constant price forever.
