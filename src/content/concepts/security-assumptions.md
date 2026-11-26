@@ -67,7 +67,7 @@ sources:
     publisher: "Lido"
 ---
 
-A useful way to read a protocol is to write down what the contracts check and what they assume. The checks are the invariant, the health factor, the withdrawal finalization rule. The assumptions are everything that has to be true for those checks to mean what the documentation says. This page is that list for the five protocols. It is not an audit, and it does not rank the protocols.
+A useful way to read a protocol is to write down what the contracts check and what they assume. The checks are the invariant, the health factor, the withdrawal finalization rule. The assumptions are everything that has to be true for those checks to mean what the documentation says. This page is that list for the protocols on this site. It is not an audit, and it does not rank the protocols.
 
 ## Assumptions that show up in more than one design
 
